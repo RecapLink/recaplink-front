@@ -242,6 +242,7 @@
     <a href="http://www.recaplink.tn">recaplink.tn</a>
     <a href="http://www.ufuk.tn">ufuk.tn</a>
     <a href="mailto:contact@ufuk.tn">Contact</a>
+    <a href="stats.html">Statistiques</a>
   </div>
 </footer>
 
@@ -273,6 +274,308 @@
 
   updateCountdown();
   setInterval(updateCountdown, 1000);
+</script>
+
+<!-- FEEDBACK FLOATING BUTTON -->
+<button class="fb-float" id="fbFloatBtn" onclick="openFeedbackModal()">
+  <i class="fas fa-comment-dots"></i>
+  <span id="fbFloatText">Votre avis</span>
+</button>
+
+<!-- FEEDBACK MODAL -->
+<div class="fb-overlay" id="fbOverlay" style="display:none;">
+  <div class="fb-modal">
+    <div class="fb-header">
+      <img src="images/recaplink.png" alt="RecapLink" style="height:26px;flex-shrink:0;">
+      <div class="fb-lang-switcher">
+        <button class="fb-lang active" id="fbLangFr" onclick="fbSetLang('fr')">FR</button>
+        <button class="fb-lang" id="fbLangEn" onclick="fbSetLang('en')">EN</button>
+        <button class="fb-lang" id="fbLangWo" onclick="fbSetLang('wo')">WO</button>
+      </div>
+      <button class="fb-close" onclick="closeFeedbackModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="fb-progress" id="fbProgress" style="display:none;">
+      <div class="fb-progress-bar" id="fbProgressBar" style="width:0%"></div>
+    </div>
+    <div class="fb-body" id="fbBody"></div>
+    <div class="fb-footer" id="fbFooter" style="display:none;">
+      <button class="fb-nav-back" id="fbBackBtn" onclick="fbGoBack()"></button>
+      <button class="fb-nav-next" id="fbNextBtn" onclick="fbGoNext()"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── FEEDBACK MODAL ───
+const FB_API = 'http://localhost:3001/api/feedback';
+const FB_STEPS = 6;
+let fbLang = 'fr';
+let fbStep = -1;
+let fbData = { language: 'fr', features: [] };
+
+const fbT = {
+  fr: {
+    floatBtn: 'Votre avis',
+    prompt: 'Souhaitez-vous donner votre avis ?',
+    promptSub: 'Aidez-nous à améliorer RecapLink ! Cela prend seulement 2 minutes.',
+    yes: 'Oui, avec plaisir !', no: 'Peut-être plus tard',
+    stepLabel: 'Étape', of: 'sur',
+    back: '← Retour', next: 'Suivant →', submit: 'Envoyer ✓',
+    sending: 'Envoi en cours…', error: "Une erreur s'est produite. Réessayez.",
+    placeholder: 'Votre commentaire ou suggestion (optionnel)…',
+    thanksTitle: 'Merci ! 🌿',
+    thanksMsg: 'Votre avis a bien été enregistré. Ensemble, nous construisons un avenir plus vert !',
+    close: 'Fermer',
+    questions: [
+      { title: 'Qui êtes-vous ?',                         sub: 'Sélectionnez le profil qui vous correspond' },
+      { title: 'Êtes-vous satisfait(e) du concept ?',      sub: 'Notez votre satisfaction (1 = très insatisfait · 5 = très satisfait)' },
+      { title: "Qu'est-ce qui vous intéresse le plus ?",  sub: 'Sélectionnez une ou plusieurs fonctionnalités' },
+      { title: 'Utiliseriez-vous RecapLink ?',            sub: "Dites-nous votre intention une fois l'application lancée" },
+      { title: 'Comment avez-vous entendu parler de nous ?', sub: 'Aidez-nous à comprendre comment vous nous avez trouvés' },
+      { title: 'Des commentaires supplémentaires ?',       sub: 'Partagez vos idées ou suggestions (optionnel)' },
+    ],
+    ratingLabels: ['','Très insatisfait','Insatisfait','Neutre','Satisfait','Très satisfait'],
+    profiles:  [{v:'collector',i:'fa-box',l:'Collecteur de plastique'},{v:'recycler',i:'fa-recycle',l:'Recycleur / Transformateur'},{v:'business',i:'fa-building',l:'Entreprise / Organisation'},{v:'individual',i:'fa-user',l:'Particulier'},{v:'other',i:'fa-ellipsis',l:'Autre'}],
+    features:  [{v:'collect',i:'fa-box-archive',l:'Collecte facilitée'},{v:'connect',i:'fa-handshake',l:'Réseau de recycleurs'},{v:'dashboard',i:'fa-chart-line',l:'Tableau de bord'},{v:'badges',i:'fa-award',l:'Système de badges'},{v:'ai',i:'fa-robot',l:'Assistant IA'},{v:'eco',i:'fa-leaf',l:'Impact écologique'}],
+    wouldUse:  [{v:'definitely_yes',i:'fa-face-smile-beam',l:'Certainement oui',c:'#16a34a'},{v:'probably_yes',i:'fa-face-smile',l:'Probablement oui',c:'#65a30d'},{v:'unsure',i:'fa-face-meh',l:'Je ne sais pas encore',c:'#ca8a04'},{v:'probably_no',i:'fa-face-frown',l:'Probablement non',c:'#ea580c'},{v:'definitely_no',i:'fa-face-frown-open',l:'Certainement non',c:'#dc2626'}],
+    heardFrom: [{v:'social_media',i:'fa-share-nodes',l:'Réseaux sociaux'},{v:'event',i:'fa-calendar-days',l:'Événement / Conférence'},{v:'colleague',i:'fa-users',l:'Collègue / Ami(e)'},{v:'internet',i:'fa-globe',l:'Recherche internet'},{v:'other',i:'fa-ellipsis',l:'Autre'}],
+  },
+  en: {
+    floatBtn: 'Feedback',
+    prompt: 'Would you like to give your feedback?',
+    promptSub: 'Help us improve RecapLink! It only takes 2 minutes.',
+    yes: "Yes, I'd love to!", no: 'Maybe later',
+    stepLabel: 'Step', of: 'of',
+    back: '← Back', next: 'Next →', submit: 'Submit ✓',
+    sending: 'Sending…', error: 'An error occurred. Please try again.',
+    placeholder: 'Your comment or suggestion (optional)…',
+    thanksTitle: 'Thank you! 🌿',
+    thanksMsg: "Your feedback has been recorded. Together we're building a greener future!",
+    close: 'Close',
+    questions: [
+      { title: 'Who are you?',                          sub: 'Select the profile that best describes you' },
+      { title: 'How satisfied are you with the concept?', sub: 'Rate your satisfaction (1 = very unsatisfied · 5 = very satisfied)' },
+      { title: 'What interests you most?',              sub: 'Select one or more features' },
+      { title: 'Would you use RecapLink?',              sub: 'Tell us your intention once the app is launched' },
+      { title: 'How did you hear about us?',            sub: 'Help us understand how you found RecapLink' },
+      { title: 'Any additional comments?',              sub: 'Share your ideas or suggestions (optional)' },
+    ],
+    ratingLabels: ['','Very unsatisfied','Unsatisfied','Neutral','Satisfied','Very satisfied'],
+    profiles:  [{v:'collector',i:'fa-box',l:'Plastic Collector'},{v:'recycler',i:'fa-recycle',l:'Recycler / Processor'},{v:'business',i:'fa-building',l:'Business / Organization'},{v:'individual',i:'fa-user',l:'Individual'},{v:'other',i:'fa-ellipsis',l:'Other'}],
+    features:  [{v:'collect',i:'fa-box-archive',l:'Facilitated Collection'},{v:'connect',i:'fa-handshake',l:'Recycler Network'},{v:'dashboard',i:'fa-chart-line',l:'Tracking Dashboard'},{v:'badges',i:'fa-award',l:'Badge System'},{v:'ai',i:'fa-robot',l:'AI Assistant'},{v:'eco',i:'fa-leaf',l:'Ecological Impact'}],
+    wouldUse:  [{v:'definitely_yes',i:'fa-face-smile-beam',l:'Definitely yes',c:'#16a34a'},{v:'probably_yes',i:'fa-face-smile',l:'Probably yes',c:'#65a30d'},{v:'unsure',i:'fa-face-meh',l:'Not sure yet',c:'#ca8a04'},{v:'probably_no',i:'fa-face-frown',l:'Probably not',c:'#ea580c'},{v:'definitely_no',i:'fa-face-frown-open',l:'Definitely not',c:'#dc2626'}],
+    heardFrom: [{v:'social_media',i:'fa-share-nodes',l:'Social Media'},{v:'event',i:'fa-calendar-days',l:'Event / Conference'},{v:'colleague',i:'fa-users',l:'Colleague / Friend'},{v:'internet',i:'fa-globe',l:'Internet Search'},{v:'other',i:'fa-ellipsis',l:'Other'}],
+  },
+  wo: {
+    floatBtn: 'Sa xam-xam',
+    prompt: 'Bëggël nga wax ci RecapLink ?',
+    promptSub: 'Jëf ak njëkk ! Dafa am 2 minit rekk.',
+    yes: 'Waaw, bëgga !', no: 'Pexe ci kanam',
+    stepLabel: 'Laaj', of: 'ci',
+    back: '← Ginaaw', next: 'Kanam →', submit: 'Yónnee ✓',
+    sending: 'Yónnee…', error: 'Yónnee bi dafa xaw. Jëf fii si kanam.',
+    placeholder: 'Waxtaan bi mbaa soxor (du dëggu)…',
+    thanksTitle: 'Jërëjëf ! 🌿',
+    thanksMsg: 'Waxtaan bi dafa dëkk. Ci dëkk, dangay def bëgg àdduna bu set !',
+    close: 'Tëj',
+    questions: [
+      { title: 'Kan ngaa jëf ?',                         sub: 'Tann profil bu ëpp jëfandikoo ci yaw' },
+      { title: 'Ana sa bëgg ci concept bi ?',            sub: 'Jox sa bëgg (1 = bëgguma · 5 = bëgga rëy)' },
+      { title: 'Fan ngeen ëpp bëgg ?',                   sub: 'Tann fonctionnalité yi dëgëna la' },
+      { title: 'Dégoon nga jëfandikoo RecapLink ?',      sub: 'Wax sa mbër bi ngeen seetële app bi' },
+      { title: 'Naka ngeen xam RecapLink ?',             sub: 'Jëf ak njëkk ci xam RecapLink' },
+      { title: 'Am nga yeneen waxtaan ?',                sub: 'Wax xam-xam, mbir yi bëggël la (du dëggu)' },
+    ],
+    ratingLabels: ['','Bëgguma','Bëgguma ci kanam','Normale','Bëgga','Bëgga rëy'],
+    profiles:  [{v:'collector',i:'fa-box',l:'Jëndakatu Plastique'},{v:'recycler',i:'fa-recycle',l:'Recikleur / Transformatöör'},{v:'business',i:'fa-building',l:'Entreprise / Organisation'},{v:'individual',i:'fa-user',l:'Nit ku jëkkër'},{v:'other',i:'fa-ellipsis',l:'Yeneen'}],
+    features:  [{v:'collect',i:'fa-box-archive',l:'Jëndakaay yu ees'},{v:'connect',i:'fa-handshake',l:'Réseau Recikleur'},{v:'dashboard',i:'fa-chart-line',l:'Tableau de bord'},{v:'badges',i:'fa-award',l:'Badge yi'},{v:'ai',i:'fa-robot',l:'Assistant IA'},{v:'eco',i:'fa-leaf',l:'Impact écologique'}],
+    wouldUse:  [{v:'definitely_yes',i:'fa-face-smile-beam',l:'Waaw, dëgg dëgg',c:'#16a34a'},{v:'probably_yes',i:'fa-face-smile',l:'Pexe waaw',c:'#65a30d'},{v:'unsure',i:'fa-face-meh',l:'Xamuma',c:'#ca8a04'},{v:'probably_no',i:'fa-face-frown',l:'Pexe déedéet',c:'#ea580c'},{v:'definitely_no',i:'fa-face-frown-open',l:'Déedéet, dëgg dëgg',c:'#dc2626'}],
+    heardFrom: [{v:'social_media',i:'fa-share-nodes',l:'Réseaux sociaux'},{v:'event',i:'fa-calendar-days',l:'Événement'},{v:'colleague',i:'fa-users',l:'Xarit / Soxor'},{v:'internet',i:'fa-globe',l:'Internet'},{v:'other',i:'fa-ellipsis',l:'Yeneen'}],
+  },
+};
+
+function openFeedbackModal() {
+  fbStep = -1;
+  fbData = { language: fbLang, features: [] };
+  document.getElementById('fbOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  fbRender();
+}
+
+function closeFeedbackModal() {
+  document.getElementById('fbOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFeedbackModal(); });
+document.getElementById('fbOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('fbOverlay')) closeFeedbackModal();
+});
+
+function fbSetLang(lang) {
+  fbLang = lang;
+  fbData.language = lang;
+  ['fr','en','wo'].forEach(l => {
+    document.getElementById('fbLang' + l[0].toUpperCase() + l.slice(1)).classList.toggle('active', l === lang);
+  });
+  document.getElementById('fbFloatText').textContent = fbT[lang].floatBtn;
+  fbRender();
+}
+
+function fbRender() {
+  const t = fbT[fbLang];
+  const body    = document.getElementById('fbBody');
+  const footer  = document.getElementById('fbFooter');
+  const prog    = document.getElementById('fbProgress');
+  const bar     = document.getElementById('fbProgressBar');
+  const backBtn = document.getElementById('fbBackBtn');
+  const nextBtn = document.getElementById('fbNextBtn');
+
+  if (fbStep === -1) {
+    prog.style.display = footer.style.display = 'none';
+    body.innerHTML = `
+      <div class="fb-prompt">
+        <div class="fb-prompt-icon"><i class="fas fa-comment-dots" style="color:var(--leaf);font-size:1.9rem;"></i></div>
+        <h2>${t.prompt}</h2>
+        <p>${t.promptSub}</p>
+        <div class="fb-prompt-btns">
+          <button class="fb-btn-yes" onclick="fbStartForm()"><i class="fas fa-check-circle"></i> ${t.yes}</button>
+          <button class="fb-btn-no" onclick="closeFeedbackModal()">${t.no}</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (fbStep === FB_STEPS + 1) {
+    prog.style.display = 'block'; bar.style.width = '100%';
+    footer.style.display = 'none';
+    body.innerHTML = `
+      <div class="fb-thanks">
+        <div class="fb-thanks-icon"><i class="fas fa-check" style="font-size:2rem;"></i></div>
+        <h2>${t.thanksTitle}</h2>
+        <p>${t.thanksMsg}</p>
+        <button class="fb-thanks-close" onclick="closeFeedbackModal()">${t.close}</button>
+      </div>`;
+    return;
+  }
+
+  prog.style.display = 'block'; footer.style.display = 'flex';
+  bar.style.width = `${(fbStep / FB_STEPS) * 100}%`;
+  backBtn.textContent = t.back;
+  backBtn.style.display = fbStep > 1 ? 'inline-flex' : 'none';
+
+  const q = t.questions[fbStep - 1];
+  let html = `<div class="fb-step-header">
+    <div class="fb-step-badge">${t.stepLabel} ${fbStep} ${t.of} ${FB_STEPS}</div>
+    <div class="fb-step-title">${q.title}</div>
+    <div class="fb-step-sub">${q.sub}</div>
+  </div>`;
+
+  if (fbStep === 1) {
+    html += fbCards(t.profiles, 'profile', fbData.profile, false, false);
+    nextBtn.textContent = t.next; nextBtn.disabled = !fbData.profile;
+  } else if (fbStep === 2) {
+    const r = fbData.satisfaction || 0;
+    html += `<div class="fb-stars" id="fbStars">${[1,2,3,4,5].map(i =>
+      `<span class="fb-star${i<=r?' fb-star-on':''}" onclick="fbRate(${i})" onmouseenter="fbHover(${i})" onmouseleave="fbUnhover()">${i<=r?'★':'☆'}</span>`).join('')}</div>
+    <div class="fb-rating-label" id="fbRateLbl">${r>0?t.ratingLabels[r]:''}</div>`;
+    nextBtn.textContent = t.next; nextBtn.disabled = !fbData.satisfaction;
+  } else if (fbStep === 3) {
+    html += fbCards(t.features, 'features', fbData.features, false, true);
+    nextBtn.textContent = t.next; nextBtn.disabled = false;
+  } else if (fbStep === 4) {
+    html += fbCards(t.wouldUse, 'wouldUse', fbData.wouldUse, true, false);
+    nextBtn.textContent = t.next; nextBtn.disabled = !fbData.wouldUse;
+  } else if (fbStep === 5) {
+    html += fbCards(t.heardFrom, 'heardFrom', fbData.heardFrom, false, false);
+    nextBtn.textContent = t.next; nextBtn.disabled = !fbData.heardFrom;
+  } else if (fbStep === 6) {
+    html += `<textarea class="fb-textarea" id="fbComment" placeholder="${t.placeholder}"
+      oninput="fbData.comment=this.value">${fbData.comment||''}</textarea>
+      <div class="fb-error" id="fbErr"></div>`;
+    nextBtn.textContent = t.submit; nextBtn.disabled = false;
+  }
+
+  body.innerHTML = html;
+}
+
+function fbCards(opts, field, selected, wide, multi) {
+  const sel = v => multi ? (selected||[]).includes(v) : selected === v;
+  return `<div class="fb-cards${wide?' fb-cards-wide':''}">
+    ${opts.map(o => `<div class="fb-card${sel(o.v)?' fb-card-on':''}" onclick="fbPick('${field}','${o.v}',${!!multi},this)">
+      <div class="fb-card-icon"><i class="fas ${o.i}"></i></div>
+      <span class="fb-card-label">${o.l}</span>
+    </div>`).join('')}
+  </div>`;
+}
+
+function fbPick(field, value, multi, el) {
+  if (multi) {
+    const idx = fbData.features.indexOf(value);
+    if (idx === -1) { fbData.features.push(value); el.classList.add('fb-card-on'); }
+    else { fbData.features.splice(idx,1); el.classList.remove('fb-card-on'); }
+  } else {
+    fbData[field] = value;
+    el.closest('.fb-cards').querySelectorAll('.fb-card').forEach(c => c.classList.remove('fb-card-on'));
+    el.classList.add('fb-card-on');
+    document.getElementById('fbNextBtn').disabled = false;
+  }
+}
+
+function fbRate(val) {
+  fbData.satisfaction = val;
+  document.querySelectorAll('.fb-star').forEach((s,i) => {
+    s.classList.toggle('fb-star-on', i<val); s.textContent = i<val?'★':'☆';
+  });
+  document.getElementById('fbRateLbl').textContent = fbT[fbLang].ratingLabels[val];
+  document.getElementById('fbNextBtn').disabled = false;
+}
+
+function fbHover(val) {
+  document.querySelectorAll('.fb-star').forEach((s,i) => {
+    s.style.color = i<val ? '#f59e0b' : '#d4d4d4';
+    s.style.transform = i<val ? 'scale(1.15)' : '';
+  });
+}
+
+function fbUnhover() {
+  document.querySelectorAll('.fb-star').forEach(s => { s.style.color=''; s.style.transform=''; });
+}
+
+function fbStartForm() { fbStep=1; fbRender(); }
+function fbGoBack()    { if(fbStep>1){fbStep--;fbRender();} }
+
+async function fbGoNext() {
+  if (fbStep < FB_STEPS) { fbStep++; fbRender(); return; }
+  const t = fbT[fbLang];
+  const nextBtn = document.getElementById('fbNextBtn');
+  const errEl   = document.getElementById('fbErr');
+  nextBtn.disabled = true; nextBtn.textContent = t.sending;
+  if (errEl) errEl.style.display='none';
+  try {
+    const payload = { language: fbData.language };
+    if (fbData.profile)          payload.profile      = fbData.profile;
+    if (fbData.satisfaction)     payload.satisfaction = fbData.satisfaction;
+    if (fbData.features.length)  payload.features     = fbData.features;
+    if (fbData.wouldUse)         payload.wouldUse     = fbData.wouldUse;
+    if (fbData.heardFrom)        payload.heardFrom    = fbData.heardFrom;
+    if (fbData.comment?.trim())  payload.comment      = fbData.comment.trim();
+    const res = await fetch(FB_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok) throw new Error();
+    fbStep = FB_STEPS+1; fbRender();
+  } catch {
+    nextBtn.disabled=false; nextBtn.textContent=t.submit;
+    if (errEl) { errEl.textContent=t.error; errEl.style.display='block'; }
+  }
+}
+
+// Auto-show once per session after 8 s
+setTimeout(() => {
+  if (!sessionStorage.getItem('fb_prompted')) {
+    sessionStorage.setItem('fb_prompted','1');
+    openFeedbackModal();
+  }
+}, 8000);
 </script>
 
 </body>
