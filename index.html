@@ -569,10 +569,10 @@ async function fbGoNext() {
   }
 }
 
-// Auto-show once per session after 8 s
+// Auto-show only on the very first visit (localStorage persists across sessions)
 setTimeout(() => {
-  if (!sessionStorage.getItem('fb_prompted')) {
-    sessionStorage.setItem('fb_prompted','1');
+  if (!localStorage.getItem('fb_prompted')) {
+    localStorage.setItem('fb_prompted','1');
     openFeedbackModal();
   }
 }, 8000);
