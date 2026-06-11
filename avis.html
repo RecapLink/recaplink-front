@@ -166,6 +166,8 @@
 
     /* ── Pill chips ───────────────────────────────────────── */
     .av-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .av-chip i { margin-right: 0.35em; font-size: 0.9em; }
+    body[dir="rtl"] .av-chip i { margin-right: 0; margin-left: 0.35em; }
     .av-chip {
       padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.92rem; cursor: pointer;
       border: 1.5px solid #e2e8f0; background: #f8fafc; color: #475569;
@@ -478,7 +480,7 @@
       <hr class="av-divider">
       <div class="av-q">
         <div class="av-q-label"><i class="fas fa-sliders"></i> <span data-k="q_complexity">L'application vous semble simple ou complexe ?</span></div>
-        <div class="av-emoji-chips" id="chips_complexity"></div>
+        <div class="av-chips" id="chips_complexity"></div>
       </div>
 
     </div>
@@ -640,19 +642,19 @@ const T = {
     q_usageFrequency:'À quelle fréquence pensez-vous utiliser RecapLink ?',
     q_wouldRecommend:'Recommanderiez-vous RecapLink à votre entourage ?',
     q_comment:'Commentaires libres ou suggestions',
-    satisfaction:   [{v:'1',l:'😞 Très insatisfait'},{v:'2',l:'😕 Insatisfait'},{v:'3',l:'😐 Neutre'},{v:'4',l:'😊 Satisfait'},{v:'5',l:'🌟 Très satisfait'}],
-    designRating:   [{v:'1',l:'😞 Très mauvais'},{v:'2',l:'😕 Mauvais'},{v:'3',l:'😐 Moyen'},{v:'4',l:'😊 Bien'},{v:'5',l:'🌟 Excellent'}],
-    messagingRating:[{v:'1',l:'😞 Très mauvaise'},{v:'2',l:'😕 Mauvaise'},{v:'3',l:'😐 Moyenne'},{v:'4',l:'😊 Bonne'},{v:'5',l:'🌟 Excellente'}],
-    chatbotRating:  [{v:'1',l:'😞 Très mauvais'},{v:'2',l:'😕 Mauvais'},{v:'3',l:'😐 Moyen'},{v:'4',l:'😊 Bien'},{v:'5',l:'🌟 Excellent'}],
-    colorScheme:[{v:'excellent',l:'Excellent 🌟'},{v:'good',l:'Bien 👍'},{v:'average',l:'Moyen 😐'},{v:'poor',l:'Mauvais 👎'}],
+    satisfaction:   [{v:'1',l:'Très insatisfait'},{v:'2',l:'Insatisfait'},{v:'3',l:'Neutre'},{v:'4',l:'Satisfait'},{v:'5',l:'Très satisfait'}],
+    designRating:   [{v:'1',l:'Très mauvais'},{v:'2',l:'Mauvais'},{v:'3',l:'Moyen'},{v:'4',l:'Bien'},{v:'5',l:'Excellent'}],
+    messagingRating:[{v:'1',l:'Très mauvaise'},{v:'2',l:'Mauvaise'},{v:'3',l:'Moyenne'},{v:'4',l:'Bonne'},{v:'5',l:'Excellente'}],
+    chatbotRating:  [{v:'1',l:'Très mauvais'},{v:'2',l:'Mauvais'},{v:'3',l:'Moyen'},{v:'4',l:'Bien'},{v:'5',l:'Excellent'}],
+    colorScheme:[{v:'excellent',l:'Excellent'},{v:'good',l:'Bien'},{v:'average',l:'Moyen'},{v:'poor',l:'Mauvais'}],
     textReadability:[{v:'very_clear',l:'Très lisible'},{v:'clear',l:'Lisible'},{v:'hard',l:'Difficile à lire'}],
     navIntuition:[{v:'very_intuitive',l:'Très intuitive'},{v:'intuitive',l:'Intuitive'},{v:'confusing',l:'Confuse'},{v:'very_confusing',l:'Très confuse'}],
-    savoirFaire:[{v:'very_useful',l:'Très utile 📚'},{v:'useful',l:'Utile'},{v:'neutral',l:'Neutre'},{v:'not_useful',l:'Peu utile'},{v:'not_used',l:'Pas utilisée'}],
-    complexity:[{v:'very_simple',l:'🟢 Très simple'},{v:'simple',l:'✅ Simple'},{v:'moderate',l:'🟡 Modérée'},{v:'complex',l:'🟠 Complexe'},{v:'very_complex',l:'🔴 Très complexe'}],
-    onboarding:[{v:'excellent',l:'Excellent 🎉'},{v:'good',l:'Bon 👌'},{v:'average',l:'Moyen'},{v:'difficult',l:'Difficile 😓'}],
+    savoirFaire:[{v:'very_useful',l:'Très utile'},{v:'useful',l:'Utile'},{v:'neutral',l:'Neutre'},{v:'not_useful',l:'Peu utile'},{v:'not_used',l:'Pas utilisée'}],
+    complexity:[{v:'very_simple',l:'Très simple'},{v:'simple',l:'Simple'},{v:'moderate',l:'Modérée'},{v:'complex',l:'Complexe'},{v:'very_complex',l:'Très complexe'}],
+    onboarding:[{v:'excellent',l:'Excellent'},{v:'good',l:'Bon'},{v:'average',l:'Moyen'},{v:'difficult',l:'Difficile'}],
     ease:[{v:'very_easy',l:'Très facile'},{v:'easy',l:'Facile'},{v:'moderate',l:'Moyen'},{v:'hard',l:'Difficile'}],
     badgeSatisfaction:[{v:'very_satisfied',l:'Très satisfait'},{v:'satisfied',l:'Satisfait'},{v:'little',l:'Peu satisfait'},{v:'not_satisfied',l:'Pas satisfait'}],
-    profilePage:[{v:'very_useful',l:'Très utile 🌟'},{v:'useful',l:'Utile 👍'},{v:'neutral',l:'Neutre 😐'},{v:'not_useful',l:'Peu utile 👎'}],
+    profilePage:[{v:'very_useful',l:'Très utile'},{v:'useful',l:'Utile'},{v:'neutral',l:'Neutre'},{v:'not_useful',l:'Peu utile'}],
     favoriteFeature:[
       {v:'collect',   i:'fa-box-archive', l:'Collecte'},
       {v:'connect',   i:'fa-handshake',   l:'Réseau'},
@@ -668,7 +670,7 @@ const T = {
       {v:'rarely',  i:'fa-clock-rotate-left', l:'Rarement'},
       {v:'never',   i:'fa-ban',            l:'Jamais'},
     ],
-    wouldRecommend:[{v:'definitely',l:'Certainement 🙌'},{v:'probably',l:'Probablement'},{v:'maybe',l:'Peut-être'},{v:'no',l:'Non'}],
+    wouldRecommend:[{v:'definitely',l:'Certainement'},{v:'probably',l:'Probablement'},{v:'maybe',l:'Peut-être'},{v:'no',l:'Non'}],
     commentPlaceholder:'Partagez vos idées, suggestions ou impressions…',
     answeredTxt:'réponses',
     submit:'Envoyer mon avis', sending:'Envoi en cours…',
@@ -707,19 +709,19 @@ const T = {
     q_usageFrequency:'كم مرة تنوي استخدام RecapLink؟',
     q_wouldRecommend:'هل ستنصح بـ RecapLink لأشخاص آخرين؟',
     q_comment:'تعليقات أو اقتراحات إضافية',
-    satisfaction:   [{v:'1',l:'😞 غير راضٍ تماماً'},{v:'2',l:'😕 غير راضٍ'},{v:'3',l:'😐 محايد'},{v:'4',l:'😊 راضٍ'},{v:'5',l:'🌟 راضٍ جداً'}],
-    designRating:   [{v:'1',l:'😞 سيئ جداً'},{v:'2',l:'😕 سيئ'},{v:'3',l:'😐 متوسط'},{v:'4',l:'😊 جيد'},{v:'5',l:'🌟 ممتاز'}],
-    messagingRating:[{v:'1',l:'😞 سيئة جداً'},{v:'2',l:'😕 سيئة'},{v:'3',l:'😐 متوسطة'},{v:'4',l:'😊 جيدة'},{v:'5',l:'🌟 ممتازة'}],
-    chatbotRating:  [{v:'1',l:'😞 سيئ جداً'},{v:'2',l:'😕 سيئ'},{v:'3',l:'😐 متوسط'},{v:'4',l:'😊 جيد'},{v:'5',l:'🌟 ممتاز'}],
-    colorScheme:[{v:'excellent',l:'ممتازة 🌟'},{v:'good',l:'جيدة 👍'},{v:'average',l:'متوسطة 😐'},{v:'poor',l:'سيئة 👎'}],
+    satisfaction:   [{v:'1',l:'غير راضٍ تماماً'},{v:'2',l:'غير راضٍ'},{v:'3',l:'محايد'},{v:'4',l:'راضٍ'},{v:'5',l:'راضٍ جداً'}],
+    designRating:   [{v:'1',l:'سيئ جداً'},{v:'2',l:'سيئ'},{v:'3',l:'متوسط'},{v:'4',l:'جيد'},{v:'5',l:'ممتاز'}],
+    messagingRating:[{v:'1',l:'سيئة جداً'},{v:'2',l:'سيئة'},{v:'3',l:'متوسطة'},{v:'4',l:'جيدة'},{v:'5',l:'ممتازة'}],
+    chatbotRating:  [{v:'1',l:'سيئ جداً'},{v:'2',l:'سيئ'},{v:'3',l:'متوسط'},{v:'4',l:'جيد'},{v:'5',l:'ممتاز'}],
+    colorScheme:[{v:'excellent',l:'ممتازة'},{v:'good',l:'جيدة'},{v:'average',l:'متوسطة'},{v:'poor',l:'سيئة'}],
     textReadability:[{v:'very_clear',l:'واضحة جداً'},{v:'clear',l:'واضحة'},{v:'hard',l:'صعبة القراءة'}],
     navIntuition:[{v:'very_intuitive',l:'سهلة جداً'},{v:'intuitive',l:'سهلة'},{v:'confusing',l:'مربكة'},{v:'very_confusing',l:'مربكة جداً'}],
-    savoirFaire:[{v:'very_useful',l:'مفيد جداً 📚'},{v:'useful',l:'مفيد'},{v:'neutral',l:'محايد'},{v:'not_useful',l:'غير مفيد'},{v:'not_used',l:'لم أستخدمه'}],
-    complexity:[{v:'very_simple',l:'🟢 بسيط جداً'},{v:'simple',l:'✅ بسيط'},{v:'moderate',l:'🟡 متوسط'},{v:'complex',l:'🟠 معقد'},{v:'very_complex',l:'🔴 معقد جداً'}],
-    onboarding:[{v:'excellent',l:'ممتازة 🎉'},{v:'good',l:'جيدة 👌'},{v:'average',l:'متوسطة'},{v:'difficult',l:'صعبة 😓'}],
+    savoirFaire:[{v:'very_useful',l:'مفيد جداً'},{v:'useful',l:'مفيد'},{v:'neutral',l:'محايد'},{v:'not_useful',l:'غير مفيد'},{v:'not_used',l:'لم أستخدمه'}],
+    complexity:[{v:'very_simple',l:'بسيط جداً'},{v:'simple',l:'بسيط'},{v:'moderate',l:'متوسط'},{v:'complex',l:'معقد'},{v:'very_complex',l:'معقد جداً'}],
+    onboarding:[{v:'excellent',l:'ممتازة'},{v:'good',l:'جيدة'},{v:'average',l:'متوسطة'},{v:'difficult',l:'صعبة'}],
     ease:[{v:'very_easy',l:'سهل جداً'},{v:'easy',l:'سهل'},{v:'moderate',l:'متوسط'},{v:'hard',l:'صعب'}],
     badgeSatisfaction:[{v:'very_satisfied',l:'راضٍ جداً'},{v:'satisfied',l:'راضٍ'},{v:'little',l:'قليلاً'},{v:'not_satisfied',l:'غير راضٍ'}],
-    profilePage:[{v:'very_useful',l:'مفيدة جداً 🌟'},{v:'useful',l:'مفيدة 👍'},{v:'neutral',l:'محايد 😐'},{v:'not_useful',l:'غير مفيدة 👎'}],
+    profilePage:[{v:'very_useful',l:'مفيدة جداً'},{v:'useful',l:'مفيدة'},{v:'neutral',l:'محايد'},{v:'not_useful',l:'غير مفيدة'}],
     favoriteFeature:[
       {v:'collect',   i:'fa-box-archive', l:'الجمع'},
       {v:'connect',   i:'fa-handshake',   l:'الشبكة'},
@@ -735,7 +737,7 @@ const T = {
       {v:'rarely',  i:'fa-clock-rotate-left', l:'نادراً'},
       {v:'never',   i:'fa-ban',               l:'أبداً'},
     ],
-    wouldRecommend:[{v:'definitely',l:'بالتأكيد 🙌'},{v:'probably',l:'على الأرجح'},{v:'maybe',l:'ربما'},{v:'no',l:'لا'}],
+    wouldRecommend:[{v:'definitely',l:'بالتأكيد'},{v:'probably',l:'على الأرجح'},{v:'maybe',l:'ربما'},{v:'no',l:'لا'}],
     commentPlaceholder:'شاركنا أفكارك واقتراحاتك…',
     answeredTxt:'إجابات',
     submit:'إرسال رأيي', sending:'جارٍ الإرسال…',
@@ -774,19 +776,19 @@ const T = {
     q_usageFrequency:'Kañ danga jëfandikoo RecapLink ?',
     q_wouldRecommend:'Danga jàppoo RecapLink ak yeneen ?',
     q_comment:'Yeneen waxtaan ak soxor',
-    satisfaction:   [{v:'1',l:'😞 Bëgguma'},{v:'2',l:'😕 Bëgguma lëk'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bëgga'},{v:'5',l:'🌟 Bëgga rëy'}],
-    designRating:   [{v:'1',l:'😞 Xaw rëy'},{v:'2',l:'😕 Xaw'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bon'},{v:'5',l:'🌟 Très bon'}],
-    messagingRating:[{v:'1',l:'😞 Xaw rëy'},{v:'2',l:'😕 Xaw'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bon'},{v:'5',l:'🌟 Très bon'}],
-    chatbotRating:  [{v:'1',l:'😞 Xaw rëy'},{v:'2',l:'😕 Xaw'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bon'},{v:'5',l:'🌟 Très bon'}],
-    colorScheme:[{v:'excellent',l:'Très bien 🌟'},{v:'good',l:'Bien 👍'},{v:'average',l:'Normale 😐'},{v:'poor',l:'Xaw 👎'}],
+    satisfaction:   [{v:'1',l:'Bëgguma'},{v:'2',l:'Bëgguma lëk'},{v:'3',l:'Normale'},{v:'4',l:'Bëgga'},{v:'5',l:'Bëgga rëy'}],
+    designRating:   [{v:'1',l:'Xaw rëy'},{v:'2',l:'Xaw'},{v:'3',l:'Normale'},{v:'4',l:'Bon'},{v:'5',l:'Très bon'}],
+    messagingRating:[{v:'1',l:'Xaw rëy'},{v:'2',l:'Xaw'},{v:'3',l:'Normale'},{v:'4',l:'Bon'},{v:'5',l:'Très bon'}],
+    chatbotRating:  [{v:'1',l:'Xaw rëy'},{v:'2',l:'Xaw'},{v:'3',l:'Normale'},{v:'4',l:'Bon'},{v:'5',l:'Très bon'}],
+    colorScheme:[{v:'excellent',l:'Très bien'},{v:'good',l:'Bien'},{v:'average',l:'Normale'},{v:'poor',l:'Xaw'}],
     textReadability:[{v:'very_clear',l:'Très clair'},{v:'clear',l:'Clair'},{v:'hard',l:'Dëgënal'}],
     navIntuition:[{v:'very_intuitive',l:'Très yomb'},{v:'intuitive',l:'Yomb'},{v:'confusing',l:'Dëgënal'},{v:'very_confusing',l:'Très dëgënal'}],
-    savoirFaire:[{v:'very_useful',l:'Très utile 📚'},{v:'useful',l:'Utile'},{v:'neutral',l:'Normale'},{v:'not_useful',l:'Pek jëf'},{v:'not_used',l:'Jëfandikuma'}],
-    complexity:[{v:'very_simple',l:'🟢 Très simple'},{v:'simple',l:'✅ Simple'},{v:'moderate',l:'🟡 Normale'},{v:'complex',l:'🟠 Complexe'},{v:'very_complex',l:'🔴 Très complexe'}],
-    onboarding:[{v:'excellent',l:'Très bien 🎉'},{v:'good',l:'Bien 👌'},{v:'average',l:'Normale'},{v:'difficult',l:'Dëgënal 😓'}],
+    savoirFaire:[{v:'very_useful',l:'Très utile'},{v:'useful',l:'Utile'},{v:'neutral',l:'Normale'},{v:'not_useful',l:'Pek jëf'},{v:'not_used',l:'Jëfandikuma'}],
+    complexity:[{v:'very_simple',l:'Très simple'},{v:'simple',l:'Simple'},{v:'moderate',l:'Normale'},{v:'complex',l:'Complexe'},{v:'very_complex',l:'Très complexe'}],
+    onboarding:[{v:'excellent',l:'Très bien'},{v:'good',l:'Bien'},{v:'average',l:'Normale'},{v:'difficult',l:'Dëgënal'}],
     ease:[{v:'very_easy',l:'Très yomb'},{v:'easy',l:'Yomb'},{v:'moderate',l:'Normale'},{v:'hard',l:'Dëgënal'}],
     badgeSatisfaction:[{v:'very_satisfied',l:'Très soxor'},{v:'satisfied',l:'Soxor'},{v:'little',l:'Pek pek'},{v:'not_satisfied',l:'Soxoruma'}],
-    profilePage:[{v:'very_useful',l:'Très utile 🌟'},{v:'useful',l:'Utile 👍'},{v:'neutral',l:'Normale 😐'},{v:'not_useful',l:'Pek jëf 👎'}],
+    profilePage:[{v:'very_useful',l:'Très utile'},{v:'useful',l:'Utile'},{v:'neutral',l:'Normale'},{v:'not_useful',l:'Pek jëf'}],
     favoriteFeature:[
       {v:'collect',   i:'fa-box-archive', l:'Jëndakaay'},
       {v:'connect',   i:'fa-handshake',   l:'Réseau'},
@@ -802,7 +804,7 @@ const T = {
       {v:'rarely',  i:'fa-clock-rotate-left', l:'Pek pek'},
       {v:'never',   i:'fa-ban',               l:'Déedéet'},
     ],
-    wouldRecommend:[{v:'definitely',l:'Waaw, dëgg 🙌'},{v:'probably',l:'Pexe waaw'},{v:'maybe',l:'Xamuma'},{v:'no',l:'Déedéet'}],
+    wouldRecommend:[{v:'definitely',l:'Waaw, dëgg'},{v:'probably',l:'Pexe waaw'},{v:'maybe',l:'Xamuma'},{v:'no',l:'Déedéet'}],
     commentPlaceholder:'Wax xam-xam, mbir yi bëggël la…',
     answeredTxt:'réponses',
     submit:'Yónnee sa xalaat', sending:'Yónnee…',
@@ -826,6 +828,24 @@ const SECTION_FIELDS = {
 };
 const ALL_FIELDS = Object.values(SECTION_FIELDS).flat();
 document.getElementById('avTotal').textContent = ALL_FIELDS.length;
+
+// ── Chip icons (FA class by field → value) ────────────────────
+const CHIP_ICONS = {
+  satisfaction:    {'1':'fa-face-sad-cry','2':'fa-face-sad-tear','3':'fa-face-meh','4':'fa-face-smile','5':'fa-face-grin-stars'},
+  designRating:    {'1':'fa-face-sad-cry','2':'fa-face-sad-tear','3':'fa-face-meh','4':'fa-face-smile','5':'fa-face-grin-stars'},
+  messagingRating: {'1':'fa-face-sad-cry','2':'fa-face-sad-tear','3':'fa-face-meh','4':'fa-face-smile','5':'fa-face-grin-stars'},
+  chatbotRating:   {'1':'fa-face-sad-cry','2':'fa-face-sad-tear','3':'fa-face-meh','4':'fa-face-smile','5':'fa-face-grin-stars'},
+  colorScheme:     {'excellent':'fa-star','good':'fa-thumbs-up','average':'fa-face-meh','poor':'fa-thumbs-down'},
+  textReadability: {'very_clear':'fa-eye','clear':'fa-glasses','hard':'fa-eye-slash'},
+  navIntuition:    {'very_intuitive':'fa-compass','intuitive':'fa-route','confusing':'fa-circle-question','very_confusing':'fa-triangle-exclamation'},
+  savoirFaire:     {'very_useful':'fa-graduation-cap','useful':'fa-book-open','neutral':'fa-book','not_useful':'fa-circle-minus','not_used':'fa-ban'},
+  profilePage:     {'very_useful':'fa-star','useful':'fa-thumbs-up','neutral':'fa-face-meh','not_useful':'fa-thumbs-down'},
+  complexity:      {'very_simple':'fa-feather','simple':'fa-check','moderate':'fa-scale-balanced','complex':'fa-gears','very_complex':'fa-triangle-exclamation'},
+  onboarding:      {'excellent':'fa-trophy','good':'fa-circle-check','average':'fa-circle-minus','difficult':'fa-face-tired'},
+  ease:            {'very_easy':'fa-bolt','easy':'fa-circle-check','moderate':'fa-clock','hard':'fa-triangle-exclamation'},
+  badgeSatisfaction:{'very_satisfied':'fa-face-grin-stars','satisfied':'fa-face-smile','little':'fa-face-meh','not_satisfied':'fa-face-frown'},
+  wouldRecommend:  {'definitely':'fa-thumbs-up','probably':'fa-circle-check','maybe':'fa-circle-question','no':'fa-thumbs-down'},
+};
 
 // ── Init ──────────────────────────────────────────────────────
 (function init() {
@@ -879,7 +899,7 @@ function applyLang(lang) {
   buildChips('registrationEase',    t.ease,            'av-chips',      'av-chip');
   buildChips('postOfferEase',       t.ease,            'av-chips',      'av-chip');
   buildChips('searchCollectorEase', t.ease,            'av-chips',      'av-chip');
-  buildChips('complexity',          t.complexity,      'av-emoji-chips','av-emoji-chip');
+  buildChips('complexity',          t.complexity,      'av-chips',      'av-chip');
   // Section 3 — Fonctionnalités
   buildChips('messagingRating',     t.messagingRating, 'av-chips',      'av-chip');
   buildChips('chatbotRating',       t.chatbotRating,   'av-chips',      'av-chip');
@@ -945,9 +965,11 @@ function buildChips(field, opts, containerClass, chipClass) {
   const c = document.getElementById('chips_'+field);
   c.className = containerClass;
   const cur = avData[field];
-  c.innerHTML = opts.map(o =>
-    `<button class="${chipClass}${cur===o.v?' selected':''}" onclick="pickChip('${field}','${o.v}',this)">${o.l}</button>`
-  ).join('');
+  const icons = CHIP_ICONS[field] || {};
+  c.innerHTML = opts.map(o => {
+    const ico = icons[o.v] ? `<i class="fas ${icons[o.v]}"></i> ` : '';
+    return `<button class="${chipClass}${cur===o.v?' selected':''}" onclick="pickChip('${field}','${o.v}',this)">${ico}${o.l}</button>`;
+  }).join('');
 }
 
 function buildIconChips(field, opts) {
