@@ -215,6 +215,7 @@
     .av-textarea:focus { outline: none; border-color: var(--leaf); box-shadow: 0 0 0 3px rgba(34,197,94,0.12); }
 
     /* ── Submit ───────────────────────────────────────────── */
+    /* ── Submit — mobile base ────────────────────────────────── */
     .av-submit-area {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
       background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
@@ -233,6 +234,30 @@
     }
     .av-submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
     .av-submit-btn:disabled { opacity: 0.55; cursor: default; transform: none; box-shadow: none; }
+
+    /* ── Submit — desktop: centered floating pill ─────────────── */
+    @media (min-width: 769px) {
+      .av-submit-area {
+        bottom: 2rem; left: 50%; right: auto;
+        transform: translateX(-50%);
+        width: auto; min-width: 320px;
+        background: transparent; border: none; backdrop-filter: none;
+        flex-direction: column; align-items: center; gap: 0.45rem;
+        padding: 0;
+      }
+      .av-submit-info {
+        order: -1;
+        background: rgba(15,23,42,0.65); backdrop-filter: blur(6px);
+        color: #f1f5f9; border-radius: 12px; padding: 0.25rem 0.9rem;
+        font-size: 0.75rem; white-space: nowrap;
+      }
+      .av-submit-info span { color: #86efac; }
+      .av-submit-btn {
+        padding: 1rem 3rem; font-size: 1.05rem; border-radius: 36px;
+        box-shadow: 0 8px 32px rgba(22,163,74,0.45), 0 2px 8px rgba(0,0,0,0.12);
+        letter-spacing: 0.01em;
+      }
+    }
     .av-error { font-size: 0.82rem; color: #dc2626; margin-top: 0.5rem; text-align: center; }
 
     /* ── Thank you ────────────────────────────────────────── */
