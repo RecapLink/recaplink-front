@@ -1278,11 +1278,49 @@
 .stats-empty i { font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3; }
 .stats-empty h3 { font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
 
+/* ── Stats responsive — tablet ───────────────────────────── */
 @media (max-width: 900px) {
   .stats-hero { padding: 2rem 1.5rem; }
   .stats-main  { padding: 1.5rem 1.5rem 3rem; }
   .charts-grid { grid-template-columns: 1fr; }
   .chart-card-wide { grid-column: 1; }
+  .stats-hero h1 { font-size: 1.5rem; }
+}
+
+/* ── Stats responsive — mobile ───────────────────────────── */
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column; align-items: flex-start;
+    gap: 0.5rem; padding: 0.6rem 1rem;
+  }
+  .logo-wrap img { width: 110px !important; }
+  .badge-bbw { font-size: 0.72rem; }
+  .badge-bbw img { width: 18% !important; }
+
+  .stats-hero { padding: 1.5rem 1rem 1.25rem; }
+  .stats-hero h1 { font-size: 1.2rem; }
+  .stats-hero p  { font-size: 0.8rem; }
+  .stats-hero-inner { gap: 0.85rem; }
+  .stats-refresh-btn { padding: 0.5rem 0.9rem; font-size: 0.78rem; }
+
+  .stats-main { padding: 1rem 0.75rem 2.5rem; }
+  .stats-summary { grid-template-columns: repeat(2, 1fr); gap: 0.65rem; margin-bottom: 1.5rem; }
+  .stat-card { padding: 1rem 0.9rem; border-radius: 12px; }
+  .stat-card-value { font-size: 1.5rem; }
+  .stat-card-label { font-size: 0.65rem; }
+
+  .charts-grid { gap: 0.75rem; }
+  .chart-card { padding: 1rem; border-radius: 12px; }
+  .chart-card h3 { font-size: 0.85rem; }
+  .chart-card-sub { font-size: 0.72rem; margin-bottom: 0.85rem; }
+  .chart-wrap { height: 190px !important; }
+  .lang-pill { font-size: 0.8rem; }
+}
+
+@media (max-width: 400px) {
+  .stats-summary { grid-template-columns: 1fr; }
+  .stats-hero h1 { font-size: 1.05rem; }
+  .stat-card-value { font-size: 1.3rem; }
 }
 
 /* ═══════════════════════════════════════════

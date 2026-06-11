@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Votre avis — RecapLink</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --leaf: #22c55e; --leaf-dark: #16a34a; --green-800: #166534;
+      --s1:#16a34a; --s2:#8b5cf6; --s3:#3b82f6; --s4:#f97316; --s5:#06b6d4;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif; background: #f1f5f9; color: #1e293b; overflow-x: hidden; width: 100%; }
+    body[dir="rtl"] { font-family: 'Cairo', 'Nunito', system-ui, sans-serif; }
+
+    /* ── Header ───────────────────────────────────────────── */
+    .av-header {
+      position: sticky; top: 0; z-index: 200; background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.65rem 1.5rem; gap: 1rem;
+      width: 100%; max-width: 100vw;
+    }
+    .av-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+    .av-logo img { height: 34px; }
+    .av-logo-name { font-size: 1.05rem; font-weight: 900; color: var(--green-800); letter-spacing: -0.02em; }
+    .av-header-right { display: flex; align-items: center; gap: 0.85rem; }
+    .av-back {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.82rem; font-weight: 600; color: #64748b;
+      text-decoration: none; padding: 0.35rem 0.7rem; border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .av-back:hover { background: #f1f5f9; color: var(--leaf-dark); }
+
+    /* ── Flag language switcher ─────────────────────────────── */
+    .av-lang-sw { display: flex; gap: 0.3rem; }
+    .av-lang-btn {
+      display: flex; align-items: center; gap: 0.3rem;
+      padding: 0.3rem 0.6rem; border-radius: 20px;
+      border: 1.5px solid #e2e8f0; background: #fff;
+      font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      color: #64748b; transition: all 0.2s; line-height: 1;
+    }
+    .av-lang-btn .flag { font-size: 1rem; }
+    .av-lang-btn .lcode { letter-spacing: 0.03em; }
+    .av-lang-btn:hover { border-color: var(--leaf); color: var(--leaf-dark); }
+    .av-lang-btn.active { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+
+    /* ── Progress bar ─────────────────────────────────────── */
+    .av-topbar { height: 4px; background: #e2e8f0; position: sticky; top: 61px; z-index: 199; }
+    .av-topbar-fill { height: 100%; background: linear-gradient(90deg,var(--leaf-dark),var(--leaf)); width: 0%; transition: width 0.4s ease; }
+
+    /* ── Section steps ────────────────────────────────────── */
+    .av-steps-sticky {
+      position: sticky; top: 65px; z-index: 198;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .av-steps-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; padding: 0.75rem 1rem; max-width: 700px; margin: 0 auto;
+      width: 100%; overflow: hidden;
+    }
+    .av-step-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; flex: 1; position: relative; }
+    .av-step-item:not(:last-child)::after {
+      content: ''; position: absolute; top: 14px;
+      left: calc(50% + 14px); right: calc(-50% + 14px);
+      height: 2px; background: #e2e8f0; transition: background 0.4s;
+      max-width: 100%; overflow: hidden;
+    }
+    .av-step-item.done::after { background: var(--leaf); }
+    .av-step-circle {
+      width: 28px; height: 28px; border-radius: 50%; border: 2px solid #e2e8f0;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; color: #94a3b8; transition: all 0.35s; z-index: 1;
+    }
+    .av-step-item.active .av-step-circle { border-color: var(--leaf); color: var(--leaf-dark); background: #dcfce7; }
+    .av-step-item.done .av-step-circle { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+    .av-step-label { font-size: 0.7rem; font-weight: 600; color: #94a3b8; text-align: center; transition: color 0.3s; white-space: nowrap; }
+    .av-step-item.active .av-step-label, .av-step-item.done .av-step-label { color: var(--leaf-dark); }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .av-hero {
+      background: linear-gradient(135deg, var(--green-800) 0%, #22c55e 100%);
+      color: #fff; text-align: center; padding: 2rem 1rem 1.75rem;
+      position: relative; overflow: hidden;
+    }
+    .av-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .av-hero-inner { position: relative; }
+    .av-hero h1 { font-size: clamp(1.3rem,4vw,1.9rem); font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    .av-hero p  { font-size: 0.9rem; opacity: 0.85; }
+    .av-hero-meta {
+      display: inline-flex; flex-wrap: wrap; justify-content: center;
+      gap: 0.5rem 1.5rem; margin-top: 1rem;
+      background: rgba(255,255,255,0.15); border-radius: 30px; padding: 0.4rem 1.2rem;
+      max-width: 100%;
+    }
+    .av-hero-meta span { font-size: 0.78rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+
+    /* ── Main form ────────────────────────────────────────── */
+    .av-main { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 5rem; width: 100%; }
+
+    /* ── Section card ─────────────────────────────────────── */
+    .av-section {
+      background: #fff; border-radius: 16px; margin-bottom: 1.25rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06); overflow: hidden;
+      border: 1px solid #f1f5f9; transition: box-shadow 0.3s;
+    }
+    .av-section:hover { box-shadow: 0 4px 20px rgba(0,0,0,.09); }
+    .av-section-head {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem 0.75rem; border-bottom: 1px solid #f1f5f9;
+    }
+    .av-section-icon {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: #fff;
+    }
+    .sec-1 .av-section-icon { background: linear-gradient(135deg,#16a34a,#22c55e); }
+    .sec-2 .av-section-icon { background: linear-gradient(135deg,#7c3aed,#a78bfa); }
+    .sec-3 .av-section-icon { background: linear-gradient(135deg,#2563eb,#60a5fa); }
+    .sec-4 .av-section-icon { background: linear-gradient(135deg,#ea580c,#fb923c); }
+    .sec-5 .av-section-icon { background: linear-gradient(135deg,#0891b2,#38bdf8); }
+    .av-section-title-wrap {}
+    .av-section-num { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; }
+    .av-section-title { font-size: 1.05rem; font-weight: 800; color: #1e293b; }
+    .av-section-done { margin-left: auto; font-size: 1rem; color: var(--leaf); display: none; }
+    .av-section.completed .av-section-done { display: block; }
+    .av-section-body { padding: 1.25rem; }
+
+    /* ── Question ─────────────────────────────────────────── */
+    .av-q { margin-bottom: 1.4rem; }
+    .av-q:last-child { margin-bottom: 0; }
+    .av-q-label {
+      font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem;
+      color: #334155; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .av-q-label i { font-size: 0.8rem; color: #94a3b8; }
+    .av-q-sub { font-size: 0.84rem; color: #64748b; margin-bottom: 0.7rem; }
+    .av-divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.25rem 0; }
+
+    /* ── Star rating ──────────────────────────────────────── */
+    .av-stars-wrap { display: flex; flex-direction: column; gap: 0.3rem; }
+    .av-stars { display: flex; gap: 0.2rem; }
+    body[dir="rtl"] .av-stars { direction: ltr; }
+    .av-star {
+      font-size: 2.2rem; cursor: pointer; color: #e2e8f0;
+      transition: color 0.12s, transform 0.12s; user-select: none; line-height: 1;
+    }
+    .av-star.on { color: #f59e0b; }
+    .av-star:hover { transform: scale(1.2); }
+    .av-star-lbl {
+      font-size: 0.78rem; font-weight: 600; color: #64748b;
+      min-height: 1.1em; transition: color 0.2s;
+    }
+    .av-star-lbl.rated { color: var(--leaf-dark); }
+
+    /* ── Pill chips ───────────────────────────────────────── */
+    .av-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .av-chip {
+      padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.92rem; cursor: pointer;
+      border: 1.5px solid #e2e8f0; background: #f8fafc; color: #475569;
+      transition: all 0.18s; font-weight: 600; font-family: inherit;
+    }
+    .av-chip:hover { border-color: var(--leaf); color: var(--leaf-dark); background: #f0fdf4; }
+    .av-chip.selected { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+
+    /* ── Icon card chips ──────────────────────────────────── */
+    .av-icon-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .av-icon-chip {
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      min-width: 90px; padding: 0.85rem 0.6rem 0.7rem;
+      border-radius: 12px; border: 1.5px solid #e2e8f0; background: #f8fafc;
+      cursor: pointer; font-size: 0.84rem; font-weight: 700;
+      color: #475569; text-align: center; transition: all 0.18s; font-family: inherit;
+    }
+    .av-icon-chip i { font-size: 1.35rem; color: #94a3b8; transition: color 0.18s; }
+    .av-icon-chip:hover { border-color: var(--leaf); color: var(--leaf-dark); background: #f0fdf4; }
+    .av-icon-chip:hover i { color: var(--leaf); }
+    .av-icon-chip.selected { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+    .av-icon-chip.selected i { color: #fff; }
+
+    /* ── Emoji chips (for complexity, etc.) ──────────────── */
+    .av-emoji-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .av-emoji-chip {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.92rem;
+      border: 1.5px solid #e2e8f0; background: #f8fafc; color: #475569;
+      transition: all 0.18s; font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .av-emoji-chip:hover { border-color: var(--leaf); color: var(--leaf-dark); background: #f0fdf4; }
+    .av-emoji-chip.selected { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+
+    /* ── Textarea ─────────────────────────────────────────── */
+    .av-textarea {
+      width: 100%; min-height: 120px; border-radius: 12px;
+      border: 1.5px solid #e2e8f0; padding: 0.85rem 1rem;
+      font-size: 0.88rem; font-family: inherit; resize: vertical;
+      color: #1e293b; background: #f8fafc; transition: border-color 0.2s, box-shadow 0.2s;
+      line-height: 1.6;
+    }
+    .av-textarea:focus { outline: none; border-color: var(--leaf); box-shadow: 0 0 0 3px rgba(34,197,94,0.12); }
+
+    /* ── Submit ───────────────────────────────────────────── */
+    .av-submit-area {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-top: 1px solid #e2e8f0; padding: 0.85rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      width: 100%; max-width: 100vw;
+    }
+    .av-submit-info { font-size: 0.78rem; color: #64748b; font-weight: 600; }
+    .av-submit-info span { color: var(--leaf-dark); font-weight: 700; }
+    .av-submit-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--leaf-dark), var(--leaf));
+      color: #fff; border: none; border-radius: 25px; padding: 0.75rem 1.75rem;
+      font-size: 0.9rem; font-weight: 800; cursor: pointer; font-family: inherit;
+      transition: opacity 0.2s, transform 0.15s; box-shadow: 0 4px 12px rgba(22,163,74,0.35);
+    }
+    .av-submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .av-submit-btn:disabled { opacity: 0.55; cursor: default; transform: none; box-shadow: none; }
+    .av-error { font-size: 0.82rem; color: #dc2626; margin-top: 0.5rem; text-align: center; }
+
+    /* ── Thank you ────────────────────────────────────────── */
+    .av-thanks {
+      text-align: center; background: #fff; border-radius: 20px;
+      padding: 3.5rem 2rem 3rem; box-shadow: 0 4px 20px rgba(0,0,0,.08);
+      border: 1px solid #f1f5f9; margin-top: 1.5rem;
+    }
+    .av-thanks-anim {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg,var(--leaf-dark),var(--leaf));
+      color: #fff; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; margin-bottom: 1.5rem;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .av-thanks h2 { font-size: 1.8rem; font-weight: 900; color: var(--green-800); margin-bottom: 0.6rem; }
+    .av-thanks p  { color: #64748b; font-size: 0.95rem; max-width: 380px; margin: 0 auto 1.75rem; line-height: 1.6; }
+    .av-thanks-home {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg,var(--leaf-dark),var(--leaf));
+      color: #fff; border-radius: 25px; padding: 0.75rem 2rem;
+      text-decoration: none; font-weight: 800; font-size: 0.92rem;
+      transition: opacity 0.2s, transform 0.15s; box-shadow: 0 4px 12px rgba(22,163,74,0.35);
+    }
+    .av-thanks-home:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ── Responsive — tablet ─────────────────────────────────── */
+    @media (max-width: 640px) {
+      .av-main { padding: 1rem 0.75rem 5rem; }
+      .av-section-body { padding: 1rem; }
+      .av-section-head { padding: 0.85rem 1rem 0.7rem; gap: 0.6rem; }
+      .av-section-icon { width: 34px; height: 34px; font-size: 0.9rem; }
+      .av-hero { padding: 1.5rem 0.75rem 1.25rem; }
+      .av-hero-meta {
+        flex-wrap: wrap; justify-content: center;
+        gap: 0.6rem 1rem; padding: 0.4rem 0.85rem;
+      }
+      .av-hero-meta span { font-size: 0.73rem; }
+    }
+
+    /* ── Responsive — mobile ──────────────────────────────────── */
+    @media (max-width: 480px) {
+      /* Header */
+      .av-header { padding: 0.5rem 0.75rem; gap: 0.5rem; }
+      .av-logo-name { display: none; }
+      .av-lang-btn .lcode { display: none; }
+      .av-lang-btn { padding: 0.28rem 0.45rem; }
+      .av-lang-btn .flag { font-size: 1.1rem; }
+      .av-back span#avBackTxt { display: none; }
+      .av-back { padding: 0.3rem 0.45rem; }
+
+      /* Steps tracker */
+      .av-topbar { top: 53px; }
+      .av-steps-sticky { top: 57px; }
+      .av-steps-row { padding: 0.6rem 0.5rem; gap: 0; overflow: hidden; }
+      .av-step-item:not(:last-child)::after {
+        left: calc(50% + 12px);
+        right: calc(-50% + 12px);
+      }
+      .av-step-circle { width: 24px; height: 24px; font-size: 0.58rem; }
+      .av-step-label { font-size: 0.55rem; max-width: 52px; overflow: hidden; text-overflow: ellipsis; }
+
+      /* Hero */
+      .av-hero h1 { font-size: 1.15rem; }
+      .av-hero p  { font-size: 0.82rem; }
+      .av-hero-meta { gap: 0.5rem 0.75rem; font-size: 0.7rem; }
+      .av-hero-meta span { font-size: 0.72rem; }
+
+      /* Cards */
+      .av-main { padding: 0.85rem 0.6rem 5rem; }
+      .av-section { border-radius: 12px; margin-bottom: 0.85rem; }
+      .av-section-head { padding: 0.75rem 0.85rem 0.6rem; }
+      .av-section-icon { width: 30px; height: 30px; font-size: 0.8rem; border-radius: 8px; }
+      .av-section-num { font-size: 0.58rem; }
+      .av-section-title { font-size: 0.85rem; }
+      .av-section-body { padding: 0.85rem; }
+      .av-q { margin-bottom: 1rem; }
+      .av-q-label { font-size: 0.82rem; }
+      .av-q-sub   { font-size: 0.72rem; }
+      .av-divider { margin: 0.85rem 0; }
+
+      /* Stars */
+      .av-star { font-size: 1.9rem; }
+
+      /* Chips */
+      .av-chip { font-size: 0.78rem; padding: 0.38rem 0.72rem; }
+      .av-emoji-chip { font-size: 0.78rem; padding: 0.38rem 0.65rem; }
+
+      /* Icon chips */
+      .av-icon-chips { gap: 0.45rem; }
+      .av-icon-chip { min-width: 70px; max-width: 85px; padding: 0.7rem 0.4rem 0.6rem; font-size: 0.68rem; border-radius: 10px; }
+      .av-icon-chip i { font-size: 1.15rem; }
+
+      /* Submit bar */
+      .av-submit-area { padding: 0.65rem 0.85rem; }
+      .av-submit-info { display: none; }
+      .av-submit-btn { padding: 0.65rem 1.4rem; font-size: 0.85rem; width: 100%; justify-content: center; }
+    }
+
+    /* ── Responsive — very small ──────────────────────────────── */
+    @media (max-width: 360px) {
+      .av-lang-sw { gap: 0.2rem; }
+      .av-lang-btn { padding: 0.25rem 0.35rem; }
+      .av-lang-btn .flag { font-size: 0.95rem; }
+      .av-step-label { display: none; }
+      .av-hero h1 { font-size: 1rem; }
+      .av-icon-chip { min-width: 60px; font-size: 0.65rem; }
+      .av-chip { font-size: 0.74rem; padding: 0.32rem 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────── -->
+<header class="av-header">
+  <a href="index.html" class="av-logo">
+    <img src="images/recaplink.png" alt="RecapLink" onerror="this.style.display='none'" />
+    <span class="av-logo-name">RecapLink</span>
+  </a>
+  <div class="av-header-right">
+    <div class="av-lang-sw">
+      <button id="avLangFr" class="av-lang-btn active" onclick="setLang('fr')">
+        <span class="flag">🇫🇷</span><span class="lcode">FR</span>
+      </button>
+      <button id="avLangAr" class="av-lang-btn" onclick="setLang('ar')">
+        <span class="flag">🇹🇳</span><span class="lcode">AR</span>
+      </button>
+      <button id="avLangWo" class="av-lang-btn" onclick="setLang('wo')">
+        <span class="flag">🇸🇳</span><span class="lcode">WO</span>
+      </button>
+    </div>
+    <a href="index.html" class="av-back" id="avBack">
+      <i class="fas fa-arrow-left" id="avBackIcon"></i>
+      <span id="avBackTxt">Retour</span>
+    </a>
+  </div>
+</header>
+
+<!-- ── Top progress bar ────────────────────────────────────── -->
+<div class="av-topbar"><div class="av-topbar-fill" id="avBar"></div></div>
+
+<!-- ── Section steps tracker ──────────────────────────────── -->
+<div class="av-steps-sticky">
+<div class="av-steps-row" id="avStepsRow">
+  <div class="av-step-item active" id="avStep1">
+    <div class="av-step-circle" id="avStepCircle1">01</div>
+    <div class="av-step-label" id="avStepLabel1" data-k="sec1Short">Satisfaction</div>
+  </div>
+  <div class="av-step-item" id="avStep2">
+    <div class="av-step-circle" id="avStepCircle2">02</div>
+    <div class="av-step-label" id="avStepLabel2" data-k="sec2Short">Expérience</div>
+  </div>
+  <div class="av-step-item" id="avStep3">
+    <div class="av-step-circle" id="avStepCircle3">03</div>
+    <div class="av-step-label" id="avStepLabel3" data-k="sec3Short">Fonctions</div>
+  </div>
+  <div class="av-step-item" id="avStep4">
+    <div class="av-step-circle" id="avStepCircle4">04</div>
+    <div class="av-step-label" id="avStepLabel4" data-k="sec4Short">Design</div>
+  </div>
+  <div class="av-step-item" id="avStep5">
+    <div class="av-step-circle" id="avStepCircle5">05</div>
+    <div class="av-step-label" id="avStepLabel5" data-k="sec5Short">Avis final</div>
+  </div>
+</div>
+</div>
+
+<!-- ── Hero ───────────────────────────────────────────────── -->
+<section class="av-hero">
+  <div class="av-hero-inner">
+    <h1 id="avHeroTitle">Évaluez l'expérience RecapLink</h1>
+    <p id="avHeroSub">Votre retour nous aide à construire une meilleure application</p>
+    <div class="av-hero-meta">
+      <span><i class="fas fa-list-check"></i> <span id="avQCount">18 questions</span></span>
+      <span><i class="fas fa-clock"></i> <span id="avTime">~3 min</span></span>
+      <span><i class="fas fa-lock"></i> <span id="avAnon">Anonyme</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Main form ───────────────────────────────────────────── -->
+<main class="av-main" id="avMain">
+
+  <!-- SECTION 1 — Satisfaction générale -->
+  <div class="av-section sec-1" id="avSection1">
+    <div class="av-section-head">
+      <div class="av-section-icon"><i class="fas fa-star"></i></div>
+      <div class="av-section-title-wrap">
+        <div class="av-section-num" data-k="sec1Num">01 — SATISFACTION GÉNÉRALE</div>
+        <div class="av-section-title" data-k="sec1Title">Votre satisfaction globale</div>
+      </div>
+      <i class="fas fa-check-circle av-section-done"></i>
+    </div>
+    <div class="av-section-body">
+
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-mobile-screen"></i> <span data-k="q_satisfaction">Satisfaction globale avec RecapLink</span></div>
+        <div class="av-chips" id="chips_satisfaction"></div>
+      </div>
+
+      <hr class="av-divider">
+
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-paintbrush"></i> <span data-k="q_designRating">Qualité du design visuel de l'application</span></div>
+        <div class="av-chips" id="chips_designRating"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 2 — Design & Interface -->
+  <!-- SECTION 2 — Expérience utilisateur (déplacée en position 02) -->
+  <div class="av-section sec-2" id="avSection2">
+    <div class="av-section-head">
+      <div class="av-section-icon"><i class="fas fa-hand-pointer"></i></div>
+      <div class="av-section-title-wrap">
+        <div class="av-section-num" data-k="sec2Num">02 — EXPÉRIENCE UTILISATEUR</div>
+        <div class="av-section-title" data-k="sec2Title">Facilité d'utilisation</div>
+      </div>
+      <i class="fas fa-check-circle av-section-done"></i>
+    </div>
+    <div class="av-section-body">
+
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-flag-checkered"></i> <span data-k="q_onboarding">Expérience lors de la première utilisation</span></div>
+        <div class="av-chips" id="chips_onboarding"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-user-plus"></i> <span data-k="q_registrationEase">Facilité d'inscription / connexion</span></div>
+        <div class="av-chips" id="chips_registrationEase"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-plus-circle"></i> <span data-k="q_postOfferEase">Facilité pour publier une offre</span></div>
+        <div class="av-chips" id="chips_postOfferEase"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-magnifying-glass"></i> <span data-k="q_searchCollectorEase">Facilité pour trouver un collecteur ou recycleur</span></div>
+        <div class="av-chips" id="chips_searchCollectorEase"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-sliders"></i> <span data-k="q_complexity">L'application vous semble simple ou complexe ?</span></div>
+        <div class="av-emoji-chips" id="chips_complexity"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 3 — Fonctionnalités (position 03) -->
+  <div class="av-section sec-3" id="avSection3">
+    <div class="av-section-head">
+      <div class="av-section-icon"><i class="fas fa-mobile-screen-button"></i></div>
+      <div class="av-section-title-wrap">
+        <div class="av-section-num" data-k="sec3Num">03 — FONCTIONNALITÉS</div>
+        <div class="av-section-title" data-k="sec3Title">Évaluation des fonctions clés</div>
+      </div>
+      <i class="fas fa-check-circle av-section-done"></i>
+    </div>
+    <div class="av-section-body">
+
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-comments"></i> <span data-k="q_messagingRating">Messagerie intégrée entre utilisateurs</span></div>
+        <div class="av-chips" id="chips_messagingRating"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-robot"></i> <span data-k="q_chatbotRating">Chatbot IA (assistant virtuel)</span></div>
+        <div class="av-chips" id="chips_chatbotRating"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-award"></i> <span data-k="q_badgeSatisfaction">Satisfaction envers le système de badges</span></div>
+        <div class="av-chips" id="chips_badgeSatisfaction"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-book-open"></i> <span data-k="q_savoirFaire">Section Savoir-faire (articles, vidéos, tutoriels)</span></div>
+        <div class="av-chips" id="chips_savoirFaire"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-circle-user"></i> <span data-k="q_profilePage">La page Profil (certification, badges, activité)</span></div>
+        <div class="av-chips" id="chips_profilePage"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-heart"></i> <span data-k="q_favoriteFeature">Votre fonctionnalité préférée</span></div>
+        <div class="av-icon-chips" id="chips_favoriteFeature"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 4 — Design & Interface (position 04) -->
+  <div class="av-section sec-4" id="avSection4">
+    <div class="av-section-head">
+      <div class="av-section-icon"><i class="fas fa-palette"></i></div>
+      <div class="av-section-title-wrap">
+        <div class="av-section-num" data-k="sec4Num">04 — DESIGN & INTERFACE</div>
+        <div class="av-section-title" data-k="sec4Title">Évaluation du design</div>
+      </div>
+      <i class="fas fa-check-circle av-section-done"></i>
+    </div>
+    <div class="av-section-body">
+
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-swatchbook"></i> <span data-k="q_colorScheme">Palette de couleurs de l'application</span></div>
+        <div class="av-chips" id="chips_colorScheme"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-text-height"></i> <span data-k="q_textReadability">Taille et lisibilité des textes</span></div>
+        <div class="av-chips" id="chips_textReadability"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-compass"></i> <span data-k="q_navIntuition">Navigation — est-elle intuitive ?</span></div>
+        <div class="av-chips" id="chips_navIntuition"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 5 — Recommandation & Avis final -->
+  <div class="av-section sec-5" id="avSection5">
+    <div class="av-section-head">
+      <div class="av-section-icon"><i class="fas fa-share-nodes"></i></div>
+      <div class="av-section-title-wrap">
+        <div class="av-section-num" data-k="sec5Num">05 — RECOMMANDATION</div>
+        <div class="av-section-title" data-k="sec5Title">Votre avis final</div>
+      </div>
+      <i class="fas fa-check-circle av-section-done"></i>
+    </div>
+    <div class="av-section-body">
+
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-calendar-check"></i> <span data-k="q_usageFrequency">À quelle fréquence pensez-vous utiliser RecapLink ?</span></div>
+        <div class="av-icon-chips" id="chips_usageFrequency"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-user-group"></i> <span data-k="q_wouldRecommend">Recommanderiez-vous RecapLink à votre entourage ?</span></div>
+        <div class="av-chips" id="chips_wouldRecommend"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-pen"></i> <span data-k="q_comment">Commentaires libres ou suggestions</span></div>
+        <textarea class="av-textarea" id="avComment" oninput="avData.comment=this.value"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- error -->
+  <div class="av-error" id="avError" style="display:none;"></div>
+  <div style="height:1rem;"></div>
+
+</main>
+
+<!-- ── Sticky submit bar ─────────────────────────────────────── -->
+<div class="av-submit-area" id="avSubmitArea">
+  <div class="av-submit-info">
+    <span id="avAnswered">0</span> / <span id="avTotal">0</span> <span id="avAnsweredTxt"> réponses</span>
+  </div>
+  <button class="av-submit-btn" id="avSubmitBtn" onclick="submitForm()">
+    <i class="fas fa-paper-plane"></i> <span id="avSubmitTxt">Envoyer mon avis</span>
+  </button>
+</div>
+
+<script>
+const AV_API = 'http://localhost:3001/api/feedback';
+
+// ── Translations ──────────────────────────────────────────────
+const T = {
+  fr: {
+    back:'Retour',
+    heroTitle:'Évaluez l\'expérience RecapLink',
+    heroSub:'Votre retour nous aide à construire une meilleure application',
+    qCount:'18 questions', time:'~3 min', anon:'Anonyme',
+    sec1Short:'Satisfaction', sec2Short:'Expérience', sec3Short:'Fonctions', sec4Short:'Design', sec5Short:'Avis final',
+    sec1Num:'01 — SATISFACTION GÉNÉRALE', sec1Title:'Votre satisfaction globale',
+    sec2Num:'02 — EXPÉRIENCE UTILISATEUR', sec2Title:'Facilité d\'utilisation',
+    sec3Num:'03 — FONCTIONNALITÉS',        sec3Title:'Évaluation des fonctions clés',
+    sec4Num:'04 — DESIGN & INTERFACE',     sec4Title:'Évaluation du design',
+    sec5Num:'05 — RECOMMANDATION',         sec5Title:'Votre avis final',
+    q_satisfaction:'Satisfaction globale avec RecapLink', q_satisfaction_sub:'1 = très insatisfait · 5 = très satisfait',
+    q_designRating:'Qualité du design visuel de l\'application', q_designRating_sub:'1 = très mauvais · 5 = excellent',
+    q_colorScheme:'Palette de couleurs de l\'application',
+    q_textReadability:'Taille et lisibilité des textes',
+    q_navIntuition:'Navigation — est-elle intuitive ?',
+    q_savoirFaire:'Section Savoir-faire (articles, vidéos, tutoriels)',
+    q_complexity:'L\'application vous semble simple ou complexe ?',
+    q_onboarding:'Expérience lors de la première utilisation',
+    q_registrationEase:'Facilité d\'inscription / connexion',
+    q_postOfferEase:'Facilité pour publier une offre',
+    q_searchCollectorEase:'Facilité pour trouver un collecteur ou recycleur',
+    q_messagingRating:'Messagerie intégrée entre utilisateurs', q_messaging_sub:'1 = très mauvaise · 5 = excellente',
+    q_chatbotRating:'Chatbot IA (assistant virtuel)', q_chatbot_sub:'1 = très mauvais · 5 = excellent',
+    q_badgeSatisfaction:'Satisfaction envers le système de badges',
+    q_profilePage:'La page Profil (certification, badges, activité) est-elle utile ?',
+    q_favoriteFeature:'Votre fonctionnalité préférée',
+    q_usageFrequency:'À quelle fréquence pensez-vous utiliser RecapLink ?',
+    q_wouldRecommend:'Recommanderiez-vous RecapLink à votre entourage ?',
+    q_comment:'Commentaires libres ou suggestions',
+    satisfaction:   [{v:'1',l:'😞 Très insatisfait'},{v:'2',l:'😕 Insatisfait'},{v:'3',l:'😐 Neutre'},{v:'4',l:'😊 Satisfait'},{v:'5',l:'🌟 Très satisfait'}],
+    designRating:   [{v:'1',l:'😞 Très mauvais'},{v:'2',l:'😕 Mauvais'},{v:'3',l:'😐 Moyen'},{v:'4',l:'😊 Bien'},{v:'5',l:'🌟 Excellent'}],
+    messagingRating:[{v:'1',l:'😞 Très mauvaise'},{v:'2',l:'😕 Mauvaise'},{v:'3',l:'😐 Moyenne'},{v:'4',l:'😊 Bonne'},{v:'5',l:'🌟 Excellente'}],
+    chatbotRating:  [{v:'1',l:'😞 Très mauvais'},{v:'2',l:'😕 Mauvais'},{v:'3',l:'😐 Moyen'},{v:'4',l:'😊 Bien'},{v:'5',l:'🌟 Excellent'}],
+    colorScheme:[{v:'excellent',l:'Excellent 🌟'},{v:'good',l:'Bien 👍'},{v:'average',l:'Moyen 😐'},{v:'poor',l:'Mauvais 👎'}],
+    textReadability:[{v:'very_clear',l:'Très lisible'},{v:'clear',l:'Lisible'},{v:'hard',l:'Difficile à lire'}],
+    navIntuition:[{v:'very_intuitive',l:'Très intuitive'},{v:'intuitive',l:'Intuitive'},{v:'confusing',l:'Confuse'},{v:'very_confusing',l:'Très confuse'}],
+    savoirFaire:[{v:'very_useful',l:'Très utile 📚'},{v:'useful',l:'Utile'},{v:'neutral',l:'Neutre'},{v:'not_useful',l:'Peu utile'},{v:'not_used',l:'Pas utilisée'}],
+    complexity:[{v:'very_simple',l:'🟢 Très simple'},{v:'simple',l:'✅ Simple'},{v:'moderate',l:'🟡 Modérée'},{v:'complex',l:'🟠 Complexe'},{v:'very_complex',l:'🔴 Très complexe'}],
+    onboarding:[{v:'excellent',l:'Excellent 🎉'},{v:'good',l:'Bon 👌'},{v:'average',l:'Moyen'},{v:'difficult',l:'Difficile 😓'}],
+    ease:[{v:'very_easy',l:'Très facile'},{v:'easy',l:'Facile'},{v:'moderate',l:'Moyen'},{v:'hard',l:'Difficile'}],
+    badgeSatisfaction:[{v:'very_satisfied',l:'Très satisfait'},{v:'satisfied',l:'Satisfait'},{v:'little',l:'Peu satisfait'},{v:'not_satisfied',l:'Pas satisfait'}],
+    profilePage:[{v:'very_useful',l:'Très utile 🌟'},{v:'useful',l:'Utile 👍'},{v:'neutral',l:'Neutre 😐'},{v:'not_useful',l:'Peu utile 👎'}],
+    favoriteFeature:[
+      {v:'collect',   i:'fa-box-archive', l:'Collecte'},
+      {v:'connect',   i:'fa-handshake',   l:'Réseau'},
+      {v:'badges',    i:'fa-award',       l:'Badges'},
+      {v:'ai_chatbot',i:'fa-robot',       l:'IA Chat'},
+      {v:'messaging', i:'fa-comments',    l:'Messagerie'},
+      {v:'eco_impact',i:'fa-leaf',        l:'Éco-impact'},
+    ],
+    usageFrequency:[
+      {v:'daily',   i:'fa-sun',            l:'Chaque jour'},
+      {v:'weekly',  i:'fa-calendar-week',  l:'Chaque semaine'},
+      {v:'monthly', i:'fa-calendar',       l:'Chaque mois'},
+      {v:'rarely',  i:'fa-clock-rotate-left', l:'Rarement'},
+      {v:'never',   i:'fa-ban',            l:'Jamais'},
+    ],
+    wouldRecommend:[{v:'definitely',l:'Certainement 🙌'},{v:'probably',l:'Probablement'},{v:'maybe',l:'Peut-être'},{v:'no',l:'Non'}],
+    commentPlaceholder:'Partagez vos idées, suggestions ou impressions…',
+    answeredTxt:'réponses',
+    submit:'Envoyer mon avis', sending:'Envoi en cours…',
+    error:'Une erreur s\'est produite. Veuillez réessayer.',
+    thanksTitle:'Merci pour votre avis ! 🌿',
+    thanksMsg:'Votre retour a bien été enregistré. Il nous aidera à améliorer RecapLink pour tous.',
+    thanksHome:'Retour à l\'accueil',
+  },
+  ar: {
+    back:'رجوع',
+    heroTitle:'قيّم تجربتك مع RecapLink',
+    heroSub:'ملاحظاتك تساعدنا على بناء تطبيق أفضل',
+    qCount:'١٨ سؤالاً', time:'~٣ دقائق', anon:'مجهول الهوية',
+    sec1Short:'الرضا', sec2Short:'التجربة', sec3Short:'الميزات', sec4Short:'التصميم', sec5Short:'الرأي',
+    sec1Num:'٠١ — الرضا العام', sec1Title:'مستوى رضاك الشامل',
+    sec2Num:'٠٢ — تجربة المستخدم', sec2Title:'سهولة الاستخدام',
+    sec3Num:'٠٣ — الميزات', sec3Title:'تقييم الوظائف الرئيسية',
+    sec4Num:'٠٤ — التصميم والواجهة', sec4Title:'تقييم التصميم',
+    sec5Num:'٠٥ — التوصية', sec5Title:'رأيك الأخير',
+    q_satisfaction:'رضاك العام عن تطبيق RecapLink', q_satisfaction_sub:'١ = غير راضٍ تماماً · ٥ = راضٍ جداً',
+    q_designRating:'جودة التصميم البصري للتطبيق', q_designRating_sub:'١ = سيئ جداً · ٥ = ممتاز',
+    q_colorScheme:'لوحة ألوان التطبيق',
+    q_textReadability:'حجم وقابلية قراءة النصوص',
+    q_navIntuition:'التنقل — هل هو سهل وبديهي؟',
+    q_savoirFaire:'قسم المعرفة (مقالات، فيديوهات، دروس)',
+    q_complexity:'هل يبدو التطبيق بسيطاً أم معقداً؟',
+    q_onboarding:'تجربة الاستخدام الأولى',
+    q_registrationEase:'سهولة التسجيل / تسجيل الدخول',
+    q_postOfferEase:'سهولة نشر عرض',
+    q_searchCollectorEase:'سهولة البحث عن جامع أو مُعيد تدوير',
+    q_messagingRating:'نظام المراسلة المدمج', q_messaging_sub:'١ = سيئ جداً · ٥ = ممتاز',
+    q_chatbotRating:'المساعد الذكي (Chatbot)', q_chatbot_sub:'١ = سيئ جداً · ٥ = ممتاز',
+    q_badgeSatisfaction:'مستوى رضاك عن نظام الشارات',
+    q_profilePage:'هل صفحة الملف الشخصي (شهادة، شارات، نشاط) مفيدة لك؟',
+    q_favoriteFeature:'ميزتك المفضلة',
+    q_usageFrequency:'كم مرة تنوي استخدام RecapLink؟',
+    q_wouldRecommend:'هل ستنصح بـ RecapLink لأشخاص آخرين؟',
+    q_comment:'تعليقات أو اقتراحات إضافية',
+    satisfaction:   [{v:'1',l:'😞 غير راضٍ تماماً'},{v:'2',l:'😕 غير راضٍ'},{v:'3',l:'😐 محايد'},{v:'4',l:'😊 راضٍ'},{v:'5',l:'🌟 راضٍ جداً'}],
+    designRating:   [{v:'1',l:'😞 سيئ جداً'},{v:'2',l:'😕 سيئ'},{v:'3',l:'😐 متوسط'},{v:'4',l:'😊 جيد'},{v:'5',l:'🌟 ممتاز'}],
+    messagingRating:[{v:'1',l:'😞 سيئة جداً'},{v:'2',l:'😕 سيئة'},{v:'3',l:'😐 متوسطة'},{v:'4',l:'😊 جيدة'},{v:'5',l:'🌟 ممتازة'}],
+    chatbotRating:  [{v:'1',l:'😞 سيئ جداً'},{v:'2',l:'😕 سيئ'},{v:'3',l:'😐 متوسط'},{v:'4',l:'😊 جيد'},{v:'5',l:'🌟 ممتاز'}],
+    colorScheme:[{v:'excellent',l:'ممتازة 🌟'},{v:'good',l:'جيدة 👍'},{v:'average',l:'متوسطة 😐'},{v:'poor',l:'سيئة 👎'}],
+    textReadability:[{v:'very_clear',l:'واضحة جداً'},{v:'clear',l:'واضحة'},{v:'hard',l:'صعبة القراءة'}],
+    navIntuition:[{v:'very_intuitive',l:'سهلة جداً'},{v:'intuitive',l:'سهلة'},{v:'confusing',l:'مربكة'},{v:'very_confusing',l:'مربكة جداً'}],
+    savoirFaire:[{v:'very_useful',l:'مفيد جداً 📚'},{v:'useful',l:'مفيد'},{v:'neutral',l:'محايد'},{v:'not_useful',l:'غير مفيد'},{v:'not_used',l:'لم أستخدمه'}],
+    complexity:[{v:'very_simple',l:'🟢 بسيط جداً'},{v:'simple',l:'✅ بسيط'},{v:'moderate',l:'🟡 متوسط'},{v:'complex',l:'🟠 معقد'},{v:'very_complex',l:'🔴 معقد جداً'}],
+    onboarding:[{v:'excellent',l:'ممتازة 🎉'},{v:'good',l:'جيدة 👌'},{v:'average',l:'متوسطة'},{v:'difficult',l:'صعبة 😓'}],
+    ease:[{v:'very_easy',l:'سهل جداً'},{v:'easy',l:'سهل'},{v:'moderate',l:'متوسط'},{v:'hard',l:'صعب'}],
+    badgeSatisfaction:[{v:'very_satisfied',l:'راضٍ جداً'},{v:'satisfied',l:'راضٍ'},{v:'little',l:'قليلاً'},{v:'not_satisfied',l:'غير راضٍ'}],
+    profilePage:[{v:'very_useful',l:'مفيدة جداً 🌟'},{v:'useful',l:'مفيدة 👍'},{v:'neutral',l:'محايد 😐'},{v:'not_useful',l:'غير مفيدة 👎'}],
+    favoriteFeature:[
+      {v:'collect',   i:'fa-box-archive', l:'الجمع'},
+      {v:'connect',   i:'fa-handshake',   l:'الشبكة'},
+      {v:'badges',    i:'fa-award',       l:'الشارات'},
+      {v:'ai_chatbot',i:'fa-robot',       l:'الذكاء'},
+      {v:'messaging', i:'fa-comments',    l:'المراسلة'},
+      {v:'eco_impact',i:'fa-leaf',        l:'البيئة'},
+    ],
+    usageFrequency:[
+      {v:'daily',   i:'fa-sun',               l:'يومياً'},
+      {v:'weekly',  i:'fa-calendar-week',     l:'أسبوعياً'},
+      {v:'monthly', i:'fa-calendar',          l:'شهرياً'},
+      {v:'rarely',  i:'fa-clock-rotate-left', l:'نادراً'},
+      {v:'never',   i:'fa-ban',               l:'أبداً'},
+    ],
+    wouldRecommend:[{v:'definitely',l:'بالتأكيد 🙌'},{v:'probably',l:'على الأرجح'},{v:'maybe',l:'ربما'},{v:'no',l:'لا'}],
+    commentPlaceholder:'شاركنا أفكارك واقتراحاتك…',
+    answeredTxt:'إجابات',
+    submit:'إرسال رأيي', sending:'جارٍ الإرسال…',
+    error:'حدث خطأ. يرجى المحاولة مرة أخرى.',
+    thanksTitle:'شكراً جزيلاً! 🌿',
+    thanksMsg:'تم تسجيل ملاحظاتك بنجاح. ستساعدنا في تحسين RecapLink للجميع.',
+    thanksHome:'العودة إلى الرئيسية',
+  },
+  wo: {
+    back:'Ginaaw',
+    heroTitle:'Juge sa tawfeex ak RecapLink',
+    heroSub:'Sa waxtaan daay jëf ngir app bi mës a sos',
+    qCount:'18 laaj', time:'~3 min', anon:'Anonyme',
+    sec1Short:'Bëgg', sec2Short:'Tawfeex', sec3Short:'Fonctions', sec4Short:'Design', sec5Short:'Xalaat',
+    sec1Num:'01 — BËGG WI', sec1Title:'Sa bëgg ci app bi',
+    sec2Num:'02 — TAWFEEX', sec2Title:'Ëpp easy',
+    sec3Num:'03 — FONCTIONS', sec3Title:'Juge fonctionnalité yi',
+    sec4Num:'04 — DESIGN', sec4Title:'Juge design bi',
+    sec5Num:'05 — XALAAT', sec5Title:'Sa xalaat final',
+    q_satisfaction:'Sa bëgg ci RecapLink', q_satisfaction_sub:'1 = bëgguma · 5 = bëgga rëy',
+    q_designRating:'Naka design bi ?', q_designRating_sub:'1 = bon dafa xaw · 5 = très bien',
+    q_colorScheme:'Couleur yi — naka la ?',
+    q_textReadability:'Taille yi ak lisibilité yi',
+    q_navIntuition:'Navigation bi — dafa yomb ?',
+    q_savoirFaire:'Section Savoir-faire (articles, vidéo, tutoriel) bi',
+    q_complexity:'App bi dafa simple walla complexe ?',
+    q_onboarding:'Première fois jëfandikoo bi',
+    q_registrationEase:'Inscription bi dafa yomb ?',
+    q_postOfferEase:'Ay offre bi dafa yomb ?',
+    q_searchCollectorEase:'Suñu collecteur walla recycleur bi dafa yomb ?',
+    q_messagingRating:'Messagerie bi — naka ?', q_messaging_sub:'1 = bon dafa xaw · 5 = très bien',
+    q_chatbotRating:'Chatbot IA bi — naka ?', q_chatbot_sub:'1 = bon dafa xaw · 5 = très bien',
+    q_badgeSatisfaction:'Badge yi — soxor nga ?',
+    q_profilePage:'Page profil bi (certification, badge, activité) dafa jëf ?',
+    q_favoriteFeature:'Fonctionnalité bu la ëpp bëgg',
+    q_usageFrequency:'Kañ danga jëfandikoo RecapLink ?',
+    q_wouldRecommend:'Danga jàppoo RecapLink ak yeneen ?',
+    q_comment:'Yeneen waxtaan ak soxor',
+    satisfaction:   [{v:'1',l:'😞 Bëgguma'},{v:'2',l:'😕 Bëgguma lëk'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bëgga'},{v:'5',l:'🌟 Bëgga rëy'}],
+    designRating:   [{v:'1',l:'😞 Xaw rëy'},{v:'2',l:'😕 Xaw'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bon'},{v:'5',l:'🌟 Très bon'}],
+    messagingRating:[{v:'1',l:'😞 Xaw rëy'},{v:'2',l:'😕 Xaw'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bon'},{v:'5',l:'🌟 Très bon'}],
+    chatbotRating:  [{v:'1',l:'😞 Xaw rëy'},{v:'2',l:'😕 Xaw'},{v:'3',l:'😐 Normale'},{v:'4',l:'😊 Bon'},{v:'5',l:'🌟 Très bon'}],
+    colorScheme:[{v:'excellent',l:'Très bien 🌟'},{v:'good',l:'Bien 👍'},{v:'average',l:'Normale 😐'},{v:'poor',l:'Xaw 👎'}],
+    textReadability:[{v:'very_clear',l:'Très clair'},{v:'clear',l:'Clair'},{v:'hard',l:'Dëgënal'}],
+    navIntuition:[{v:'very_intuitive',l:'Très yomb'},{v:'intuitive',l:'Yomb'},{v:'confusing',l:'Dëgënal'},{v:'very_confusing',l:'Très dëgënal'}],
+    savoirFaire:[{v:'very_useful',l:'Très utile 📚'},{v:'useful',l:'Utile'},{v:'neutral',l:'Normale'},{v:'not_useful',l:'Pek jëf'},{v:'not_used',l:'Jëfandikuma'}],
+    complexity:[{v:'very_simple',l:'🟢 Très simple'},{v:'simple',l:'✅ Simple'},{v:'moderate',l:'🟡 Normale'},{v:'complex',l:'🟠 Complexe'},{v:'very_complex',l:'🔴 Très complexe'}],
+    onboarding:[{v:'excellent',l:'Très bien 🎉'},{v:'good',l:'Bien 👌'},{v:'average',l:'Normale'},{v:'difficult',l:'Dëgënal 😓'}],
+    ease:[{v:'very_easy',l:'Très yomb'},{v:'easy',l:'Yomb'},{v:'moderate',l:'Normale'},{v:'hard',l:'Dëgënal'}],
+    badgeSatisfaction:[{v:'very_satisfied',l:'Très soxor'},{v:'satisfied',l:'Soxor'},{v:'little',l:'Pek pek'},{v:'not_satisfied',l:'Soxoruma'}],
+    profilePage:[{v:'very_useful',l:'Très utile 🌟'},{v:'useful',l:'Utile 👍'},{v:'neutral',l:'Normale 😐'},{v:'not_useful',l:'Pek jëf 👎'}],
+    favoriteFeature:[
+      {v:'collect',   i:'fa-box-archive', l:'Jëndakaay'},
+      {v:'connect',   i:'fa-handshake',   l:'Réseau'},
+      {v:'badges',    i:'fa-award',       l:'Badge'},
+      {v:'ai_chatbot',i:'fa-robot',       l:'IA'},
+      {v:'messaging', i:'fa-comments',    l:'Message'},
+      {v:'eco_impact',i:'fa-leaf',        l:'Eco'},
+    ],
+    usageFrequency:[
+      {v:'daily',   i:'fa-sun',               l:'Ci bés'},
+      {v:'weekly',  i:'fa-calendar-week',     l:'Ci ayu'},
+      {v:'monthly', i:'fa-calendar',          l:'Ci weer'},
+      {v:'rarely',  i:'fa-clock-rotate-left', l:'Pek pek'},
+      {v:'never',   i:'fa-ban',               l:'Déedéet'},
+    ],
+    wouldRecommend:[{v:'definitely',l:'Waaw, dëgg 🙌'},{v:'probably',l:'Pexe waaw'},{v:'maybe',l:'Xamuma'},{v:'no',l:'Déedéet'}],
+    commentPlaceholder:'Wax xam-xam, mbir yi bëggël la…',
+    answeredTxt:'réponses',
+    submit:'Yónnee sa xalaat', sending:'Yónnee…',
+    error:'Yónnee bi dafa xaw. Jëf fii.',
+    thanksTitle:'Jërëjëf ! 🌿',
+    thanksMsg:'Waxtaan bi dafa dëkk. Dangay jëf ci kanam RecapLink bi !',
+    thanksHome:'Dellu ci kër',
+  },
+};
+
+// ── State ─────────────────────────────────────────────────────
+let avLang = 'fr';
+const avData = { language: 'fr' };
+
+const SECTION_FIELDS = {
+  1: ['satisfaction', 'designRating'],
+  2: ['onboarding', 'registrationEase', 'postOfferEase', 'searchCollectorEase', 'complexity'],
+  3: ['messagingRating', 'chatbotRating', 'badgeSatisfaction', 'savoirFaire', 'profilePage', 'favoriteFeature'],
+  4: ['colorScheme', 'textReadability', 'navIntuition'],
+  5: ['usageFrequency', 'wouldRecommend'],
+};
+const ALL_FIELDS = Object.values(SECTION_FIELDS).flat();
+document.getElementById('avTotal').textContent = ALL_FIELDS.length;
+
+// ── Init ──────────────────────────────────────────────────────
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const urlLang = params.get('lang');
+  if (urlLang && T[urlLang]) avLang = urlLang;
+  applyLang(avLang);
+  updateProgress();
+})();
+
+// ── Language ──────────────────────────────────────────────────
+function setLang(lang) { avLang = lang; applyLang(lang); }
+
+function applyLang(lang) {
+  const t = T[lang];
+  avData.language = lang;
+  document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+  document.documentElement.lang = lang;
+
+  // back arrow direction
+  document.getElementById('avBackIcon').className = lang === 'ar' ? 'fas fa-arrow-right' : 'fas fa-arrow-left';
+
+  // lang buttons
+  ['fr','ar','wo'].forEach(l => {
+    document.getElementById('avLang'+l[0].toUpperCase()+l.slice(1)).classList.toggle('active', l===lang);
+  });
+
+  // static text
+  document.getElementById('avBackTxt').textContent  = t.back;
+  document.getElementById('avHeroTitle').textContent = t.heroTitle;
+  document.getElementById('avHeroSub').textContent   = t.heroSub;
+  document.getElementById('avQCount').textContent    = t.qCount;
+  document.getElementById('avTime').textContent      = t.time;
+  document.getElementById('avAnon').textContent      = t.anon;
+  document.getElementById('avSubmitTxt').textContent = t.submit;
+  document.getElementById('avComment').placeholder   = t.commentPlaceholder;
+  document.getElementById('avAnsweredTxt').textContent = t.answeredTxt;
+
+  // data-k elements
+  document.querySelectorAll('[data-k]').forEach(el => {
+    const k = el.dataset.k;
+    if (t[k]) el.textContent = t[k];
+  });
+
+  // rebuild chips
+  // Section 1 — Satisfaction (rating chips)
+  buildChips('satisfaction',    t.satisfaction,    'av-chips', 'av-chip');
+  buildChips('designRating',    t.designRating,    'av-chips', 'av-chip');
+  // Section 2 — Expérience utilisateur
+  buildChips('onboarding',          t.onboarding,      'av-chips',      'av-chip');
+  buildChips('registrationEase',    t.ease,            'av-chips',      'av-chip');
+  buildChips('postOfferEase',       t.ease,            'av-chips',      'av-chip');
+  buildChips('searchCollectorEase', t.ease,            'av-chips',      'av-chip');
+  buildChips('complexity',          t.complexity,      'av-emoji-chips','av-emoji-chip');
+  // Section 3 — Fonctionnalités
+  buildChips('messagingRating',     t.messagingRating, 'av-chips',      'av-chip');
+  buildChips('chatbotRating',       t.chatbotRating,   'av-chips',      'av-chip');
+  buildChips('badgeSatisfaction',   t.badgeSatisfaction,'av-chips',     'av-chip');
+  buildChips('savoirFaire',         t.savoirFaire,     'av-chips',      'av-chip');
+  buildChips('profilePage',         t.profilePage,     'av-chips',      'av-chip');
+  buildMultiIconChips('favoriteFeature', t.favoriteFeature);
+  // Section 4 — Design & Interface
+  buildChips('colorScheme',         t.colorScheme,     'av-chips',      'av-chip');
+  buildChips('textReadability',     t.textReadability, 'av-chips',      'av-chip');
+  buildChips('navIntuition',        t.navIntuition,    'av-chips',      'av-chip');
+  // Section 5 — Recommandation
+  buildChips('wouldRecommend',      t.wouldRecommend,  'av-chips',      'av-chip');
+  buildIconChips('usageFrequency',  t.usageFrequency);
+
+  // update star labels
+  ['satisfaction','designRating','messagingRating','chatbotRating'].forEach(f => {
+    const v = avData[f] || 0;
+    const el = document.getElementById('lbl_'+f);
+    el.textContent = v ? t.starLabels[v] : '';
+    el.classList.toggle('rated', !!v);
+  });
+}
+
+// ── Stars ──────────────────────────────────────────────────────
+function buildStars(field) {
+  const c = document.getElementById('stars_'+field);
+  c.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('span');
+    s.className = 'av-star' + (avData[field] >= i ? ' on' : '');
+    s.textContent = avData[field] >= i ? '★' : '☆';
+    s.dataset.val = i;
+    s.onclick     = () => rateField(field, i);
+    s.onmouseenter= () => hoverStars(field, i);
+    s.onmouseleave= () => unhoverStars(field);
+    c.appendChild(s);
+  }
+}
+
+function rateField(field, val) {
+  avData[field] = val;
+  document.querySelectorAll(`#stars_${field} .av-star`).forEach((s,i) => {
+    s.classList.toggle('on', i < val); s.textContent = i < val ? '★' : '☆';
+  });
+  const lbl = document.getElementById('lbl_'+field);
+  lbl.textContent = T[avLang].starLabels[val];
+  lbl.classList.add('rated');
+  updateProgress();
+}
+
+function hoverStars(field, val) {
+  document.querySelectorAll(`#stars_${field} .av-star`).forEach((s,i) => {
+    s.style.color = i < val ? '#f59e0b' : ''; s.style.transform = i < val ? 'scale(1.15)' : '';
+  });
+}
+function unhoverStars(field) {
+  document.querySelectorAll(`#stars_${field} .av-star`).forEach(s => { s.style.color=''; s.style.transform=''; });
+}
+
+// ── Chips ─────────────────────────────────────────────────────
+function buildChips(field, opts, containerClass, chipClass) {
+  const c = document.getElementById('chips_'+field);
+  c.className = containerClass;
+  const cur = avData[field];
+  c.innerHTML = opts.map(o =>
+    `<button class="${chipClass}${cur===o.v?' selected':''}" onclick="pickChip('${field}','${o.v}',this)">${o.l}</button>`
+  ).join('');
+}
+
+function buildIconChips(field, opts) {
+  const c = document.getElementById('chips_'+field);
+  const cur = avData[field];
+  c.innerHTML = opts.map(o =>
+    `<button class="av-icon-chip${cur===o.v?' selected':''}" onclick="pickChip('${field}','${o.v}',this)">
+      <i class="fas ${o.i}"></i>${o.l}
+    </button>`
+  ).join('');
+}
+
+function buildMultiIconChips(field, opts) {
+  if (!Array.isArray(avData[field])) avData[field] = [];
+  const cur = avData[field];
+  const c = document.getElementById('chips_'+field);
+  c.innerHTML = opts.map(o =>
+    `<button class="av-icon-chip${cur.includes(o.v)?' selected':''}" onclick="pickMultiChip('${field}','${o.v}',this)">
+      <i class="fas ${o.i}"></i>${o.l}
+    </button>`
+  ).join('');
+}
+
+function pickChip(field, val, el) {
+  avData[field] = val;
+  el.closest('[id^="chips_"]').querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  updateProgress();
+}
+
+function pickMultiChip(field, val, el) {
+  if (!Array.isArray(avData[field])) avData[field] = [];
+  const idx = avData[field].indexOf(val);
+  if (idx === -1) { avData[field].push(val); el.classList.add('selected'); }
+  else            { avData[field].splice(idx, 1); el.classList.remove('selected'); }
+  updateProgress();
+}
+
+// ── Progress ──────────────────────────────────────────────────
+function isAnswered(f) {
+  const v = avData[f];
+  return Array.isArray(v) ? v.length > 0 : !!v;
+}
+function updateProgress() {
+  const answered = ALL_FIELDS.filter(isAnswered).length;
+  const pct = answered / ALL_FIELDS.length * 100;
+  document.getElementById('avBar').style.width = pct + '%';
+  document.getElementById('avAnswered').textContent = answered;
+
+  // Update section steps
+  for (let s = 1; s <= 5; s++) {
+    const fields   = SECTION_FIELDS[s];
+    const done     = fields.every(isAnswered);
+    const partial  = fields.some(isAnswered);
+    const stepEl   = document.getElementById('avStep'+s);
+    const circleEl = document.getElementById('avStepCircle'+s);
+    if (done) {
+      stepEl.classList.add('done');   stepEl.classList.remove('active');
+      circleEl.innerHTML = '<i class="fas fa-check" style="font-size:0.65rem;"></i>';
+      document.getElementById('avSection'+s)?.classList.add('completed');
+    } else {
+      stepEl.classList.remove('done');
+      circleEl.textContent = '0'+s;
+      document.getElementById('avSection'+s)?.classList.remove('completed');
+      if (partial) { stepEl.classList.add('active'); }
+    }
+    // connector done if prev section done
+    if (s < 5) {
+      const prevDone = SECTION_FIELDS[s].every(isAnswered);
+      if (prevDone) document.getElementById('avStep'+s).classList.add('done');
+    }
+  }
+}
+
+// ── Submit ─────────────────────────────────────────────────────
+async function submitForm() {
+  const t   = T[avLang];
+  const btn = document.getElementById('avSubmitBtn');
+  const err = document.getElementById('avError');
+  btn.disabled = true;
+  document.getElementById('avSubmitTxt').textContent = t.sending;
+  err.style.display = 'none';
+
+  const RATING_FIELDS = ['satisfaction','designRating','messagingRating','chatbotRating'];
+  const payload = { language: avData.language };
+  ALL_FIELDS.forEach(f => {
+    const v = avData[f];
+    if (isAnswered(f)) payload[f] = RATING_FIELDS.includes(f) ? Number(v) : v;
+  });
+  if (avData.comment?.trim()) payload.comment = avData.comment.trim();
+
+  try {
+    const res = await fetch(AV_API, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error();
+    localStorage.setItem('fb_prompted','submitted');
+    showThanks();
+  } catch {
+    btn.disabled = false;
+    document.getElementById('avSubmitTxt').textContent = t.submit;
+    err.textContent   = t.error;
+    err.style.display = 'block';
+  }
+}
+
+function showThanks() {
+  const t = T[avLang];
+  document.getElementById('avBar').style.width = '100%';
+  document.getElementById('avSubmitArea').style.display = 'none';
+  document.getElementById('avMain').innerHTML = `
+    <div class="av-thanks">
+      <div class="av-thanks-anim"><i class="fas fa-check"></i></div>
+      <h2>${t.thanksTitle}</h2>
+      <p>${t.thanksMsg}</p>
+      <a href="index.html" class="av-thanks-home">
+        <i class="fas fa-home"></i> ${t.thanksHome}
+      </a>
+    </div>`;
+}
+</script>
+</body>
+</html>

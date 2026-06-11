@@ -2,8 +2,18 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>RecapLink — Statistiques Feedback</title>
+  <style>
+    html, body { overflow-x: hidden; width: 100%; }
+    * { box-sizing: border-box; }
+    /* Mobile nav fix */
+    @media (max-width: 600px) {
+      nav { flex-wrap: wrap; padding: 0.6rem 1rem !important; gap: 0.4rem; min-height: auto !important; }
+      nav .logo-wrap { flex: 1; }
+      nav .badge-bbw { width: 100%; font-size: 0.7rem; }
+    }
+  </style>
   <link rel="icon" type="image/png" href="images/recaplink.png" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
@@ -44,7 +54,6 @@
 <!-- MAIN CONTENT -->
 <div class="stats-main">
 
-  <!-- LOADING / ERROR STATE -->
   <div id="statsLoading" style="text-align:center;padding:4rem 2rem;color:var(--muted);display:none;">
     <i class="fas fa-spinner fa-spin" style="font-size:2rem;margin-bottom:1rem;display:block;color:var(--leaf);"></i>
     <p>Chargement des statistiques…</p>
@@ -58,7 +67,6 @@
     </button>
   </div>
 
-  <!-- STATS CONTENT -->
   <div id="statsContent" style="display:none;">
 
     <!-- SUMMARY CARDS -->
@@ -77,61 +85,120 @@
     <!-- CHARTS -->
     <div class="charts-grid" id="chartsGrid" style="display:none;">
 
-      <!-- Satisfaction Distribution -->
+      <!-- ── SECTION 1: Satisfaction ──────────────────────────── -->
+
       <div class="chart-card">
-        <h3><i class="fas fa-star" style="color:#f59e0b;margin-right:0.4rem;"></i>Distribution de la satisfaction</h3>
-        <p class="chart-card-sub">Nombre de réponses par note (1 à 5 étoiles)</p>
-        <div class="chart-wrap" style="height:220px;">
-          <canvas id="chartSatisfaction"></canvas>
-        </div>
+        <h3><i class="fas fa-star" style="color:#f59e0b;margin-right:0.4rem;"></i>Satisfaction globale</h3>
+        <p class="chart-card-sub">Distribution des notes de satisfaction (1 à 5 ★)</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartSatisfaction"></canvas></div>
       </div>
 
-      <!-- Profile Distribution -->
       <div class="chart-card">
-        <h3><i class="fas fa-users" style="color:var(--leaf);margin-right:0.4rem;"></i>Profils des répondants</h3>
-        <p class="chart-card-sub">Répartition par type de profil</p>
-        <div class="chart-wrap" style="height:220px;">
-          <canvas id="chartProfile"></canvas>
-        </div>
+        <h3><i class="fas fa-paintbrush" style="color:var(--leaf);margin-right:0.4rem;"></i>Qualité du design visuel</h3>
+        <p class="chart-card-sub">Note sur le design / UX de l'application (1 à 5 ★)</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartDesignRating"></canvas></div>
       </div>
 
-      <!-- Would Use -->
+      <!-- ── SECTION 2: Expérience utilisateur ─────────────────── -->
+
       <div class="chart-card">
-        <h3><i class="fas fa-mobile-screen" style="color:var(--leaf);margin-right:0.4rem;"></i>Intention d'utilisation</h3>
-        <p class="chart-card-sub">Souhaitez-vous utiliser RecapLink ?</p>
-        <div class="chart-wrap" style="height:220px;">
-          <canvas id="chartWouldUse"></canvas>
-        </div>
+        <h3><i class="fas fa-sliders" style="color:var(--leaf);margin-right:0.4rem;"></i>Complexité perçue</h3>
+        <p class="chart-card-sub">L'application vous paraît-elle simple ou complexe ?</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartComplexity"></canvas></div>
       </div>
 
-      <!-- Heard From -->
       <div class="chart-card">
-        <h3><i class="fas fa-share-nodes" style="color:var(--leaf);margin-right:0.4rem;"></i>Source de découverte</h3>
-        <p class="chart-card-sub">Comment avez-vous entendu parler de RecapLink ?</p>
-        <div class="chart-wrap" style="height:220px;">
-          <canvas id="chartHeardFrom"></canvas>
-        </div>
+        <h3><i class="fas fa-flag-checkered" style="color:var(--leaf);margin-right:0.4rem;"></i>Expérience d'onboarding</h3>
+        <p class="chart-card-sub">Expérience lors de la première utilisation</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartOnboarding"></canvas></div>
       </div>
 
-      <!-- Features Popularity (wide) -->
       <div class="chart-card chart-card-wide">
-        <h3><i class="fas fa-sparkles" style="color:var(--leaf);margin-right:0.4rem;"></i>Fonctionnalités les plus appréciées</h3>
-        <p class="chart-card-sub">Intérêt par fonctionnalité (choix multiples)</p>
-        <div class="chart-wrap" style="height:250px;">
-          <canvas id="chartFeatures"></canvas>
-        </div>
+        <h3><i class="fas fa-hand-pointer" style="color:var(--leaf);margin-right:0.4rem;"></i>Facilité des actions clés</h3>
+        <p class="chart-card-sub">Inscription, publication d'offre, recherche de collecteur</p>
+        <div class="chart-wrap" style="height:260px;"><canvas id="chartEaseComparison"></canvas></div>
       </div>
 
-      <!-- Recent Trend (wide) -->
+      <!-- ── SECTION 3: Fonctionnalités ─────────────────────────── -->
+
+      <div class="chart-card">
+        <h3><i class="fas fa-comments" style="color:var(--leaf);margin-right:0.4rem;"></i>Messagerie intégrée</h3>
+        <p class="chart-card-sub">Note sur la messagerie (1 à 5 ★)</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartMessagingRating"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-robot" style="color:var(--leaf);margin-right:0.4rem;"></i>Chatbot IA</h3>
+        <p class="chart-card-sub">Note sur le chatbot IA (1 à 5 ★)</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartChatbotRating"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-award" style="color:#f59e0b;margin-right:0.4rem;"></i>Système de badges</h3>
+        <p class="chart-card-sub">Satisfaction envers le système de badges</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartBadgeSatisfaction"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-book-open" style="color:var(--leaf);margin-right:0.4rem;"></i>Section Savoir-faire</h3>
+        <p class="chart-card-sub">Utilité des articles, vidéos et tutoriels</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartSavoirFaire"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-circle-user" style="color:var(--leaf);margin-right:0.4rem;"></i>Page Profil</h3>
+        <p class="chart-card-sub">Utilité de la page profil (certification, badges, activité)</p>
+        <div class="chart-wrap" style="height:180px;"><canvas id="chartProfilePage"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-heart" style="color:#f59e0b;margin-right:0.4rem;"></i>Fonctionnalités préférées</h3>
+        <p class="chart-card-sub">Fonctionnalités les plus appréciées (choix multiple)</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartFavoriteFeature"></canvas></div>
+      </div>
+
+      <!-- ── SECTION 4: Design & Interface ──────────────────────── -->
+
+      <div class="chart-card">
+        <h3><i class="fas fa-palette" style="color:var(--leaf);margin-right:0.4rem;"></i>Palette de couleurs</h3>
+        <p class="chart-card-sub">Appréciation de la palette de couleurs</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartColorScheme"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-text-height" style="color:var(--leaf);margin-right:0.4rem;"></i>Lisibilité des textes</h3>
+        <p class="chart-card-sub">Taille et lisibilité des textes dans l'app</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartTextReadability"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-compass" style="color:var(--leaf);margin-right:0.4rem;"></i>Navigation intuitive ?</h3>
+        <p class="chart-card-sub">Perception de la facilité de navigation</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartNavIntuition"></canvas></div>
+      </div>
+
+      <!-- ── SECTION 5: Recommandation ────────────────────────── -->
+
+      <div class="chart-card">
+        <h3><i class="fas fa-calendar-check" style="color:var(--leaf);margin-right:0.4rem;"></i>Fréquence d'utilisation prévue</h3>
+        <p class="chart-card-sub">À quelle fréquence les utilisateurs prévoient-ils d'utiliser l'app ?</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartUsageFrequency"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3><i class="fas fa-share-nodes" style="color:var(--leaf);margin-right:0.4rem;"></i>Recommandation</h3>
+        <p class="chart-card-sub">Recommanderiez-vous RecapLink ?</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartWouldRecommend"></canvas></div>
+      </div>
+
+      <!-- ── Trend & Language ───────────────────────────────────── -->
+
       <div class="chart-card chart-card-wide">
         <h3><i class="fas fa-chart-line" style="color:var(--leaf);margin-right:0.4rem;"></i>Tendance sur 30 jours</h3>
         <p class="chart-card-sub">Nombre de soumissions par jour</p>
-        <div class="chart-wrap" style="height:200px;">
-          <canvas id="chartTrend"></canvas>
-        </div>
+        <div class="chart-wrap" style="height:200px;"><canvas id="chartTrend"></canvas></div>
       </div>
 
-      <!-- Language Distribution -->
       <div class="chart-card chart-card-wide">
         <h3><i class="fas fa-language" style="color:var(--leaf);margin-right:0.4rem;"></i>Langues utilisées</h3>
         <p class="chart-card-sub">Répartition par langue de soumission</p>
@@ -142,7 +209,6 @@
   </div><!-- /#statsContent -->
 </div><!-- /.stats-main -->
 
-<!-- FOOTER -->
 <footer>
   <p>© 2026 RecapLink — Tous droits réservés. Conçu par <a href="http://www.ufuk.tn" style="color:var(--leaf);text-decoration:none;">Ufuk Connect</a>.</p>
   <div class="footer-links">
@@ -156,104 +222,108 @@
 const API_BASE = 'http://localhost:3001/api';
 
 const LABELS = {
-  profile:  { collector:'Collecteur', recycler:'Recycleur', business:'Entreprise', individual:'Particulier', other:'Autre' },
-  wouldUse: { definitely_yes:'Certainement oui', probably_yes:'Probablement oui', unsure:'Indécis(e)', probably_no:'Probablement non', definitely_no:'Certainement non' },
-  heardFrom:{ social_media:'Réseaux sociaux', event:'Événement', colleague:'Collègue/Ami', internet:'Internet', other:'Autre' },
-  features: { collect:'Collecte facilitée', connect:'Réseau recycleurs', dashboard:'Tableau de bord', badges:'Badges', ai:'Assistant IA', eco:'Impact éco.' },
-  language: { fr:'Français', ar:'العربية', wo:'Wolof' },
+  language:         { fr:'Français', ar:'العربية', wo:'Wolof' },
+  colorScheme:      { excellent:'Excellent', good:'Bien', average:'Moyen', poor:'Mauvais' },
+  textReadability:  { very_clear:'Très lisible', clear:'Lisible', hard:'Difficile' },
+  navIntuition:     { very_intuitive:'Très intuitive', intuitive:'Intuitive', confusing:'Confuse', very_confusing:'Très confuse' },
+  savoirFaire:      { very_useful:'Très utile', useful:'Utile', neutral:'Neutre', not_useful:'Peu utile', not_used:'Pas utilisée' },
+  profilePage:      { very_useful:'Très utile', useful:'Utile', neutral:'Neutre', not_useful:'Peu utile' },
+  complexity:       { very_simple:'Très simple', simple:'Simple', moderate:'Modéré', complex:'Complexe', very_complex:'Très complexe' },
+  onboarding:       { excellent:'Excellent', good:'Bon', average:'Moyen', difficult:'Difficile' },
+  ease:             { very_easy:'Très facile', easy:'Facile', moderate:'Moyen', hard:'Difficile' },
+  badgeSatisfaction:{ very_satisfied:'Très satisfait', satisfied:'Satisfait', little:'Peu satisfait', not_satisfied:'Pas satisfait' },
+  favoriteFeature:  { collect:'Collecte', connect:'Réseau', badges:'Badges', ai_chatbot:'IA Chat', messaging:'Messagerie', eco_impact:'Éco-impact' },
+  usageFrequency:   { daily:'Chaque jour', weekly:'Chaque semaine', monthly:'Chaque mois', rarely:'Rarement', never:'Jamais' },
+  wouldRecommend:   { definitely:'Certainement', probably:'Probablement', maybe:'Peut-être', no:'Non' },
 };
 
-const PALETTE = ['#3d7a1a','#5a9e2a','#9fd176','#c7e6b0','#65a30d','#2e6610','#eef6e8','#16a34a'];
-const SATISFACTION_COLORS = ['#dc2626','#ea580c','#ca8a04','#65a30d','#16a34a'];
-const WOULD_USE_COLORS = ['#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
+const PALETTE        = ['#3d7a1a','#5a9e2a','#9fd176','#c7e6b0','#65a30d','#2e6610','#eef6e8','#16a34a'];
+const STAR_COLORS    = ['#dc2626','#ea580c','#ca8a04','#65a30d','#16a34a'];
+const RECOMMEND_CLRS = ['#16a34a','#65a30d','#ca8a04','#dc2626'];
+const EASE_CLRS      = ['#16a34a','#65a30d','#ca8a04','#dc2626'];
 
 let chartInstances = {};
 
 function destroyChart(id) {
   if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
 }
-
 function starsHtml(avg) {
   const full = Math.floor(avg), half = (avg - full) >= 0.5;
   let s = '';
   for (let i=1;i<=5;i++) {
-    if (i<=full) s+='★';
-    else if (i===full+1&&half) s+='½';
-    else s+='☆';
+    if (i<=full) s+='★'; else if (i===full+1&&half) s+='½'; else s+='☆';
   }
   return s;
 }
-
 function labelOf(map, key) { return map[key] || key; }
+function sortDesc(obj) { return Object.entries(obj).sort((a,b)=>b[1]-a[1]); }
 
-function sortDesc(obj) {
-  return Object.entries(obj).sort((a,b)=>b[1]-a[1]);
-}
-
+// ── Load ─────────────────────────────────────────────────────────
 async function loadStats() {
-  const loading  = document.getElementById('statsLoading');
-  const error    = document.getElementById('statsError');
-  const content  = document.getElementById('statsContent');
-  const icon     = document.getElementById('refreshIcon');
-
-  loading.style.display = 'block';
-  error.style.display   = 'none';
-  content.style.display = 'none';
+  const loading = document.getElementById('statsLoading');
+  const error   = document.getElementById('statsError');
+  const content = document.getElementById('statsContent');
+  const icon    = document.getElementById('refreshIcon');
+  loading.style.display = 'block'; error.style.display = 'none'; content.style.display = 'none';
   icon.classList.add('fa-spin');
-
   try {
     const res = await fetch(`${API_BASE}/feedback/stats`);
     if (!res.ok) throw new Error();
     const data = await res.json();
-    loading.style.display = 'none';
-    content.style.display = 'block';
-    icon.classList.remove('fa-spin');
+    loading.style.display = 'none'; content.style.display = 'block'; icon.classList.remove('fa-spin');
     renderStats(data);
   } catch {
-    loading.style.display = 'none';
-    error.style.display   = 'block';
-    content.style.display = 'none';
+    loading.style.display = 'none'; error.style.display = 'block'; content.style.display = 'none';
     icon.classList.remove('fa-spin');
   }
 }
 
+// ── Render all ───────────────────────────────────────────────────
 function renderStats(data) {
   const empty  = document.getElementById('emptyState');
   const charts = document.getElementById('chartsGrid');
-
   renderSummary(data);
+  if (data.total === 0) { empty.style.display='block'; charts.style.display='none'; return; }
+  empty.style.display = 'none'; charts.style.display = 'grid';
 
-  if (data.total === 0) {
-    empty.style.display  = 'block';
-    charts.style.display = 'none';
-    return;
-  }
-
-  empty.style.display  = 'none';
-  charts.style.display = 'grid';
-
-  renderSatisfactionChart(data.satisfactionDistribution, data.total);
-  renderDonutChart('chartProfile', data.profileDistribution, LABELS.profile, PALETTE);
-  renderWouldUseChart(data.wouldUseDistribution);
-  renderDonutChart('chartHeardFrom', data.heardFromDistribution, LABELS.heardFrom, PALETTE);
-  renderFeaturesChart(data.featuresDistribution);
+  // Section 1
+  renderStarBar('chartSatisfaction',  data.satisfactionDistribution,  data.total);
+  renderStarBar('chartDesignRating',  data.designRatingDistribution,  data.total);
+  // Section 2
+  renderDonut('chartColorScheme',     data.colorSchemeDistribution,     LABELS.colorScheme,    PALETTE);
+  renderDonut('chartTextReadability', data.textReadabilityDistribution, LABELS.textReadability, PALETTE);
+  renderHBar('chartNavIntuition',  data.navIntuitionDistribution,  LABELS.navIntuition,  ['#16a34a','#65a30d','#ea580c','#dc2626']);
+  renderHBar('chartSavoirFaire',   data.savoirFaireDistribution,   LABELS.savoirFaire,   ['#16a34a','#65a30d','#ca8a04','#ea580c','#94a3b8']);
+  renderHBar('chartProfilePage',   data.profilePageDistribution,   LABELS.profilePage,   ['#16a34a','#65a30d','#ca8a04','#ea580c']);
+  // Section 3
+  renderComplexityBar('chartComplexity', data.complexityDistribution);
+  renderHBar('chartOnboarding', data.onboardingDistribution, LABELS.onboarding, ['#16a34a','#65a30d','#ca8a04','#dc2626']);
+  renderEaseComparison('chartEaseComparison', {
+    registrationEase:    data.registrationEaseDistribution    || {},
+    postOfferEase:       data.postOfferEaseDistribution       || {},
+    searchCollectorEase: data.searchCollectorEaseDistribution || {},
+  });
+  // Section 4
+  renderStarBar('chartMessagingRating',  data.messagingRatingDistribution, data.total);
+  renderStarBar('chartChatbotRating',    data.chatbotRatingDistribution,   data.total);
+  renderDonut('chartBadgeSatisfaction',  data.badgeSatisfactionDistribution, LABELS.badgeSatisfaction, PALETTE);
+  renderHBar('chartFavoriteFeature', data.favoriteFeatureDistribution, LABELS.favoriteFeature, PALETTE);
+  // Section 5
+  renderHBar('chartUsageFrequency', data.usageFrequencyDistribution, LABELS.usageFrequency, ['#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626']);
+  renderRecommendBar('chartWouldRecommend', data.wouldRecommendDistribution);
+  // Trend & Language
   renderTrendChart(data.recentTrend);
   renderLangPills(data.languageDistribution, data.total);
 }
 
+// ── Summary cards ────────────────────────────────────────────────
 function renderSummary(data) {
-  const avg = data.averageSatisfaction;
-
-  // Responses this week
   const weekCutoff = new Date(); weekCutoff.setDate(weekCutoff.getDate()-7);
-  const weekCount = (data.recentTrend || [])
-    .filter(d => new Date(d.date) >= weekCutoff)
-    .reduce((s, d) => s + d.count, 0);
-
-  // Top feature
-  const featEntries = sortDesc(data.featuresDistribution || {});
-  const topFeat = featEntries.length > 0 ? labelOf(LABELS.features, featEntries[0][0]) : '—';
-
+  const weekCount = (data.recentTrend||[]).filter(d=>new Date(d.date)>=weekCutoff).reduce((s,d)=>s+d.count,0);
+  const avgS = data.averageSatisfaction   || 0;
+  const avgD = data.averageDesignRating   || 0;
+  const avgM = data.averageMessagingRating|| 0;
+  const avgC = data.averageChatbotRating  || 0;
   document.getElementById('summaryCards').innerHTML = `
     <div class="stat-card">
       <div class="stat-card-label"><i class="fas fa-inbox" style="margin-right:0.35rem;"></i>Réponses totales</div>
@@ -261,206 +331,213 @@ function renderSummary(data) {
       <div class="stat-card-sub">depuis le lancement</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-star" style="margin-right:0.35rem;color:#f59e0b;"></i>Satisfaction moyenne</div>
-      <div class="stat-card-value">${avg > 0 ? avg.toFixed(1) : '—'}</div>
-      <div class="stat-card-sub stat-stars">${avg > 0 ? starsHtml(avg) + ' / 5' : 'Aucune note'}</div>
+      <div class="stat-card-label"><i class="fas fa-star" style="margin-right:0.35rem;color:#f59e0b;"></i>Satisfaction moy.</div>
+      <div class="stat-card-value">${avgS>0?avgS.toFixed(1):'—'}</div>
+      <div class="stat-card-sub stat-stars">${avgS>0?starsHtml(avgS)+' / 5':'Aucune note'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label"><i class="fas fa-paintbrush" style="margin-right:0.35rem;color:var(--leaf);"></i>Design moy.</div>
+      <div class="stat-card-value">${avgD>0?avgD.toFixed(1):'—'}</div>
+      <div class="stat-card-sub stat-stars">${avgD>0?starsHtml(avgD)+' / 5':'Aucune note'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label"><i class="fas fa-comments" style="margin-right:0.35rem;color:var(--leaf);"></i>Messagerie moy.</div>
+      <div class="stat-card-value">${avgM>0?avgM.toFixed(1):'—'}</div>
+      <div class="stat-card-sub stat-stars">${avgM>0?starsHtml(avgM)+' / 5':'Aucune note'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label"><i class="fas fa-robot" style="margin-right:0.35rem;color:var(--leaf);"></i>Chatbot moy.</div>
+      <div class="stat-card-value">${avgC>0?avgC.toFixed(1):'—'}</div>
+      <div class="stat-card-sub stat-stars">${avgC>0?starsHtml(avgC)+' / 5':'Aucune note'}</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label"><i class="fas fa-calendar-week" style="margin-right:0.35rem;"></i>Cette semaine</div>
       <div class="stat-card-value">${weekCount}</div>
-      <div class="stat-card-sub">soumissions (7 derniers jours)</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-trophy" style="margin-right:0.35rem;color:#f59e0b;"></i>Fonctionnalité populaire</div>
-      <div class="stat-card-value" style="font-size:1.1rem;font-weight:700;padding-top:0.3rem;">${topFeat}</div>
-      <div class="stat-card-sub">${featEntries.length>0 ? featEntries[0][1]+' vote(s)' : '—'}</div>
+      <div class="stat-card-sub">soumissions (7j)</div>
     </div>`;
 }
 
-function renderSatisfactionChart(dist, total) {
-  destroyChart('chartSatisfaction');
-  const labels = ['1 ★','2 ★★','3 ★★★','4 ★★★★','5 ★★★★★'];
-  const values = [1,2,3,4,5].map(i => dist[i]||0);
-  const ctx = document.getElementById('chartSatisfaction').getContext('2d');
-  chartInstances['chartSatisfaction'] = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: SATISFACTION_COLORS,
-        borderRadius: 8,
-        borderSkipped: false,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.raw} réponse(s) · ${total>0?Math.round(ctx.raw/total*100):0}%` } }
-      },
-      scales: {
-        y: { beginAtZero:true, ticks:{ stepSize:1, font:{family:'Nunito'} }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        x: { ticks:{ font:{family:'Nunito',weight:'600'} }, grid:{ display:false } }
-      }
-    }
-  });
-}
-
-function renderDonutChart(canvasId, dist, labelMap, colors) {
+// ── Star distribution bar ────────────────────────────────────────
+function renderStarBar(canvasId, dist, total) {
   destroyChart(canvasId);
-  const entries = sortDesc(dist);
-  if (entries.length === 0) return;
+  if (!dist) return;
+  const labels = ['1 ★','2 ★★','3 ★★★','4 ★★★★','5 ★★★★★'];
+  const values = [1,2,3,4,5].map(i=>dist[i]||0);
   const ctx = document.getElementById(canvasId).getContext('2d');
   chartInstances[canvasId] = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: entries.map(([k])=>labelOf(labelMap,k)),
-      datasets: [{
-        data: entries.map(([,v])=>v),
-        backgroundColor: colors.slice(0, entries.length),
-        borderWidth: 2,
-        borderColor: 'white',
-        hoverOffset: 8,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      cutout: '60%',
-      plugins: {
-        legend: { position:'right', labels:{ font:{family:'Nunito',size:11}, boxWidth:12, padding:10 } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
-      }
-    }
-  });
-}
-
-function renderWouldUseChart(dist) {
-  destroyChart('chartWouldUse');
-  const order = ['definitely_yes','probably_yes','unsure','probably_no','definitely_no'];
-  const labels = order.map(k=>labelOf(LABELS.wouldUse,k));
-  const values = order.map(k=>dist[k]||0);
-  const ctx = document.getElementById('chartWouldUse').getContext('2d');
-  chartInstances['chartWouldUse'] = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: WOULD_USE_COLORS,
-        borderRadius: 8,
-        borderSkipped: false,
-      }]
-    },
+    data: { labels, datasets: [{ data:values, backgroundColor:STAR_COLORS, borderRadius:8, borderSkipped:false }] },
     options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
+      responsive:true, maintainAspectRatio:false,
       plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.raw} réponse(s)` } }
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s) · ${total>0?Math.round(c.raw/total*100):0}%`}}
       },
-      scales: {
-        x: { beginAtZero:true, ticks:{ stepSize:1, font:{family:'Nunito'} }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        y: { ticks:{ font:{family:'Nunito',size:11} }, grid:{ display:false } }
+      scales:{
+        y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
+        x:{ticks:{font:{family:'Nunito',weight:'600'}},grid:{display:false}}
       }
     }
   });
 }
 
-function renderFeaturesChart(dist) {
-  destroyChart('chartFeatures');
+// ── Donut chart ──────────────────────────────────────────────────
+function renderDonut(canvasId, dist, labelMap, colors) {
+  destroyChart(canvasId);
+  if (!dist) return;
   const entries = sortDesc(dist);
-  if (entries.length === 0) return;
-  const labels = entries.map(([k])=>labelOf(LABELS.features,k));
-  const values = entries.map(([,v])=>v);
-  const ctx = document.getElementById('chartFeatures').getContext('2d');
-  chartInstances['chartFeatures'] = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: labels.map((_,i) => PALETTE[i % PALETTE.length]),
-        borderRadius: 8,
-        borderSkipped: false,
-      }]
+  if (!entries.length) return;
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  chartInstances[canvasId] = new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels:entries.map(([k])=>labelOf(labelMap,k)),
+      datasets:[{data:entries.map(([,v])=>v),backgroundColor:colors.slice(0,entries.length),borderWidth:2,borderColor:'white',hoverOffset:8}]
     },
-    options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.raw} vote(s)` } }
-      },
-      scales: {
-        x: { beginAtZero:true, ticks:{ stepSize:1, font:{family:'Nunito'} }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        y: { ticks:{ font:{family:'Nunito',size:12,weight:'600'} }, grid:{ display:false } }
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{
+        legend:{position:'right',labels:{font:{family:'Nunito',size:11},boxWidth:12,padding:10}},
+        tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw}`}}
       }
     }
   });
 }
 
+// ── Generic horizontal bar (ordered by labelMap key order) ───────
+function renderHBar(canvasId, dist, labelMap, colors) {
+  destroyChart(canvasId);
+  if (!dist) return;
+  const order  = Object.keys(labelMap);
+  const labels = order.map(k => labelOf(labelMap, k));
+  const values = order.map(k => dist[k] || 0);
+  if (!values.some(v => v > 0)) return;
+  const ctx = document.getElementById(canvasId)?.getContext('2d');
+  if (!ctx) return;
+  chartInstances[canvasId] = new Chart(ctx, {
+    type:'bar',
+    data:{labels,datasets:[{data:values,backgroundColor:colors.slice(0,labels.length),borderRadius:8,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s)`}}},
+      scales:{
+        x:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
+        y:{ticks:{font:{family:'Nunito',size:11,weight:'600'}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ── Complexity horizontal bar ────────────────────────────────────
+function renderComplexityBar(canvasId, dist) {
+  destroyChart(canvasId);
+  if (!dist) return;
+  const order  = ['very_simple','simple','moderate','complex','very_complex'];
+  const colors = ['#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626'];
+  const labels = order.map(k=>labelOf(LABELS.complexity,k));
+  const values = order.map(k=>dist[k]||0);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  chartInstances[canvasId] = new Chart(ctx, {
+    type:'bar',
+    data:{labels,datasets:[{data:values,backgroundColor:colors,borderRadius:8,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s)`}}},
+      scales:{
+        x:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
+        y:{ticks:{font:{family:'Nunito',size:11}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ── Ease comparison grouped bar ──────────────────────────────────
+function renderEaseComparison(canvasId, dists) {
+  destroyChart(canvasId);
+  const order  = ['very_easy','easy','moderate','hard'];
+  const labels = order.map(k=>labelOf(LABELS.ease,k));
+  const datasets = [
+    { label:'Inscription', data:order.map(k=>dists.registrationEase[k]||0),    backgroundColor:'rgba(22,163,74,0.8)',  borderRadius:6 },
+    { label:'Publier offre',data:order.map(k=>dists.postOfferEase[k]||0),       backgroundColor:'rgba(101,163,13,0.8)', borderRadius:6 },
+    { label:'Trouver collecteur',data:order.map(k=>dists.searchCollectorEase[k]||0), backgroundColor:'rgba(202,138,4,0.8)',  borderRadius:6 },
+  ];
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  chartInstances[canvasId] = new Chart(ctx, {
+    type:'bar',
+    data:{labels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{font:{family:'Nunito',size:11},boxWidth:12}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.raw}`}}
+      },
+      scales:{
+        y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
+        x:{ticks:{font:{family:'Nunito',weight:'600'}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ── Would Recommend horizontal bar ──────────────────────────────
+function renderRecommendBar(canvasId, dist) {
+  destroyChart(canvasId);
+  if (!dist) return;
+  const order  = ['definitely','probably','maybe','no'];
+  const labels = order.map(k=>labelOf(LABELS.wouldRecommend,k));
+  const values = order.map(k=>dist[k]||0);
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  chartInstances[canvasId] = new Chart(ctx, {
+    type:'bar',
+    data:{labels,datasets:[{data:values,backgroundColor:RECOMMEND_CLRS,borderRadius:8,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s)`}}},
+      scales:{
+        x:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
+        y:{ticks:{font:{family:'Nunito',size:12,weight:'600'}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ── 30-day trend ─────────────────────────────────────────────────
 function renderTrendChart(trend) {
   destroyChart('chartTrend');
-  if (!trend || trend.length === 0) return;
-
-  // Show every 3rd label for readability
-  const labels = trend.map((d,i) => {
-    if (i === 0 || i === trend.length-1 || i % 5 === 0) return d.date.slice(5);
-    return '';
-  });
+  if (!trend||!trend.length) return;
+  const labels = trend.map((d,i)=>(i===0||i===trend.length-1||i%5===0)?d.date.slice(5):'');
   const values = trend.map(d=>d.count);
   const ctx = document.getElementById('chartTrend').getContext('2d');
-
   const gradient = ctx.createLinearGradient(0,0,0,200);
-  gradient.addColorStop(0,'rgba(61,122,26,0.25)');
-  gradient.addColorStop(1,'rgba(61,122,26,0)');
-
+  gradient.addColorStop(0,'rgba(61,122,26,0.25)'); gradient.addColorStop(1,'rgba(61,122,26,0)');
   chartInstances['chartTrend'] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        borderColor: '#3d7a1a',
-        backgroundColor: gradient,
-        borderWidth: 2.5,
-        fill: true,
-        tension: 0.4,
-        pointRadius: values.map(v => v>0?4:0),
-        pointBackgroundColor: '#3d7a1a',
-        pointBorderColor: 'white',
-        pointBorderWidth: 2,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { title: ctx => trend[ctx[0].dataIndex].date, label: ctx => ` ${ctx.raw} soumission(s)` } }
-      },
-      scales: {
-        y: { beginAtZero:true, ticks:{ stepSize:1, font:{family:'Nunito'} }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        x: { ticks:{ font:{family:'Nunito',size:10}, maxRotation:0 }, grid:{ display:false } }
+    type:'line',
+    data:{labels,datasets:[{data:values,borderColor:'#3d7a1a',backgroundColor:gradient,borderWidth:2.5,fill:true,tension:0.4,
+      pointRadius:values.map(v=>v>0?4:0),pointBackgroundColor:'#3d7a1a',pointBorderColor:'white',pointBorderWidth:2}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>trend[c[0].dataIndex].date,label:c=>` ${c.raw} soumission(s)`}}},
+      scales:{
+        y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
+        x:{ticks:{font:{family:'Nunito',size:10},maxRotation:0},grid:{display:false}}
       }
     }
   });
 }
 
+// ── Language pills ────────────────────────────────────────────────
 function renderLangPills(dist, total) {
   const container = document.getElementById('langPills');
-  const entries = sortDesc(dist);
-  if (entries.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Aucune donnée</p>'; return; }
-  container.innerHTML = entries.map(([lang, count]) => `
+  const entries = sortDesc(dist||{});
+  if (!entries.length) { container.innerHTML='<p style="color:var(--muted);font-size:0.85rem;">Aucune donnée</p>'; return; }
+  container.innerHTML = entries.map(([lang,count])=>`
     <div class="lang-pill">
       <div class="lang-pill-dot"></div>
-      <span><strong>${labelOf(LABELS.language, lang)}</strong> — ${count} réponse${count>1?'s':''} (${total>0?Math.round(count/total*100):0}%)</span>
+      <span><strong>${labelOf(LABELS.language,lang)}</strong> — ${count} réponse${count>1?'s':''} (${total>0?Math.round(count/total*100):0}%)</span>
     </div>`).join('');
 }
 
-// Load on page ready
 document.addEventListener('DOMContentLoaded', loadStats);
 </script>
-
 </body>
 </html>
