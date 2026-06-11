@@ -289,7 +289,7 @@
       <img src="images/recaplink.png" alt="RecapLink" style="height:26px;flex-shrink:0;">
       <div class="fb-lang-switcher">
         <button class="fb-lang active" id="fbLangFr" onclick="fbSetLang('fr')">FR</button>
-        <button class="fb-lang" id="fbLangEn" onclick="fbSetLang('en')">EN</button>
+        <button class="fb-lang" id="fbLangAr" onclick="fbSetLang('ar')">AR</button>
         <button class="fb-lang" id="fbLangWo" onclick="fbSetLang('wo')">WO</button>
       </div>
       <button class="fb-close" onclick="closeFeedbackModal()"><i class="fas fa-times"></i></button>
@@ -340,31 +340,31 @@ const fbT = {
     wouldUse:  [{v:'definitely_yes',i:'fa-face-smile-beam',l:'Certainement oui',c:'#16a34a'},{v:'probably_yes',i:'fa-face-smile',l:'Probablement oui',c:'#65a30d'},{v:'unsure',i:'fa-face-meh',l:'Je ne sais pas encore',c:'#ca8a04'},{v:'probably_no',i:'fa-face-frown',l:'Probablement non',c:'#ea580c'},{v:'definitely_no',i:'fa-face-frown-open',l:'Certainement non',c:'#dc2626'}],
     heardFrom: [{v:'social_media',i:'fa-share-nodes',l:'Réseaux sociaux'},{v:'event',i:'fa-calendar-days',l:'Événement / Conférence'},{v:'colleague',i:'fa-users',l:'Collègue / Ami(e)'},{v:'internet',i:'fa-globe',l:'Recherche internet'},{v:'other',i:'fa-ellipsis',l:'Autre'}],
   },
-  en: {
-    floatBtn: 'Feedback',
-    prompt: 'Would you like to give your feedback?',
-    promptSub: 'Help us improve RecapLink! It only takes 2 minutes.',
-    yes: "Yes, I'd love to!", no: 'Maybe later',
-    stepLabel: 'Step', of: 'of',
-    back: '← Back', next: 'Next →', submit: 'Submit ✓',
-    sending: 'Sending…', error: 'An error occurred. Please try again.',
-    placeholder: 'Your comment or suggestion (optional)…',
-    thanksTitle: 'Thank you! 🌿',
-    thanksMsg: "Your feedback has been recorded. Together we're building a greener future!",
-    close: 'Close',
+  ar: {
+    floatBtn: 'رأيك',
+    prompt: 'هل تريد مشاركتنا رأيك؟',
+    promptSub: 'ساعدنا في تحسين RecapLink! لن يستغرق الأمر سوى دقيقتين.',
+    yes: 'نعم، بكل سرور!', no: 'ربما لاحقاً',
+    stepLabel: 'خطوة', of: 'من',
+    back: 'رجوع →', next: '← التالي', submit: '✓ إرسال',
+    sending: 'جارٍ الإرسال…', error: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+    placeholder: 'تعليقك أو اقتراحك (اختياري)…',
+    thanksTitle: 'شكراً جزيلاً! 🌿',
+    thanksMsg: 'تم تسجيل ملاحظاتك. معاً نبني مستقبلاً أكثر خضرة!',
+    close: 'إغلاق',
     questions: [
-      { title: 'Who are you?',                          sub: 'Select the profile that best describes you' },
-      { title: 'How satisfied are you with the concept?', sub: 'Rate your satisfaction (1 = very unsatisfied · 5 = very satisfied)' },
-      { title: 'What interests you most?',              sub: 'Select one or more features' },
-      { title: 'Would you use RecapLink?',              sub: 'Tell us your intention once the app is launched' },
-      { title: 'How did you hear about us?',            sub: 'Help us understand how you found RecapLink' },
-      { title: 'Any additional comments?',              sub: 'Share your ideas or suggestions (optional)' },
+      { title: 'من أنت؟',                                   sub: 'اختر الملف الشخصي الذي يصفك أكثر' },
+      { title: 'ما مدى رضاك عن المفهوم؟',                  sub: 'قيّم رضاك (1 = غير راضٍ تماماً · 5 = راضٍ جداً)' },
+      { title: 'ما الذي يثير اهتمامك أكثر؟',               sub: 'اختر ميزة واحدة أو أكثر' },
+      { title: 'هل ستستخدم RecapLink؟',                    sub: 'أخبرنا بنيتك بعد إطلاق التطبيق' },
+      { title: 'كيف سمعت عنّا؟',                           sub: 'ساعدنا على فهم كيف وجدتنا' },
+      { title: 'هل لديك تعليقات إضافية؟',                  sub: 'شاركنا أفكارك أو اقتراحاتك (اختياري)' },
     ],
-    ratingLabels: ['','Very unsatisfied','Unsatisfied','Neutral','Satisfied','Very satisfied'],
-    profiles:  [{v:'collector',i:'fa-box',l:'Plastic Collector'},{v:'recycler',i:'fa-recycle',l:'Recycler / Processor'},{v:'business',i:'fa-building',l:'Business / Organization'},{v:'individual',i:'fa-user',l:'Individual'},{v:'other',i:'fa-ellipsis',l:'Other'}],
-    features:  [{v:'collect',i:'fa-box-archive',l:'Facilitated Collection'},{v:'connect',i:'fa-handshake',l:'Recycler Network'},{v:'dashboard',i:'fa-chart-line',l:'Tracking Dashboard'},{v:'badges',i:'fa-award',l:'Badge System'},{v:'ai',i:'fa-robot',l:'AI Assistant'},{v:'eco',i:'fa-leaf',l:'Ecological Impact'}],
-    wouldUse:  [{v:'definitely_yes',i:'fa-face-smile-beam',l:'Definitely yes',c:'#16a34a'},{v:'probably_yes',i:'fa-face-smile',l:'Probably yes',c:'#65a30d'},{v:'unsure',i:'fa-face-meh',l:'Not sure yet',c:'#ca8a04'},{v:'probably_no',i:'fa-face-frown',l:'Probably not',c:'#ea580c'},{v:'definitely_no',i:'fa-face-frown-open',l:'Definitely not',c:'#dc2626'}],
-    heardFrom: [{v:'social_media',i:'fa-share-nodes',l:'Social Media'},{v:'event',i:'fa-calendar-days',l:'Event / Conference'},{v:'colleague',i:'fa-users',l:'Colleague / Friend'},{v:'internet',i:'fa-globe',l:'Internet Search'},{v:'other',i:'fa-ellipsis',l:'Other'}],
+    ratingLabels: ['','غير راضٍ تماماً','غير راضٍ','محايد','راضٍ','راضٍ جداً'],
+    profiles:  [{v:'collector',i:'fa-box',l:'جامع البلاستيك'},{v:'recycler',i:'fa-recycle',l:'مُعيد التدوير / المُعالج'},{v:'business',i:'fa-building',l:'شركة / مؤسسة'},{v:'individual',i:'fa-user',l:'فرد'},{v:'other',i:'fa-ellipsis',l:'أخرى'}],
+    features:  [{v:'collect',i:'fa-box-archive',l:'تسهيل الجمع'},{v:'connect',i:'fa-handshake',l:'شبكة المُعاد تدويرين'},{v:'dashboard',i:'fa-chart-line',l:'لوحة المتابعة'},{v:'badges',i:'fa-award',l:'نظام الشارات'},{v:'ai',i:'fa-robot',l:'المساعد الذكي'},{v:'eco',i:'fa-leaf',l:'الأثر البيئي'}],
+    wouldUse:  [{v:'definitely_yes',i:'fa-face-smile-beam',l:'بالتأكيد نعم',c:'#16a34a'},{v:'probably_yes',i:'fa-face-smile',l:'على الأرجح نعم',c:'#65a30d'},{v:'unsure',i:'fa-face-meh',l:'لست متأكداً بعد',c:'#ca8a04'},{v:'probably_no',i:'fa-face-frown',l:'على الأرجح لا',c:'#ea580c'},{v:'definitely_no',i:'fa-face-frown-open',l:'بالتأكيد لا',c:'#dc2626'}],
+    heardFrom: [{v:'social_media',i:'fa-share-nodes',l:'وسائل التواصل الاجتماعي'},{v:'event',i:'fa-calendar-days',l:'حدث / مؤتمر'},{v:'colleague',i:'fa-users',l:'زميل / صديق'},{v:'internet',i:'fa-globe',l:'بحث على الإنترنت'},{v:'other',i:'fa-ellipsis',l:'أخرى'}],
   },
   wo: {
     floatBtn: 'Sa xam-xam',
@@ -415,10 +415,14 @@ document.getElementById('fbOverlay').addEventListener('click', e => {
 function fbSetLang(lang) {
   fbLang = lang;
   fbData.language = lang;
-  ['fr','en','wo'].forEach(l => {
-    document.getElementById('fbLang' + l[0].toUpperCase() + l.slice(1)).classList.toggle('active', l === lang);
+  ['fr','ar','wo'].forEach(l => {
+    const id = 'fbLang' + l[0].toUpperCase() + l.slice(1);
+    document.getElementById(id).classList.toggle('active', l === lang);
   });
   document.getElementById('fbFloatText').textContent = fbT[lang].floatBtn;
+  // RTL for Arabic
+  const modal = document.querySelector('.fb-modal');
+  modal.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
   fbRender();
 }
 

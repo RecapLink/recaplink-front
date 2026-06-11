@@ -1284,3 +1284,23 @@
   .charts-grid { grid-template-columns: 1fr; }
   .chart-card-wide { grid-column: 1; }
 }
+
+/* ═══════════════════════════════════════════
+   ARABIC RTL SUPPORT IN FEEDBACK MODAL
+═══════════════════════════════════════════ */
+.fb-modal[dir="rtl"] { direction: rtl; font-family: 'Cairo', 'Segoe UI', sans-serif; }
+.fb-modal[dir="rtl"] .fb-header { flex-direction: row-reverse; }
+.fb-modal[dir="rtl"] .fb-lang-switcher { flex-direction: row-reverse; }
+.fb-modal[dir="rtl"] .fb-footer { flex-direction: row-reverse; }
+.fb-modal[dir="rtl"] .fb-nav-next { margin-left: 0; margin-right: auto; }
+.fb-modal[dir="rtl"] .fb-step-badge,
+.fb-modal[dir="rtl"] .fb-step-title,
+.fb-modal[dir="rtl"] .fb-step-sub,
+.fb-modal[dir="rtl"] .fb-prompt h2,
+.fb-modal[dir="rtl"] .fb-prompt p { text-align: right; }
+.fb-modal[dir="rtl"] .fb-card { flex-direction: row-reverse; }
+.fb-modal[dir="rtl"] .fb-stars { direction: ltr; }
+.fb-modal[dir="rtl"] .fb-rating-label { text-align: center; }
+.fb-modal[dir="rtl"] .fb-textarea { text-align: right; }
+.fb-modal[dir="rtl"] .fb-thanks { direction: rtl; }
+.fb-modal[dir="rtl"] .fb-prompt-btns { direction: rtl; }
