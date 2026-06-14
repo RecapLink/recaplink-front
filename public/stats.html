@@ -545,9 +545,20 @@ async function loadStats() {
   loading.style.display = 'block'; error.style.display = 'none'; content.style.display = 'none';
   icon.classList.add('fa-spin');
   try {
-    const res = await fetch(`${API_BASE}/feedback/stats`);
-    if (!res.ok) throw new Error();
-    const data = await res.json();
+    const [statsRes, allRes] = await Promise.all([
+      fetch(`${API_BASE}/feedback/stats`),
+      fetch(`${API_BASE}/feedback`),
+    ]);
+    if (!statsRes.ok) throw new Error();
+    const data = await statsRes.json();
+    const all  = allRes.ok ? await allRes.json() : [];
+    // extract comments from the full list (backend rebuild not required)
+    if (!data.comments || !data.comments.length) {
+      data.comments = (Array.isArray(all) ? all : [])
+        .filter(i => i.comment && String(i.comment).trim())
+        .map(i => ({ text: String(i.comment).trim(), lang: i.language || 'fr', satisfaction: i.satisfaction || null, date: i.createdAt }))
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }
     lastStatsData = data;
     loading.style.display = 'none'; content.style.display = 'block'; icon.classList.remove('fa-spin');
     renderStats(data);
