@@ -1,17 +1,53 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="htmlRoot">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>RecapLink — Statistiques Feedback</title>
+  <title id="pageTitle">RecapLink — Statistiques Feedback</title>
   <style>
     html, body { overflow-x: hidden; width: 100%; }
     * { box-sizing: border-box; }
-    /* Mobile nav fix */
     @media (max-width: 600px) {
       nav { flex-wrap: wrap; padding: 0.6rem 1rem !important; gap: 0.4rem; min-height: auto !important; }
       nav .logo-wrap { flex: 1; }
       nav .badge-bbw { width: 100%; font-size: 0.7rem; }
+    }
+    .stats-lang-btn {
+      padding: 0.3rem 0.65rem;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 8px;
+      background: transparent;
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .stats-lang-btn.active,
+    .stats-lang-btn:hover {
+      background: rgba(255,255,255,0.22);
+      border-color: white;
+    }
+    .stats-reset-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      border: 2px solid rgba(220,38,38,0.7);
+      border-radius: 12px;
+      background: rgba(220,38,38,0.15);
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .stats-reset-btn:hover {
+      background: rgba(220,38,38,0.35);
+      border-color: white;
     }
   </style>
   <link rel="icon" type="image/png" href="images/recaplink.png" />
@@ -37,16 +73,40 @@
 <div class="stats-hero">
   <div class="stats-hero-inner">
     <div>
-      <h1><i class="fas fa-chart-line" style="margin-right:0.6rem;opacity:0.8;"></i>Statistiques Feedback</h1>
-      <p>Données collectées depuis les retours utilisateurs RecapLink</p>
+      <h1><i class="fas fa-chart-line" style="margin-right:0.6rem;opacity:0.8;"></i><span id="heroTitle">Statistiques Feedback</span></h1>
+      <p id="heroSub">Données collectées depuis les retours utilisateurs RecapLink</p>
     </div>
     <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+      <!-- Lang switcher -->
+      <div style="display:flex;gap:0.35rem;align-items:center;">
+        <button class="stats-lang-btn active" data-lang="fr" onclick="switchStatsLang('fr')">FR</button>
+        <button class="stats-lang-btn" data-lang="ar" onclick="switchStatsLang('ar')">AR</button>
+        <button class="stats-lang-btn" data-lang="wo" onclick="switchStatsLang('wo')">WO</button>
+      </div>
       <button class="stats-refresh-btn" onclick="loadStats()">
-        <i class="fas fa-rotate" id="refreshIcon"></i> Actualiser
+        <i class="fas fa-rotate" id="refreshIcon"></i> <span id="btnRefresh">Actualiser</span>
+      </button>
+      <button class="stats-reset-btn" onclick="confirmReset()">
+        <i class="fas fa-trash"></i> <span id="btnReset">Réinitialiser</span>
       </button>
       <a href="index.html" class="stats-refresh-btn" style="text-decoration:none;">
-        <i class="fas fa-arrow-left"></i> Retour au site
+        <i class="fas fa-arrow-left"></i> <span id="btnBack">Retour au site</span>
       </a>
+    </div>
+  </div>
+</div>
+
+<!-- RESET CONFIRM MODAL -->
+<div id="resetModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:2rem;max-width:380px;width:90%;font-family:'Nunito',sans-serif;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="text-align:center;margin-bottom:1.25rem;">
+      <i class="fas fa-triangle-exclamation" style="font-size:2.5rem;color:#dc2626;margin-bottom:0.75rem;display:block;"></i>
+      <h3 id="modalTitle" style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin:0 0 0.5rem;">Réinitialiser toutes les données ?</h3>
+      <p id="modalText" style="color:#666;font-size:0.9rem;margin:0;">Cette action supprimera définitivement tous les feedbacks. Elle est irréversible.</p>
+    </div>
+    <div style="display:flex;gap:0.75rem;">
+      <button id="modalCancelBtn" onclick="closeResetModal()" style="flex:1;padding:0.7rem;border:2px solid #e5e7eb;border-radius:10px;background:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">Annuler</button>
+      <button id="modalConfirmBtn" onclick="doReset()" style="flex:1;padding:0.7rem;border:none;border-radius:10px;background:#dc2626;color:white;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">Supprimer tout</button>
     </div>
   </div>
 </div>
@@ -56,14 +116,14 @@
 
   <div id="statsLoading" style="text-align:center;padding:4rem 2rem;color:var(--muted);display:none;">
     <i class="fas fa-spinner fa-spin" style="font-size:2rem;margin-bottom:1rem;display:block;color:var(--leaf);"></i>
-    <p>Chargement des statistiques…</p>
+    <p id="txtLoading">Chargement des statistiques…</p>
   </div>
   <div id="statsError" style="text-align:center;padding:4rem 2rem;color:var(--muted);display:none;">
     <i class="fas fa-triangle-exclamation" style="font-size:2.5rem;margin-bottom:1rem;display:block;color:#ea580c;opacity:0.7;"></i>
-    <h3 style="font-family:'Nunito',sans-serif;font-weight:700;color:#ea580c;margin-bottom:0.5rem;">Connexion impossible</h3>
-    <p style="margin-bottom:1.5rem;">Impossible de joindre le serveur.<br>Vérifiez que le backend tourne sur <code style="background:var(--green-50);padding:0.15rem 0.4rem;border-radius:5px;">localhost:3001</code></p>
+    <h3 id="txtErrorTitle" style="font-family:'Nunito',sans-serif;font-weight:700;color:#ea580c;margin-bottom:0.5rem;">Connexion impossible</h3>
+    <p id="txtErrorBody" style="margin-bottom:1.5rem;">Impossible de joindre le serveur.<br>Vérifiez que le backend tourne sur <code style="background:var(--green-50);padding:0.15rem 0.4rem;border-radius:5px;">localhost:3001</code></p>
     <button onclick="loadStats()" style="background:var(--leaf);color:white;border:none;border-radius:12px;padding:0.7rem 1.5rem;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;">
-      <i class="fas fa-rotate"></i> Réessayer
+      <i class="fas fa-rotate"></i> <span id="txtRetry">Réessayer</span>
     </button>
   </div>
 
@@ -75,9 +135,9 @@
     <!-- EMPTY STATE -->
     <div id="emptyState" class="stats-empty" style="display:none;">
       <i class="fas fa-inbox"></i>
-      <h3>Aucune donnée pour l'instant</h3>
-      <p>Les statistiques apparaîtront dès les premiers retours reçus.</p>
-      <a href="index.html" style="display:inline-block;margin-top:1rem;background:var(--leaf);color:white;text-decoration:none;border-radius:12px;padding:0.7rem 1.5rem;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;">
+      <h3 id="txtEmptyTitle">Aucune donnée pour l'instant</h3>
+      <p id="txtEmptySub">Les statistiques apparaîtront dès les premiers retours reçus.</p>
+      <a href="index.html" id="txtEmptyLink" style="display:inline-block;margin-top:1rem;background:var(--leaf);color:white;text-decoration:none;border-radius:12px;padding:0.7rem 1.5rem;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;">
         Visiter le site
       </a>
     </div>
@@ -88,120 +148,120 @@
       <!-- ── SECTION 1: Satisfaction ──────────────────────────── -->
 
       <div class="chart-card">
-        <h3><i class="fas fa-star" style="color:#f59e0b;margin-right:0.4rem;"></i>Satisfaction globale</h3>
-        <p class="chart-card-sub">Distribution des notes de satisfaction (1 à 5 ★)</p>
+        <h3><i class="fas fa-star" style="color:#f59e0b;margin-right:0.4rem;"></i><span data-i18n="satisfaction_title">Satisfaction globale</span></h3>
+        <p class="chart-card-sub" data-i18n="satisfaction_sub">Distribution des notes de satisfaction (1 à 5 ★)</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartSatisfaction"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-paintbrush" style="color:var(--leaf);margin-right:0.4rem;"></i>Qualité du design visuel</h3>
-        <p class="chart-card-sub">Note sur le design / UX de l'application (1 à 5 ★)</p>
+        <h3><i class="fas fa-paintbrush" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="design_title">Qualité du design visuel</span></h3>
+        <p class="chart-card-sub" data-i18n="design_sub">Note sur le design / UX de l'application (1 à 5 ★)</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartDesignRating"></canvas></div>
       </div>
 
       <!-- ── SECTION 2: Expérience utilisateur ─────────────────── -->
 
       <div class="chart-card">
-        <h3><i class="fas fa-sliders" style="color:var(--leaf);margin-right:0.4rem;"></i>Complexité perçue</h3>
-        <p class="chart-card-sub">L'application vous paraît-elle simple ou complexe ?</p>
+        <h3><i class="fas fa-sliders" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="complexity_title">Complexité perçue</span></h3>
+        <p class="chart-card-sub" data-i18n="complexity_sub">L'application vous paraît-elle simple ou complexe ?</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartComplexity"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-flag-checkered" style="color:var(--leaf);margin-right:0.4rem;"></i>Expérience d'onboarding</h3>
-        <p class="chart-card-sub">Expérience lors de la première utilisation</p>
+        <h3><i class="fas fa-flag-checkered" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="onboarding_title">Expérience d'onboarding</span></h3>
+        <p class="chart-card-sub" data-i18n="onboarding_sub">Expérience lors de la première utilisation</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartOnboarding"></canvas></div>
       </div>
 
       <div class="chart-card chart-card-wide">
-        <h3><i class="fas fa-hand-pointer" style="color:var(--leaf);margin-right:0.4rem;"></i>Facilité des actions clés</h3>
-        <p class="chart-card-sub">Inscription, publication d'offre, recherche de collecteur</p>
+        <h3><i class="fas fa-hand-pointer" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="ease_title">Facilité des actions clés</span></h3>
+        <p class="chart-card-sub" data-i18n="ease_sub">Inscription, publication d'offre, recherche de collecteur</p>
         <div class="chart-wrap" style="height:260px;"><canvas id="chartEaseComparison"></canvas></div>
       </div>
 
       <!-- ── SECTION 3: Fonctionnalités ─────────────────────────── -->
 
       <div class="chart-card">
-        <h3><i class="fas fa-comments" style="color:var(--leaf);margin-right:0.4rem;"></i>Messagerie intégrée</h3>
-        <p class="chart-card-sub">Note sur la messagerie (1 à 5 ★)</p>
+        <h3><i class="fas fa-comments" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="messaging_title">Messagerie intégrée</span></h3>
+        <p class="chart-card-sub" data-i18n="messaging_sub">Note sur la messagerie (1 à 5 ★)</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartMessagingRating"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-robot" style="color:var(--leaf);margin-right:0.4rem;"></i>Chatbot IA</h3>
-        <p class="chart-card-sub">Note sur le chatbot IA (1 à 5 ★)</p>
+        <h3><i class="fas fa-robot" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="chatbot_title">Chatbot IA</span></h3>
+        <p class="chart-card-sub" data-i18n="chatbot_sub">Note sur le chatbot IA (1 à 5 ★)</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartChatbotRating"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-award" style="color:#f59e0b;margin-right:0.4rem;"></i>Système de badges</h3>
-        <p class="chart-card-sub">Satisfaction envers le système de badges</p>
+        <h3><i class="fas fa-award" style="color:#f59e0b;margin-right:0.4rem;"></i><span data-i18n="badge_title">Système de badges</span></h3>
+        <p class="chart-card-sub" data-i18n="badge_sub">Satisfaction envers le système de badges</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartBadgeSatisfaction"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-book-open" style="color:var(--leaf);margin-right:0.4rem;"></i>Section Savoir-faire</h3>
-        <p class="chart-card-sub">Utilité des articles, vidéos et tutoriels</p>
+        <h3><i class="fas fa-book-open" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="savoirfaire_title">Section Savoir-faire</span></h3>
+        <p class="chart-card-sub" data-i18n="savoirfaire_sub">Utilité des articles, vidéos et tutoriels</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartSavoirFaire"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-circle-user" style="color:var(--leaf);margin-right:0.4rem;"></i>Page Profil</h3>
-        <p class="chart-card-sub">Utilité de la page profil (certification, badges, activité)</p>
+        <h3><i class="fas fa-circle-user" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="profile_title">Page Profil</span></h3>
+        <p class="chart-card-sub" data-i18n="profile_sub">Utilité de la page profil (certification, badges, activité)</p>
         <div class="chart-wrap" style="height:180px;"><canvas id="chartProfilePage"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-heart" style="color:#f59e0b;margin-right:0.4rem;"></i>Fonctionnalités préférées</h3>
-        <p class="chart-card-sub">Fonctionnalités les plus appréciées (choix multiple)</p>
+        <h3><i class="fas fa-heart" style="color:#f59e0b;margin-right:0.4rem;"></i><span data-i18n="favorite_title">Fonctionnalités préférées</span></h3>
+        <p class="chart-card-sub" data-i18n="favorite_sub">Fonctionnalités les plus appréciées (choix multiple)</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartFavoriteFeature"></canvas></div>
       </div>
 
       <!-- ── SECTION 4: Design & Interface ──────────────────────── -->
 
       <div class="chart-card">
-        <h3><i class="fas fa-palette" style="color:var(--leaf);margin-right:0.4rem;"></i>Palette de couleurs</h3>
-        <p class="chart-card-sub">Appréciation de la palette de couleurs</p>
+        <h3><i class="fas fa-palette" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="color_title">Palette de couleurs</span></h3>
+        <p class="chart-card-sub" data-i18n="color_sub">Appréciation de la palette de couleurs</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartColorScheme"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-text-height" style="color:var(--leaf);margin-right:0.4rem;"></i>Lisibilité des textes</h3>
-        <p class="chart-card-sub">Taille et lisibilité des textes dans l'app</p>
+        <h3><i class="fas fa-text-height" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="readability_title">Lisibilité des textes</span></h3>
+        <p class="chart-card-sub" data-i18n="readability_sub">Taille et lisibilité des textes dans l'app</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartTextReadability"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-compass" style="color:var(--leaf);margin-right:0.4rem;"></i>Navigation intuitive ?</h3>
-        <p class="chart-card-sub">Perception de la facilité de navigation</p>
+        <h3><i class="fas fa-compass" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="nav_title">Navigation intuitive ?</span></h3>
+        <p class="chart-card-sub" data-i18n="nav_sub">Perception de la facilité de navigation</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartNavIntuition"></canvas></div>
       </div>
 
       <!-- ── SECTION 5: Recommandation ────────────────────────── -->
 
       <div class="chart-card">
-        <h3><i class="fas fa-calendar-check" style="color:var(--leaf);margin-right:0.4rem;"></i>Fréquence d'utilisation prévue</h3>
-        <p class="chart-card-sub">À quelle fréquence les utilisateurs prévoient-ils d'utiliser l'app ?</p>
+        <h3><i class="fas fa-calendar-check" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="frequency_title">Fréquence d'utilisation prévue</span></h3>
+        <p class="chart-card-sub" data-i18n="frequency_sub">À quelle fréquence les utilisateurs prévoient-ils d'utiliser l'app ?</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartUsageFrequency"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <h3><i class="fas fa-share-nodes" style="color:var(--leaf);margin-right:0.4rem;"></i>Recommandation</h3>
-        <p class="chart-card-sub">Recommanderiez-vous RecapLink ?</p>
+        <h3><i class="fas fa-share-nodes" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="recommend_title">Recommandation</span></h3>
+        <p class="chart-card-sub" data-i18n="recommend_sub">Recommanderiez-vous RecapLink ?</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartWouldRecommend"></canvas></div>
       </div>
 
       <!-- ── Trend & Language ───────────────────────────────────── -->
 
       <div class="chart-card chart-card-wide">
-        <h3><i class="fas fa-chart-line" style="color:var(--leaf);margin-right:0.4rem;"></i>Tendance sur 30 jours</h3>
-        <p class="chart-card-sub">Nombre de soumissions par jour</p>
+        <h3><i class="fas fa-chart-line" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="trend_title">Tendance sur 30 jours</span></h3>
+        <p class="chart-card-sub" data-i18n="trend_sub">Nombre de soumissions par jour</p>
         <div class="chart-wrap" style="height:200px;"><canvas id="chartTrend"></canvas></div>
       </div>
 
       <div class="chart-card chart-card-wide">
-        <h3><i class="fas fa-language" style="color:var(--leaf);margin-right:0.4rem;"></i>Langues utilisées</h3>
-        <p class="chart-card-sub">Répartition par langue de soumission</p>
+        <h3><i class="fas fa-language" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="languages_title">Langues utilisées</span></h3>
+        <p class="chart-card-sub" data-i18n="languages_sub">Répartition par langue de soumission</p>
         <div class="lang-pills" id="langPills"></div>
       </div>
 
@@ -221,21 +281,213 @@
 <script>
 const API_BASE = 'https://api.recaplink.tn/api';
 
-const LABELS = {
-  language:         { fr:'Français', ar:'العربية', wo:'Wolof' },
-  colorScheme:      { excellent:'Excellent', good:'Bien', average:'Moyen', poor:'Mauvais' },
-  textReadability:  { very_clear:'Très lisible', clear:'Lisible', hard:'Difficile' },
-  navIntuition:     { very_intuitive:'Très intuitive', intuitive:'Intuitive', confusing:'Confuse', very_confusing:'Très confuse' },
-  savoirFaire:      { very_useful:'Très utile', useful:'Utile', neutral:'Neutre', not_useful:'Peu utile', not_used:'Pas utilisée' },
-  profilePage:      { very_useful:'Très utile', useful:'Utile', neutral:'Neutre', not_useful:'Peu utile' },
-  complexity:       { very_simple:'Très simple', simple:'Simple', moderate:'Modéré', complex:'Complexe', very_complex:'Très complexe' },
-  onboarding:       { excellent:'Excellent', good:'Bon', average:'Moyen', difficult:'Difficile' },
-  ease:             { very_easy:'Très facile', easy:'Facile', moderate:'Moyen', hard:'Difficile' },
-  badgeSatisfaction:{ very_satisfied:'Très satisfait', satisfied:'Satisfait', little:'Peu satisfait', not_satisfied:'Pas satisfait' },
-  favoriteFeature:  { collect:'Collecte', connect:'Réseau', badges:'Badges', ai_chatbot:'IA Chat', messaging:'Messagerie', eco_impact:'Éco-impact' },
-  usageFrequency:   { daily:'Chaque jour', weekly:'Chaque semaine', monthly:'Chaque mois', rarely:'Rarement', never:'Jamais' },
-  wouldRecommend:   { definitely:'Certainement', probably:'Probablement', maybe:'Peut-être', no:'Non' },
+// ── i18n ──────────────────────────────────────────────────────────
+const STATS_I18N = {
+  fr: {
+    dir: 'ltr', lang: 'fr',
+    pageTitle: 'RecapLink — Statistiques Feedback',
+    heroTitle: 'Statistiques Feedback',
+    heroSub: 'Données collectées depuis les retours utilisateurs RecapLink',
+    btnRefresh: 'Actualiser', btnReset: 'Réinitialiser', btnBack: 'Retour au site',
+    loading: 'Chargement des statistiques…',
+    errorTitle: 'Connexion impossible', errorBody: 'Impossible de joindre le serveur.', retry: 'Réessayer',
+    emptyTitle: 'Aucune donnée pour l\'instant', emptySub: 'Les statistiques apparaîtront dès les premiers retours reçus.', emptyLink: 'Visiter le site',
+    modalTitle: 'Réinitialiser toutes les données ?',
+    modalText: 'Cette action supprimera définitivement tous les feedbacks. Elle est irréversible.',
+    modalCancel: 'Annuler', modalConfirm: 'Supprimer tout',
+    cardTotal: 'Réponses totales', cardSince: 'depuis le lancement',
+    cardSat: 'Satisfaction moy.', cardDesign: 'Design moy.', cardMsg: 'Messagerie moy.', cardBot: 'Chatbot moy.',
+    cardWeek: 'Cette semaine', cardWeekSub: 'soumissions (7j)',
+    noNote: 'Aucune note',
+    labels: {
+      language:         { fr:'Français', ar:'العربية', wo:'Wolof' },
+      colorScheme:      { excellent:'Excellent', good:'Bien', average:'Moyen', poor:'Mauvais' },
+      textReadability:  { very_clear:'Très lisible', clear:'Lisible', hard:'Difficile' },
+      navIntuition:     { very_intuitive:'Très intuitive', intuitive:'Intuitive', confusing:'Confuse', very_confusing:'Très confuse' },
+      savoirFaire:      { very_useful:'Très utile', useful:'Utile', neutral:'Neutre', not_useful:'Peu utile', not_used:'Pas utilisée' },
+      profilePage:      { very_useful:'Très utile', useful:'Utile', neutral:'Neutre', not_useful:'Peu utile' },
+      complexity:       { very_simple:'Très simple', simple:'Simple', moderate:'Modéré', complex:'Complexe', very_complex:'Très complexe' },
+      onboarding:       { excellent:'Excellent', good:'Bon', average:'Moyen', difficult:'Difficile' },
+      ease:             { very_easy:'Très facile', easy:'Facile', moderate:'Moyen', hard:'Difficile' },
+      badgeSatisfaction:{ very_satisfied:'Très satisfait', satisfied:'Satisfait', little:'Peu satisfait', not_satisfied:'Pas satisfait' },
+      favoriteFeature:  { collect:'Collecte', connect:'Réseau', badges:'Badges', ai_chatbot:'IA Chat', messaging:'Messagerie', eco_impact:'Éco-impact' },
+      usageFrequency:   { daily:'Chaque jour', weekly:'Chaque semaine', monthly:'Chaque mois', rarely:'Rarement', never:'Jamais' },
+      wouldRecommend:   { definitely:'Certainement', probably:'Probablement', maybe:'Peut-être', no:'Non' },
+    },
+    easeLabels: { registration:'Inscription', postOffer:'Publier offre', searchCollector:'Trouver collecteur' },
+    responses: n => `${n} réponse${n>1?'s':''}`,
+    submissions: n => `${n} soumission${n>1?'s':''}`,
+    charts: {
+      satisfaction_title:'Satisfaction globale', satisfaction_sub:'Distribution des notes de satisfaction (1 à 5 ★)',
+      design_title:'Qualité du design visuel', design_sub:"Note sur le design / UX de l'application (1 à 5 ★)",
+      complexity_title:'Complexité perçue', complexity_sub:"L'application vous paraît-elle simple ou complexe ?",
+      onboarding_title:"Expérience d'onboarding", onboarding_sub:'Expérience lors de la première utilisation',
+      ease_title:'Facilité des actions clés', ease_sub:"Inscription, publication d'offre, recherche de collecteur",
+      messaging_title:'Messagerie intégrée', messaging_sub:'Note sur la messagerie (1 à 5 ★)',
+      chatbot_title:'Chatbot IA', chatbot_sub:'Note sur le chatbot IA (1 à 5 ★)',
+      badge_title:'Système de badges', badge_sub:'Satisfaction envers le système de badges',
+      savoirfaire_title:'Section Savoir-faire', savoirfaire_sub:'Utilité des articles, vidéos et tutoriels',
+      profile_title:'Page Profil', profile_sub:'Utilité de la page profil (certification, badges, activité)',
+      favorite_title:'Fonctionnalités préférées', favorite_sub:'Fonctionnalités les plus appréciées (choix multiple)',
+      color_title:'Palette de couleurs', color_sub:'Appréciation de la palette de couleurs',
+      readability_title:'Lisibilité des textes', readability_sub:"Taille et lisibilité des textes dans l'app",
+      nav_title:'Navigation intuitive ?', nav_sub:'Perception de la facilité de navigation',
+      frequency_title:"Fréquence d'utilisation prévue", frequency_sub:"À quelle fréquence les utilisateurs prévoient-ils d'utiliser l'app ?",
+      recommend_title:'Recommandation', recommend_sub:'Recommanderiez-vous RecapLink ?',
+      trend_title:'Tendance sur 30 jours', trend_sub:'Nombre de soumissions par jour',
+      languages_title:'Langues utilisées', languages_sub:'Répartition par langue de soumission',
+    },
+  },
+  ar: {
+    dir: 'rtl', lang: 'ar',
+    pageTitle: 'RecapLink — إحصاءات الآراء',
+    heroTitle: 'إحصاءات الآراء',
+    heroSub: 'بيانات مجمّعة من آراء مستخدمي RecapLink',
+    btnRefresh: 'تحديث', btnReset: 'إعادة تعيين', btnBack: 'العودة للموقع',
+    loading: 'جارٍ تحميل الإحصاءات…',
+    errorTitle: 'تعذّر الاتصال', errorBody: 'تعذّر الوصول إلى الخادم.', retry: 'إعادة المحاولة',
+    emptyTitle: 'لا توجد بيانات بعد', emptySub: 'ستظهر الإحصاءات بمجرد استلام أول رأي.', emptyLink: 'زيارة الموقع',
+    modalTitle: 'إعادة تعيين جميع البيانات؟',
+    modalText: 'سيؤدي هذا إلى حذف جميع الآراء نهائياً. لا يمكن التراجع عن هذا الإجراء.',
+    modalCancel: 'إلغاء', modalConfirm: 'حذف الكل',
+    cardTotal: 'إجمالي الردود', cardSince: 'منذ الإطلاق',
+    cardSat: 'متوسط الرضا', cardDesign: 'متوسط التصميم', cardMsg: 'متوسط المراسلة', cardBot: 'متوسط الروبوت',
+    cardWeek: 'هذا الأسبوع', cardWeekSub: 'إرسال (7 أيام)',
+    noNote: 'لا تقييم',
+    labels: {
+      language:         { fr:'الفرنسية', ar:'العربية', wo:'ولوف' },
+      colorScheme:      { excellent:'ممتاز', good:'جيد', average:'متوسط', poor:'ضعيف' },
+      textReadability:  { very_clear:'واضح جداً', clear:'واضح', hard:'صعب القراءة' },
+      navIntuition:     { very_intuitive:'سهل جداً', intuitive:'سهل', confusing:'مربك', very_confusing:'مربك جداً' },
+      savoirFaire:      { very_useful:'مفيد جداً', useful:'مفيد', neutral:'محايد', not_useful:'غير مفيد', not_used:'لم يُستخدم' },
+      profilePage:      { very_useful:'مفيد جداً', useful:'مفيد', neutral:'محايد', not_useful:'غير مفيد' },
+      complexity:       { very_simple:'بسيط جداً', simple:'بسيط', moderate:'متوسط', complex:'معقد', very_complex:'معقد جداً' },
+      onboarding:       { excellent:'ممتاز', good:'جيد', average:'متوسط', difficult:'صعب' },
+      ease:             { very_easy:'سهل جداً', easy:'سهل', moderate:'متوسط', hard:'صعب' },
+      badgeSatisfaction:{ very_satisfied:'راضٍ جداً', satisfied:'راضٍ', little:'قليل الرضا', not_satisfied:'غير راضٍ' },
+      favoriteFeature:  { collect:'الجمع', connect:'الشبكة', badges:'الشارات', ai_chatbot:'الذكاء الاصطناعي', messaging:'المراسلة', eco_impact:'الأثر البيئي' },
+      usageFrequency:   { daily:'يومياً', weekly:'أسبوعياً', monthly:'شهرياً', rarely:'نادراً', never:'أبداً' },
+      wouldRecommend:   { definitely:'بالتأكيد', probably:'على الأرجح', maybe:'ربما', no:'لا' },
+    },
+    easeLabels: { registration:'التسجيل', postOffer:'نشر عرض', searchCollector:'إيجاد جامع' },
+    responses: n => `${n} ردّ`,
+    submissions: n => `${n} إرسال`,
+    charts: {
+      satisfaction_title:'الرضا العام', satisfaction_sub:'توزيع تقييمات الرضا (1 إلى 5 ★)',
+      design_title:'جودة التصميم', design_sub:'تقييم تصميم / تجربة مستخدم التطبيق (1 إلى 5 ★)',
+      complexity_title:'التعقيد المُدرَك', complexity_sub:'هل يبدو التطبيق بسيطاً أم معقداً؟',
+      onboarding_title:'تجربة الانطلاق', onboarding_sub:'التجربة عند الاستخدام الأول',
+      ease_title:'سهولة الإجراءات الرئيسية', ease_sub:'التسجيل، نشر عرض، إيجاد جامع',
+      messaging_title:'المراسلة المدمجة', messaging_sub:'تقييم نظام المراسلة (1 إلى 5 ★)',
+      chatbot_title:'روبوت الذكاء الاصطناعي', chatbot_sub:'تقييم الروبوت الذكي (1 إلى 5 ★)',
+      badge_title:'نظام الشارات', badge_sub:'مستوى الرضا عن نظام الشارات',
+      savoirfaire_title:'قسم المهارات', savoirfaire_sub:'مدى فائدة المقالات ومقاطع الفيديو',
+      profile_title:'صفحة الملف الشخصي', profile_sub:'فائدة صفحة الملف (الشهادة، الشارات، النشاط)',
+      favorite_title:'الميزات المفضلة', favorite_sub:'الميزات الأكثر تقديراً (اختيار متعدد)',
+      color_title:'نظام الألوان', color_sub:'مدى تقدير لوحة الألوان',
+      readability_title:'قابلية قراءة النص', readability_sub:'حجم وقابلية قراءة النصوص في التطبيق',
+      nav_title:'التنقل سهل؟', nav_sub:'إدراك سهولة التنقل',
+      frequency_title:'تكرار الاستخدام المتوقع', frequency_sub:'بأي تكرار يخطط المستخدمون لاستخدام التطبيق؟',
+      recommend_title:'التوصية', recommend_sub:'هل توصي بـ RecapLink؟',
+      trend_title:'الاتجاه خلال 30 يوماً', trend_sub:'عدد الإرسالات اليومية',
+      languages_title:'اللغات المستخدمة', languages_sub:'التوزيع حسب لغة الإرسال',
+    },
+  },
+  wo: {
+    dir: 'ltr', lang: 'wo',
+    pageTitle: 'RecapLink — Statistiques Feedback',
+    heroTitle: 'Statistiques yi',
+    heroSub: 'Xibaar yi jëfandikoo yi ci RecapLink',
+    btnRefresh: 'Yeesal', btnReset: 'Seetël', btnBack: 'Dellu ci site bi',
+    loading: 'Jël statistiques yi…',
+    errorTitle: 'Mënuñu jëgël serveur bi', errorBody: 'Jàppali serveur bi dafa set.', retry: 'Dëkk tuuti',
+    emptyTitle: 'Amul dëkk bu bees', emptySub: 'Statistiques yi dinañu jëm ba la feedback yi ñëw.', emptyLink: 'Jëfandikoo site bi',
+    modalTitle: 'Seetël données yi bëpp?',
+    modalText: 'Liggeey bii dinaa dem ak feedback yi bëpp. Mënuñu dellu.',
+    modalCancel: 'Bàyyi', modalConfirm: 'Fàtte bëpp',
+    cardTotal: 'Tontu yi bëpp', cardSince: 'từ jël',
+    cardSat: 'Tang. satisfaction', cardDesign: 'Tang. design', cardMsg: 'Tang. messagerie', cardBot: 'Tang. chatbot',
+    cardWeek: 'Ayu-bés bi', cardWeekSub: 'yónneen (7 fan)',
+    noNote: 'Amul not',
+    labels: {
+      language:         { fr:'Français', ar:'Arabe', wo:'Wolof' },
+      colorScheme:      { excellent:'Rafet lool', good:'Rafet', average:'Dëkk', poor:'Baax woon' },
+      textReadability:  { very_clear:'Gëna yees lool', clear:'Yees', hard:'Doy gaaw' },
+      navIntuition:     { very_intuitive:'Yomb lool', intuitive:'Yomb', confusing:'Mbedd', very_confusing:'Mbedd lool' },
+      savoirFaire:      { very_useful:'Baax lool', useful:'Baax', neutral:'Dëkk', not_useful:'Baaxul', not_used:'Jëfandikuñu ko' },
+      profilePage:      { very_useful:'Baax lool', useful:'Baax', neutral:'Dëkk', not_useful:'Baaxul' },
+      complexity:       { very_simple:'Yomb lool', simple:'Yomb', moderate:'Dëkk', complex:'Doy', very_complex:'Doy lool' },
+      onboarding:       { excellent:'Rafet lool', good:'Baax', average:'Dëkk', difficult:'Doy' },
+      ease:             { very_easy:'Yomb lool', easy:'Yomb', moderate:'Dëkk', hard:'Doy' },
+      badgeSatisfaction:{ very_satisfied:'Xam lool', satisfied:'Xam', little:'Tuuti', not_satisfied:'Xamul' },
+      favoriteFeature:  { collect:'Collecte', connect:'Réseau', badges:'Badges', ai_chatbot:'IA Chat', messaging:'Messagerie', eco_impact:'Éco-impact' },
+      usageFrequency:   { daily:'Fan bu nekk', weekly:'Ayu-bés', monthly:'Weer', rarely:'Mbir mbir', never:'Deedéet' },
+      wouldRecommend:   { definitely:'Waaw, dëgg', probably:'Ci kanam', maybe:'Soxor', no:'Déedéet' },
+    },
+    easeLabels: { registration:'Dugël', postOffer:'Bind offre', searchCollector:'Yéeg collecteur' },
+    responses: n => `${n} tontu`,
+    submissions: n => `${n} yónneen`,
+    charts: {
+      satisfaction_title:'Satisfaction yi', satisfaction_sub:'Xam-xam satisfaction (1 ak 5 ★)',
+      design_title:'Jariñu design bi', design_sub:'Not design / UX (1 ak 5 ★)',
+      complexity_title:'Lu doy ci app bi', complexity_sub:'App bi dafa yomb walla doy?',
+      onboarding_title:'Tàng bu njëk', onboarding_sub:'Jëfandikoo bu njëk',
+      ease_title:'Yomb ci liggey yu mag', ease_sub:'Dugël, bind offre, yéeg collecteur',
+      messaging_title:'Messagerie bi', messaging_sub:'Not messagerie (1 ak 5 ★)',
+      chatbot_title:'Chatbot IA bi', chatbot_sub:'Not chatbot (1 ak 5 ★)',
+      badge_title:'Badge yi', badge_sub:'Lu neex ci badge yi',
+      savoirfaire_title:'Savoir-faire bi', savoirfaire_sub:'Baax ak articles, vidéo ak tutoriels yi',
+      profile_title:'Xët profil bi', profile_sub:'Baax profil bi (sertifikaa, badge, liggey)',
+      favorite_title:'Fonctionnalité yu neex', favorite_sub:'Fonctionnalité yu gëna neex (choix bu bari)',
+      color_title:'Xëriñ yu dëkk', color_sub:'Neex bi ci xëriñ yi',
+      readability_title:'Yees tekki', readability_sub:'Mag ak yees ci tekki yi',
+      nav_title:'Navigation yomb?', nav_sub:'Xam lu neex ci navigation bi',
+      frequency_title:'Ñaata lañu soxor jëfandikoo', frequency_sub:'Ñaata fan fan jëfandikooñu app bi?',
+      recommend_title:'Sàggal', recommend_sub:'Danga sàggal RecapLink?',
+      trend_title:'Tendance 30 fan', trend_sub:'Ñaata yónneen fan bu nekk',
+      languages_title:'Làkk yi jëfandikoo', languages_sub:'Répartition ci làkk yi',
+    },
+  },
 };
+
+let statsLang = 'fr';
+function t() { return STATS_I18N[statsLang]; }
+let LABELS = t().labels;
+
+function switchStatsLang(lang) {
+  statsLang = lang;
+  LABELS = t().labels;
+  const tl = t();
+  document.getElementById('htmlRoot').setAttribute('lang', lang);
+  document.getElementById('htmlRoot').setAttribute('dir', tl.dir);
+  document.getElementById('pageTitle').textContent = tl.pageTitle;
+  document.getElementById('heroTitle').textContent = tl.heroTitle;
+  document.getElementById('heroSub').textContent = tl.heroSub;
+  document.getElementById('btnRefresh').textContent = tl.btnRefresh;
+  document.getElementById('btnReset').textContent = tl.btnReset;
+  document.getElementById('btnBack').textContent = tl.btnBack;
+  document.getElementById('txtLoading').textContent = tl.loading;
+  document.getElementById('txtErrorTitle').textContent = tl.errorTitle;
+  document.getElementById('txtErrorBody').textContent = tl.errorBody;
+  document.getElementById('txtRetry').textContent = tl.retry;
+  document.getElementById('txtEmptyTitle').textContent = tl.emptyTitle;
+  document.getElementById('txtEmptySub').textContent = tl.emptySub;
+  document.getElementById('txtEmptyLink').textContent = tl.emptyLink;
+  document.getElementById('modalTitle').textContent = tl.modalTitle;
+  document.getElementById('modalText').textContent = tl.modalText;
+  document.getElementById('modalCancelBtn').textContent = tl.modalCancel;
+  document.getElementById('modalConfirmBtn').textContent = tl.modalConfirm;
+  document.querySelectorAll('.stats-lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === lang)
+  );
+  // translate chart titles/subs
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = tl.charts && tl.charts[key];
+    if (val) el.textContent = val;
+  });
+  if (lastStatsData) renderStats(lastStatsData);
+}
 
 const PALETTE        = ['#3d7a1a','#5a9e2a','#9fd176','#c7e6b0','#65a30d','#2e6610','#eef6e8','#16a34a'];
 const STAR_COLORS    = ['#dc2626','#ea580c','#ca8a04','#65a30d','#16a34a'];
@@ -243,6 +495,7 @@ const RECOMMEND_CLRS = ['#16a34a','#65a30d','#ca8a04','#dc2626'];
 const EASE_CLRS      = ['#16a34a','#65a30d','#ca8a04','#dc2626'];
 
 let chartInstances = {};
+let lastStatsData = null;
 
 function destroyChart(id) {
   if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
@@ -270,6 +523,7 @@ async function loadStats() {
     const res = await fetch(`${API_BASE}/feedback/stats`);
     if (!res.ok) throw new Error();
     const data = await res.json();
+    lastStatsData = data;
     loading.style.display = 'none'; content.style.display = 'block'; icon.classList.remove('fa-spin');
     renderStats(data);
   } catch {
@@ -318,6 +572,7 @@ function renderStats(data) {
 
 // ── Summary cards ────────────────────────────────────────────────
 function renderSummary(data) {
+  const tl = t();
   const weekCutoff = new Date(); weekCutoff.setDate(weekCutoff.getDate()-7);
   const weekCount = (data.recentTrend||[]).filter(d=>new Date(d.date)>=weekCutoff).reduce((s,d)=>s+d.count,0);
   const avgS = data.averageSatisfaction   || 0;
@@ -326,34 +581,34 @@ function renderSummary(data) {
   const avgC = data.averageChatbotRating  || 0;
   document.getElementById('summaryCards').innerHTML = `
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-inbox" style="margin-right:0.35rem;"></i>Réponses totales</div>
+      <div class="stat-card-label"><i class="fas fa-inbox" style="margin-right:0.35rem;"></i>${tl.cardTotal}</div>
       <div class="stat-card-value">${data.total}</div>
-      <div class="stat-card-sub">depuis le lancement</div>
+      <div class="stat-card-sub">${tl.cardSince}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-star" style="margin-right:0.35rem;color:#f59e0b;"></i>Satisfaction moy.</div>
+      <div class="stat-card-label"><i class="fas fa-star" style="margin-right:0.35rem;color:#f59e0b;"></i>${tl.cardSat}</div>
       <div class="stat-card-value">${avgS>0?avgS.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgS>0?starsHtml(avgS)+' / 5':'Aucune note'}</div>
+      <div class="stat-card-sub stat-stars">${avgS>0?starsHtml(avgS)+' / 5':tl.noNote}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-paintbrush" style="margin-right:0.35rem;color:var(--leaf);"></i>Design moy.</div>
+      <div class="stat-card-label"><i class="fas fa-paintbrush" style="margin-right:0.35rem;color:var(--leaf);"></i>${tl.cardDesign}</div>
       <div class="stat-card-value">${avgD>0?avgD.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgD>0?starsHtml(avgD)+' / 5':'Aucune note'}</div>
+      <div class="stat-card-sub stat-stars">${avgD>0?starsHtml(avgD)+' / 5':tl.noNote}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-comments" style="margin-right:0.35rem;color:var(--leaf);"></i>Messagerie moy.</div>
+      <div class="stat-card-label"><i class="fas fa-comments" style="margin-right:0.35rem;color:var(--leaf);"></i>${tl.cardMsg}</div>
       <div class="stat-card-value">${avgM>0?avgM.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgM>0?starsHtml(avgM)+' / 5':'Aucune note'}</div>
+      <div class="stat-card-sub stat-stars">${avgM>0?starsHtml(avgM)+' / 5':tl.noNote}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-robot" style="margin-right:0.35rem;color:var(--leaf);"></i>Chatbot moy.</div>
+      <div class="stat-card-label"><i class="fas fa-robot" style="margin-right:0.35rem;color:var(--leaf);"></i>${tl.cardBot}</div>
       <div class="stat-card-value">${avgC>0?avgC.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgC>0?starsHtml(avgC)+' / 5':'Aucune note'}</div>
+      <div class="stat-card-sub stat-stars">${avgC>0?starsHtml(avgC)+' / 5':tl.noNote}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-calendar-week" style="margin-right:0.35rem;"></i>Cette semaine</div>
+      <div class="stat-card-label"><i class="fas fa-calendar-week" style="margin-right:0.35rem;"></i>${tl.cardWeek}</div>
       <div class="stat-card-value">${weekCount}</div>
-      <div class="stat-card-sub">soumissions (7j)</div>
+      <div class="stat-card-sub">${tl.cardWeekSub}</div>
     </div>`;
 }
 
@@ -371,7 +626,7 @@ function renderStarBar(canvasId, dist, total) {
       responsive:true, maintainAspectRatio:false,
       plugins: {
         legend:{display:false},
-        tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s) · ${total>0?Math.round(c.raw/total*100):0}%`}}
+        tooltip:{callbacks:{label:c=>` ${t().responses(c.raw)} · ${total>0?Math.round(c.raw/total*100):0}%`}}
       },
       scales:{
         y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
@@ -419,7 +674,7 @@ function renderHBar(canvasId, dist, labelMap, colors) {
     data:{labels,datasets:[{data:values,backgroundColor:colors.slice(0,labels.length),borderRadius:8,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s)`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${t().responses(c.raw)}`}}},
       scales:{
         x:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
         y:{ticks:{font:{family:'Nunito',size:11,weight:'600'}},grid:{display:false}}
@@ -442,7 +697,7 @@ function renderComplexityBar(canvasId, dist) {
     data:{labels,datasets:[{data:values,backgroundColor:colors,borderRadius:8,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s)`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${t().responses(c.raw)}`}}},
       scales:{
         x:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
         y:{ticks:{font:{family:'Nunito',size:11}},grid:{display:false}}
@@ -456,10 +711,11 @@ function renderEaseComparison(canvasId, dists) {
   destroyChart(canvasId);
   const order  = ['very_easy','easy','moderate','hard'];
   const labels = order.map(k=>labelOf(LABELS.ease,k));
+  const el = t().easeLabels;
   const datasets = [
-    { label:'Inscription', data:order.map(k=>dists.registrationEase[k]||0),    backgroundColor:'rgba(22,163,74,0.8)',  borderRadius:6 },
-    { label:'Publier offre',data:order.map(k=>dists.postOfferEase[k]||0),       backgroundColor:'rgba(101,163,13,0.8)', borderRadius:6 },
-    { label:'Trouver collecteur',data:order.map(k=>dists.searchCollectorEase[k]||0), backgroundColor:'rgba(202,138,4,0.8)',  borderRadius:6 },
+    { label:el.registration,     data:order.map(k=>dists.registrationEase[k]||0),    backgroundColor:'rgba(22,163,74,0.8)',  borderRadius:6 },
+    { label:el.postOffer,        data:order.map(k=>dists.postOfferEase[k]||0),        backgroundColor:'rgba(101,163,13,0.8)', borderRadius:6 },
+    { label:el.searchCollector,  data:order.map(k=>dists.searchCollectorEase[k]||0),  backgroundColor:'rgba(202,138,4,0.8)',  borderRadius:6 },
   ];
   const ctx = document.getElementById(canvasId).getContext('2d');
   chartInstances[canvasId] = new Chart(ctx, {
@@ -492,7 +748,7 @@ function renderRecommendBar(canvasId, dist) {
     data:{labels,datasets:[{data:values,backgroundColor:RECOMMEND_CLRS,borderRadius:8,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} réponse(s)`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${t().responses(c.raw)}`}}},
       scales:{
         x:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
         y:{ticks:{font:{family:'Nunito',size:12,weight:'600'}},grid:{display:false}}
@@ -516,7 +772,7 @@ function renderTrendChart(trend) {
       pointRadius:values.map(v=>v>0?4:0),pointBackgroundColor:'#3d7a1a',pointBorderColor:'white',pointBorderWidth:2}]},
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>trend[c[0].dataIndex].date,label:c=>` ${c.raw} soumission(s)`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>trend[c[0].dataIndex].date,label:c=>` ${t().submissions(c.raw)}`}}},
       scales:{
         y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Nunito'}},grid:{color:'rgba(0,0,0,0.04)'}},
         x:{ticks:{font:{family:'Nunito',size:10},maxRotation:0},grid:{display:false}}
@@ -529,13 +785,39 @@ function renderTrendChart(trend) {
 function renderLangPills(dist, total) {
   const container = document.getElementById('langPills');
   const entries = sortDesc(dist||{});
-  if (!entries.length) { container.innerHTML='<p style="color:var(--muted);font-size:0.85rem;">Aucune donnée</p>'; return; }
+  if (!entries.length) { container.innerHTML=`<p style="color:var(--muted);font-size:0.85rem;">${t().emptyTitle}</p>`; return; }
   container.innerHTML = entries.map(([lang,count])=>`
     <div class="lang-pill">
       <div class="lang-pill-dot"></div>
-      <span><strong>${labelOf(LABELS.language,lang)}</strong> — ${count} réponse${count>1?'s':''} (${total>0?Math.round(count/total*100):0}%)</span>
+      <span><strong>${labelOf(LABELS.language,lang)}</strong> — ${t().responses(count)} (${total>0?Math.round(count/total*100):0}%)</span>
     </div>`).join('');
 }
+
+// ── Reset ─────────────────────────────────────────────────────────
+function confirmReset() {
+  const modal = document.getElementById('resetModal');
+  modal.style.display = 'flex';
+}
+function closeResetModal() {
+  document.getElementById('resetModal').style.display = 'none';
+}
+async function doReset() {
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const res = await fetch(`${API_BASE}/feedback/reset`, { method: 'DELETE' });
+    if (!res.ok) throw new Error();
+    closeResetModal();
+    lastStatsData = null;
+    loadStats();
+  } catch {
+    btn.disabled = false;
+    btn.textContent = t().modalConfirm;
+    alert('Erreur lors de la réinitialisation.');
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeResetModal(); });
 
 document.addEventListener('DOMContentLoaded', loadStats);
 </script>
