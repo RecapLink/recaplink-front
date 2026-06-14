@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="htmlRoot">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,15 +9,40 @@
   <meta property="og:title" content="RecapLink — Bientôt disponible" />
   <meta property="og:description" content="RecapLink, la première plateforme mobile dédiée au recyclage du plastique en Tunisie et au Sénégal. Connectez collecteurs et recycleurs pour un impact écologique concret. Lancement officiel le 08/10/2026." />
   <meta property="og:image" content="https://www.recaplink.tn/images/recaplink.png" />
-  <meta property="og:url" content="https://www.recaplink.tn" />  
+  <meta property="og:url" content="https://www.recaplink.tn" />
   <title>RecapLink — Bientôt disponible</title>
   <link rel="icon" type="image/png" href="images/recaplink.png" />
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet" />
-  <!-- Stylesheet -->
   <link rel="stylesheet" href="css/style.css" />
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    .index-lang-switcher {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .index-lang-btn {
+      padding: 0.28rem 0.65rem;
+      border: 1.5px solid rgba(61,122,26,0.3);
+      border-radius: 7px;
+      background: transparent;
+      color: var(--leaf, #3d7a1a);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .index-lang-btn.active,
+    .index-lang-btn:hover {
+      background: var(--leaf, #3d7a1a);
+      border-color: var(--leaf, #3d7a1a);
+      color: white;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,55 +51,58 @@
   <div class="logo-wrap">
     <img src="images/recaplink.png" style="width: 150px; margin-right: 0.75rem;">
   </div>
+  <div class="index-lang-switcher">
+    <button class="index-lang-btn active" data-lang="fr" onclick="switchIndexLang('fr')">🇫🇷 FR</button>
+    <button class="index-lang-btn" data-lang="ar" onclick="switchIndexLang('ar')">🇹🇳 AR</button>
+    <button class="index-lang-btn" data-lang="wo" onclick="switchIndexLang('wo')">🇸🇳 WO</button>
+  </div>
   <div class="badge-bbw">
-   <img src="images/bbw_international.svg" style="width: 25%;"> Un projet de <br>
+    <img src="images/bbw_international.svg" style="width: 25%;"> <span data-i18n="nav_projet">Un projet de</span> <br>
     <strong style="color: #c0183a;">Bildungswerk der Bayerischen Wirtschaft (bbw)</strong>
   </div>
 </nav>
 
 <!-- ufuk -->
 <section class="ufuk">
-  <!-- LEFT: Text content -->
   <div class="ufuk-content">
-    
 
     <h1 class="fade-up delay-1">
       Coming<br><em>Soon.</em>
     </h1>
 
-    <p class="ufuk-sub fade-up delay-2">
+    <p class="ufuk-sub fade-up delay-2" data-i18n="hero_sub">
       <strong>RecapLink</strong> est la première plateforme mobile dédiée au recyclage du plastique en <strong>Tunisie</strong> et au <strong>Sénégal</strong> — connectant collecteurs et recycleurs pour un impact écologique concret.
     </p>
 
     <div class="countdown-wrap fade-up delay-3">
       <div class="count-block">
         <div class="count-num" id="days">--</div>
-        <div class="count-label">Jours</div>
+        <div class="count-label" data-i18n="cd_days">Jours</div>
       </div>
       <div class="count-sep">:</div>
       <div class="count-block">
         <div class="count-num" id="hours">--</div>
-        <div class="count-label">Heures</div>
+        <div class="count-label" data-i18n="cd_hours">Heures</div>
       </div>
       <div class="count-sep">:</div>
       <div class="count-block">
         <div class="count-num" id="minutes">--</div>
-        <div class="count-label">Minutes</div>
+        <div class="count-label" data-i18n="cd_minutes">Minutes</div>
       </div>
       <div class="count-sep">:</div>
       <div class="count-block">
         <div class="count-num" id="seconds">--</div>
-        <div class="count-label">Secondes</div>
+        <div class="count-label" data-i18n="cd_seconds">Secondes</div>
       </div>
     </div>
 
-    <div class="launch-date fade-up delay-4">Lancement officiel — Mercredi 08 Octobre 2026</div>
+    <div class="launch-date fade-up delay-4" data-i18n="launch_date">Lancement officiel — Mercredi 08 Octobre 2026</div>
 
     <a class="figma-proto-btn fade-up delay-4"
        href="https://www.figma.com/proto/2NSgpazb2JTXX8yept8u91/RecapLink?node-id=1-2&t=yJ7ul3nUPeaJGPVS-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A2&show-proto-sidebar=1"
        target="_blank" rel="noopener noreferrer">
       <i class="fas fa-mobile-screen-button"></i>
-      Tester le prototype
+      <span data-i18n="proto_btn">Tester le prototype</span>
       <i class="fas fa-arrow-up-right-from-square"></i>
     </a>
   </div>
@@ -98,33 +126,30 @@
 <section class="app-preview-section">
   <div class="app-preview-inner">
     <div class="app-preview-text">
-      <p class="section-label">L'application mobile</p>
-      <h2 class="section-title" style="max-width:400px;">Une expérience pensée pour vous.</h2>
-      <p style="color:var(--muted); font-weight:300; line-height:1.7; margin-bottom:1.5rem;">
+      <p class="section-label" data-i18n="app_label">L'application mobile</p>
+      <h2 class="section-title" style="max-width:400px;" data-i18n="app_title">Une expérience pensée pour vous.</h2>
+      <p style="color:var(--muted); font-weight:300; line-height:1.7; margin-bottom:1.5rem;" data-i18n="app_desc">
         Disponible sur iOS et Android, RecapLink vous accompagne à chaque étape — de la déclaration de collecte jusqu'à la mise en relation avec les recycleurs certifiés.
       </p>
       <ul class="app-features-list">
-        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Interface simple et intuitive</li>
-        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Géolocalisation intégrée</li>
-        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Chatbot IA disponible 24h/24</li>
-        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Suivi en temps réel</li>
+        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> <span data-i18n="app_f1">Interface simple et intuitive</span></li>
+        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> <span data-i18n="app_f2">Géolocalisation intégrée</span></li>
+        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> <span data-i18n="app_f3">Chatbot IA disponible 24h/24</span></li>
+        <li><span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> <span data-i18n="app_f4">Suivi en temps réel</span></li>
       </ul>
     </div>
 
-    <!-- Phone mockup -->
     <div class="app-preview-phone">
       <div class="preview-phone-wrap">
-        <!-- Phone shell -->
         <div class="preview-phone-frame">
           <div class="preview-phone-notch"></div>
           <div class="preview-phone-btn btn-vol1"></div>
           <div class="preview-phone-btn btn-vol2"></div>
           <div class="preview-phone-btn btn-power"></div>
           <div class="preview-phone-screen">
-          <img src="images/recaplink-tunisie.jpeg">  
+            <img src="images/recaplink-tunisie.jpeg">
           </div>
         </div>
-        <!-- Decorative rings -->
         <div class="preview-ring ring1"></div>
         <div class="preview-ring ring2"></div>
       </div>
@@ -132,53 +157,52 @@
   </div>
 </section>
 
-
 <!-- LEAF DIVIDER 2 -->
 <div class="leaf-divider"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12" stroke="#9fd176" stroke-width="1.5" stroke-linecap="round"/><path d="M12 22C12 16 8 10 2 9" stroke="#9fd176" stroke-width="1.5" stroke-linecap="round"/><path d="M12 22C12 16 16 10 22 9" stroke="#9fd176" stroke-width="1.5" stroke-linecap="round"/></svg></div>
 
 <!-- FEATURES -->
 <section class="features-section">
-  <p class="section-label">Ce que vous pouvez faire</p>
-  <h2 class="section-title">Tout ce dont vous avez besoin, dans une seule application.</h2>
+  <p class="section-label" data-i18n="feat_label">Ce que vous pouvez faire</p>
+  <h2 class="section-title" data-i18n="feat_title">Tout ce dont vous avez besoin, dans une seule application.</h2>
 
   <div class="features-grid">
     <div class="feature-card">
       <div class="feature-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3d7a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8L12 3L3 8M21 8V16L12 21M21 8L12 13M12 21L3 16V8M12 21V13M3 8L12 13"/></svg></div>
-      <h3>Collecte facilitée</h3>
-      <p>Déclarez et gérez vos collectes de plastique en quelques clics, directement depuis votre téléphone.</p>
+      <h3 data-i18n="fc1_title">Collecte facilitée</h3>
+      <p data-i18n="fc1_desc">Déclarez et gérez vos collectes de plastique en quelques clics, directement depuis votre téléphone.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3d7a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M2 20c0-3.3 2.7-6 6-6"/><circle cx="16" cy="8" r="3"/><path d="M22 20c0-3.3-2.7-6-6-6"/><path d="M12 14c2 0 4 1 5 3M7 17c1-2 3-3 5-3"/></svg></div>
-      <h3>Mise en relation</h3>
-      <p>Connectez-vous directement avec des recycleurs certifiés près de chez vous, en toute confiance.</p>
+      <h3 data-i18n="fc2_title">Mise en relation</h3>
+      <p data-i18n="fc2_desc">Connectez-vous directement avec des recycleurs certifiés près de chez vous, en toute confiance.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3d7a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="4" width="4" height="17" rx="1"/><path d="M3 3h18"/></svg></div>
-      <h3>Tableau de bord</h3>
-      <p>Suivez vos offres, volumes collectés et votre impact environnemental en temps réel.</p>
+      <h3 data-i18n="fc3_title">Tableau de bord</h3>
+      <p data-i18n="fc3_desc">Suivez vos offres, volumes collectés et votre impact environnemental en temps réel.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3d7a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M12 15v6M9 18l3 3 3-3"/><path d="M8.5 6.5l1 2 2 .5-1.5 1.5.3 2L12 11.5l1.7.9.3-2L12.5 9l2-.5 1-2-1.5.5L12 6l-1.5 1.5L8.5 6.5z" fill="#3d7a1a" stroke="none"/></svg></div>
-      <h3>Système de badges</h3>
-      <p>Gagnez des badges selon vos performances et contributions à l'économie circulaire.</p>
+      <h3 data-i18n="fc4_title">Système de badges</h3>
+      <p data-i18n="fc4_desc">Gagnez des badges selon vos performances et contributions à l'économie circulaire.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3d7a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><circle cx="9" cy="14" r="1.5" fill="#3d7a1a" stroke="none"/><circle cx="15" cy="14" r="1.5" fill="#3d7a1a" stroke="none"/><path d="M8 18h8"/><path d="M7 8h10"/></svg></div>
-      <h3>Assistant IA</h3>
-      <p>Un chatbot disponible 24h/24 pour répondre à toutes vos questions sur le recyclage.</p>
+      <h3 data-i18n="fc5_title">Assistant IA</h3>
+      <p data-i18n="fc5_desc">Un chatbot disponible 24h/24 pour répondre à toutes vos questions sur le recyclage.</p>
     </div>
     <div class="feature-card" style="background: var(--green-50); border-color: rgba(90,158,42,0.25);">
       <div class="feature-icon" style="background: white;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3d7a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
-      <h3>Impact écologique</h3>
-      <p>Contribuez directement à la réduction des déchets plastiques et à un avenir plus propre.</p>
+      <h3 data-i18n="fc6_title">Impact écologique</h3>
+      <p data-i18n="fc6_desc">Contribuez directement à la réduction des déchets plastiques et à un avenir plus propre.</p>
     </div>
   </div>
 </section>
 
 <!-- COUNTRIES -->
 <section class="countries-section">
-  <p class="section-label">Notre couverture géographique</p>
-  <h2 class="section-title">Deux pays, un seul écosystème.</h2>
+  <p class="section-label" data-i18n="country_label">Notre couverture géographique</p>
+  <h2 class="section-title" data-i18n="country_title">Deux pays, un seul écosystème.</h2>
   <div class="countries-grid">
     <div class="country-card">
       <div class="country-flag"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="70" height="47" style="border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
@@ -189,7 +213,7 @@
   <polygon points="430,220 445,265 492,265 455,290 470,335 430,310 390,335 405,290 368,265 415,265" fill="#E70013" transform="rotate(20,430,280)"/>
 </svg></div>
       <div class="country-name">Tunisie</div>
-      <div class="country-tag">Disponible au lancement</div>
+      <div class="country-tag" data-i18n="country_available">Disponible au lancement</div>
     </div>
     <div class="plus-connector">+</div>
     <div class="country-card">
@@ -200,7 +224,7 @@
   <polygon points="450,210 463,250 505,250 472,273 484,313 450,290 416,313 428,273 395,250 437,250" fill="#00853F"/>
 </svg></div>
       <div class="country-name">Sénégal</div>
-      <div class="country-tag">Disponible au lancement</div>
+      <div class="country-tag" data-i18n="country_available">Disponible au lancement</div>
     </div>
   </div>
 </section>
@@ -208,16 +232,16 @@
 <!-- PARTNER STRIP -->
 <div class="partner-strip">
   <span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6e4e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="13" rx="1"/><path d="M3 9l9-7 9 7"/><rect x="9" y="14" width="6" height="8"/><line x1="9" y1="14" x2="9" y2="22"/><line x1="15" y1="14" x2="15" y2="22"/></svg></span>
-  <span>Un projet de</span>
+  <span data-i18n="partner_text">Un projet de</span>
   <span class="partner-name">Bildungswerk der Bayerischen Wirtschaft (bbw)</span>
 </div>
 
 <!-- CONTACT -->
 <section class="contact-section">
   <div>
-    <p class="section-label">Assistance & Contact</p>
-    <h2 class="section-title">Une question ? On est là.</h2>
-    <p>Notre équipe est disponible du lundi au vendredi pour répondre à vos questions et vous accompagner.</p>
+    <p class="section-label" data-i18n="contact_label">Assistance & Contact</p>
+    <h2 class="section-title" data-i18n="contact_title">Une question ? On est là.</h2>
+    <p data-i18n="contact_desc">Notre équipe est disponible du lundi au vendredi pour répondre à vos questions et vous accompagner.</p>
 
     <div class="contact-items">
       <a href="tel:52056778" class="contact-item">
@@ -238,14 +262,14 @@
   <div class="contact-visual">
     <img src="images/logo-ufuk.png" style="width: 15%;">
     <h4>Ufuk Connect</h4>
-    <p>Conception & développement</p>
-    <div class="hours-badge">Lun – Ven · 9h00 → 17h00</div>
+    <p data-i18n="contact_ufuk_sub">Conception & développement</p>
+    <div class="hours-badge" data-i18n="contact_hours">Lun – Ven · 9h00 → 17h00</div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <p>© 2026 RecapLink — Tous droits réservés. Conçu par <a href="http://www.ufuk.tn" style="color:var(--leaf); text-decoration:none;">Ufuk Connect</a>.</p>
+  <p><span data-i18n="footer_copy">© 2026 RecapLink — Tous droits réservés. Conçu par</span> <a href="http://www.ufuk.tn" style="color:var(--leaf); text-decoration:none;">Ufuk Connect</a>.</p>
   <div class="footer-links">
     <a href="http://www.recaplink.tn">recaplink.tn</a>
     <a href="http://www.ufuk.tn">ufuk.tn</a>
@@ -255,33 +279,145 @@
 </footer>
 
 <script>
-  const target = new Date('2026-10-08T00:00:00').getTime();
+// ── Countdown ────────────────────────────────────────────────────
+const target = new Date('2026-10-08T00:00:00').getTime();
+function updateCountdown() {
+  const diff = target - Date.now();
+  if (diff <= 0) { ['days','hours','minutes','seconds'].forEach(id => document.getElementById(id).textContent='00'); return; }
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('days').textContent    = pad(Math.floor(diff/86400000));
+  document.getElementById('hours').textContent   = pad(Math.floor((diff%86400000)/3600000));
+  document.getElementById('minutes').textContent = pad(Math.floor((diff%3600000)/60000));
+  document.getElementById('seconds').textContent = pad(Math.floor((diff%60000)/1000));
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
 
-  function updateCountdown() {
-    const now = Date.now();
-    const diff = target - now;
+// ── i18n ─────────────────────────────────────────────────────────
+const INDEX_I18N = {
+  fr: {
+    dir: 'ltr',
+    nav_projet: 'Un projet de',
+    hero_sub: '<strong>RecapLink</strong> est la première plateforme mobile dédiée au recyclage du plastique en <strong>Tunisie</strong> et au <strong>Sénégal</strong> — connectant collecteurs et recycleurs pour un impact écologique concret.',
+    cd_days: 'Jours', cd_hours: 'Heures', cd_minutes: 'Minutes', cd_seconds: 'Secondes',
+    launch_date: 'Lancement officiel — Mercredi 08 Octobre 2026',
+    proto_btn: 'Tester le prototype',
+    app_label: 'L\'application mobile',
+    app_title: 'Une expérience pensée pour vous.',
+    app_desc: 'Disponible sur iOS et Android, RecapLink vous accompagne à chaque étape — de la déclaration de collecte jusqu\'à la mise en relation avec les recycleurs certifiés.',
+    app_f1: 'Interface simple et intuitive',
+    app_f2: 'Géolocalisation intégrée',
+    app_f3: 'Chatbot IA disponible 24h/24',
+    app_f4: 'Suivi en temps réel',
+    feat_label: 'Ce que vous pouvez faire',
+    feat_title: 'Tout ce dont vous avez besoin, dans une seule application.',
+    fc1_title: 'Collecte facilitée', fc1_desc: 'Déclarez et gérez vos collectes de plastique en quelques clics, directement depuis votre téléphone.',
+    fc2_title: 'Mise en relation',   fc2_desc: 'Connectez-vous directement avec des recycleurs certifiés près de chez vous, en toute confiance.',
+    fc3_title: 'Tableau de bord',    fc3_desc: 'Suivez vos offres, volumes collectés et votre impact environnemental en temps réel.',
+    fc4_title: 'Système de badges',  fc4_desc: 'Gagnez des badges selon vos performances et contributions à l\'économie circulaire.',
+    fc5_title: 'Assistant IA',       fc5_desc: 'Un chatbot disponible 24h/24 pour répondre à toutes vos questions sur le recyclage.',
+    fc6_title: 'Impact écologique',  fc6_desc: 'Contribuez directement à la réduction des déchets plastiques et à un avenir plus propre.',
+    country_label: 'Notre couverture géographique',
+    country_title: 'Deux pays, un seul écosystème.',
+    country_available: 'Disponible au lancement',
+    partner_text: 'Un projet de',
+    contact_label: 'Assistance & Contact',
+    contact_title: 'Une question ? On est là.',
+    contact_desc: 'Notre équipe est disponible du lundi au vendredi pour répondre à vos questions et vous accompagner.',
+    contact_ufuk_sub: 'Conception & développement',
+    contact_hours: 'Lun – Ven · 9h00 → 17h00',
+    footer_copy: '© 2026 RecapLink — Tous droits réservés. Conçu par',
+    fb_float: 'Votre avis',
+  },
+  ar: {
+    dir: 'rtl',
+    nav_projet: 'مشروع من طرف',
+    hero_sub: '<strong>RecapLink</strong> هي أول منصة جوالة مخصصة لإعادة تدوير البلاستيك في <strong>تونس</strong> و<strong>السنغال</strong> — تربط الجامعين بالمُعاد تدويرين لتأثير بيئي ملموس.',
+    cd_days: 'أيام', cd_hours: 'ساعات', cd_minutes: 'دقائق', cd_seconds: 'ثواني',
+    launch_date: 'الإطلاق الرسمي — الأربعاء 08 أكتوبر 2026',
+    proto_btn: 'تجربة النموذج الأولي',
+    app_label: 'التطبيق الجوال',
+    app_title: 'تجربة مصممة خصيصاً لك.',
+    app_desc: 'متاح على iOS وAndroid، يرافقك RecapLink في كل خطوة — من إعلان الجمع حتى التواصل مع المُعاد تدويرين المعتمدين.',
+    app_f1: 'واجهة بسيطة وبديهية',
+    app_f2: 'تحديد موقع جغرافي مدمج',
+    app_f3: 'روبوت ذكاء اصطناعي 24 ساعة',
+    app_f4: 'متابعة في الوقت الفعلي',
+    feat_label: 'ما يمكنك فعله',
+    feat_title: 'كل ما تحتاجه في تطبيق واحد.',
+    fc1_title: 'جمع مُيسَّر',           fc1_desc: 'أعلن عن عمليات جمع البلاستيك وأدرها بنقرات قليلة من هاتفك.',
+    fc2_title: 'ربط المستخدمين',        fc2_desc: 'تواصل مباشرة مع المُعاد تدويرين المعتمدين بالقرب منك وبكل ثقة.',
+    fc3_title: 'لوحة التحكم',           fc3_desc: 'تابع عروضك وحجم الجمع وتأثيرك البيئي في الوقت الفعلي.',
+    fc4_title: 'نظام الشارات',          fc4_desc: 'اكسب شارات وفقاً لأدائك ومساهماتك في الاقتصاد الدائري.',
+    fc5_title: 'مساعد الذكاء الاصطناعي', fc5_desc: 'روبوت متاح على مدار 24 ساعة للإجابة على جميع أسئلتك حول إعادة التدوير.',
+    fc6_title: 'التأثير البيئي',        fc6_desc: 'ساهم مباشرة في تقليل النفايات البلاستيكية وبناء مستقبل أنظف.',
+    country_label: 'تغطيتنا الجغرافية',
+    country_title: 'دولتان، منظومة واحدة.',
+    country_available: 'متاح عند الإطلاق',
+    partner_text: 'مشروع من طرف',
+    contact_label: 'المساعدة والتواصل',
+    contact_title: 'سؤال؟ نحن هنا.',
+    contact_desc: 'فريقنا متاح من الاثنين إلى الجمعة للإجابة على أسئلتكم ومرافقتكم.',
+    contact_ufuk_sub: 'التصميم والتطوير',
+    contact_hours: 'الاثنين – الجمعة · 9:00 → 17:00',
+    footer_copy: '© 2026 RecapLink — جميع الحقوق محفوظة. تصميم',
+    fb_float: 'رأيك',
+  },
+  wo: {
+    dir: 'ltr',
+    nav_projet: 'Liggey bi jëf ci',
+    hero_sub: '<strong>RecapLink</strong> mooy application bi njëk ci gestion plastique ci <strong>Tunisie</strong> ak <strong>Sénégal</strong> — jëfandikoo collecteur yi ak recycleur yi pour impact écologique bu dëgg.',
+    cd_days: 'Fan', cd_hours: 'Waxtu', cd_minutes: 'Minit', cd_seconds: 'Segon',
+    launch_date: 'Joxe officiel bi — Allarba, 08 Oktob 2026',
+    proto_btn: 'Tàng prototype bi',
+    app_label: 'Application mobil bi',
+    app_title: 'Tàng bu yomb pour yow.',
+    app_desc: 'Am ci iOS ak Android, RecapLink dinañu la dëkk ci kaw kaw — jël collecte ba yéeg recycleur yi certifié yi.',
+    app_f1: 'Interface yomb ak simple',
+    app_f2: 'Géolocalisation bi dëkk',
+    app_f3: 'Chatbot IA am 24h/24',
+    app_f4: 'Xam ci waxtu réel',
+    feat_label: 'Lu mën nga def',
+    feat_title: 'Bëpp luy soxor ci application bu benn.',
+    fc1_title: 'Collecte yomb',   fc1_desc: 'Déclaré ak gérer collecte plastique yi ci klik yu tuuti, ci sa tëléphone.',
+    fc2_title: 'Jëfandikoo',      fc2_desc: 'Woy recycleur yi certifié yi ci kaw kaw ak jàmm.',
+    fc3_title: 'Tableau de bord', fc3_desc: 'Xam offre yi, volumes collecté yi ak impact bi ci waxtu réel.',
+    fc4_title: 'Badge yi',        fc4_desc: 'Jël badge yi ci sa performance ak contribution yi ci économie circulaire bi.',
+    fc5_title: 'Jëm-jëm IA',     fc5_desc: 'Chatbot bi am 24 waxtu ci ay laaj yép ci recyclage bi.',
+    fc6_title: 'Impact écologique', fc6_desc: 'Dëkk ci teral déchets plastique yi ak avenir bu sell.',
+    country_label: 'Couverture géographique bi',
+    country_title: 'Pays yu ñar, ecosystème bu benn.',
+    country_available: 'Am ci joxe bi',
+    partner_text: 'Liggey bi jëf ci',
+    contact_label: 'Sëdd ak Jëfandikoo',
+    contact_title: 'Laaj? Amna fi.',
+    contact_desc: 'Team bi dafa am ci Altine ba Àjjuma ci tontu ay laaj yi ak leeral.',
+    contact_ufuk_sub: 'Design ak développement',
+    contact_hours: 'Altine – Àjjuma · 9h00 → 17h00',
+    footer_copy: '© 2026 RecapLink — Bëpp jafe-jafe yi dëkk. Design bi jëf ci',
+    fb_float: 'Sa xam-xam',
+  },
+};
 
-    if (diff <= 0) {
-      ['days','hours','minutes','seconds'].forEach(id => {
-        document.getElementById(id).textContent = '00';
-      });
-      return;
-    }
+let indexLang = 'fr';
 
-    const days    = Math.floor(diff / 86400000);
-    const hours   = Math.floor((diff % 86400000) / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-
-    const pad = n => String(n).padStart(2, '0');
-    document.getElementById('days').textContent    = pad(days);
-    document.getElementById('hours').textContent   = pad(hours);
-    document.getElementById('minutes').textContent = pad(minutes);
-    document.getElementById('seconds').textContent = pad(seconds);
-  }
-
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
+function switchIndexLang(lang) {
+  indexLang = lang;
+  const tl = INDEX_I18N[lang];
+  document.getElementById('htmlRoot').setAttribute('lang', lang);
+  document.getElementById('htmlRoot').setAttribute('dir', tl.dir);
+  document.querySelectorAll('.index-lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === lang)
+  );
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (tl[key] !== undefined) el.innerHTML = tl[key];
+  });
+  // sync feedback float button label
+  document.getElementById('fbFloatText').textContent = tl.fb_float;
+  // sync feedback modal lang
+  fbSetLang(lang);
+}
 </script>
 
 <!-- FEEDBACK FLOATING BUTTON -->
@@ -314,7 +450,7 @@
 </div>
 
 <script>
-// ─── FEEDBACK PROMPT (Yes → avis.html, No → close) ───────────────────────────
+// ── Feedback modal ────────────────────────────────────────────────
 const FB_PROMPTS = {
   fr: { float:'Votre avis', title:'Votre avis compte !',
         sub:'Souhaitez-vous donner votre avis sur RecapLink ?',
@@ -373,7 +509,7 @@ setTimeout(() => {
     localStorage.setItem('fb_prompted','1');
     openFeedbackModal();
   }
-}, 8000);
+}, 2000);
 </script>
 
 </body>

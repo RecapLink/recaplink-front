@@ -1320,12 +1320,17 @@
 /* ── Stats responsive — mobile ───────────────────────────── */
 @media (max-width: 600px) {
   nav {
-    flex-direction: column; align-items: flex-start;
-    gap: 0.5rem; padding: 0.6rem 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    padding: 0.55rem 1rem;
   }
+  .logo-wrap { flex: 1; min-width: 0; }
   .logo-wrap img { width: 110px !important; }
-  .badge-bbw { font-size: 0.72rem; }
-  .badge-bbw img { width: 18% !important; }
+  .index-lang-switcher { flex-shrink: 0; gap: 0.2rem; }
+  .index-lang-btn { padding: 0.22rem 0.5rem !important; font-size: 0.68rem !important; }
+  .badge-bbw { width: 100%; font-size: 0.68rem; border-top: 1px solid rgba(90,158,42,0.1); padding-top: 0.35rem; }
+  .badge-bbw img { width: 16% !important; }
 
   .stats-hero { padding: 1.5rem 1rem 1.25rem; }
   .stats-hero h1 { font-size: 1.2rem; }
