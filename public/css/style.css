@@ -1257,7 +1257,38 @@
   margin-bottom: 0.35rem;
 }
 .stat-card-sub { font-size: 0.8rem; color: var(--muted); }
+.lang-mini-grid { display: flex; gap: 1.2rem; margin: 0.5rem 0 0.35rem; }
+.lang-mini { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+.lang-mini-code { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.lang-mini-val { font-size: 1.6rem; font-weight: 800; color: var(--green-800); line-height: 1; }
 
+/* COMMENTS SECTION */
+.comments-heading {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--green-800);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.comments-count { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+.comments-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.comments-empty { color: var(--muted); font-size: 0.9rem; }
+.comment-card {
+  background: white;
+  border: 1px solid rgba(90,158,42,0.12);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.comment-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.comment-flag { font-size: 1.1rem; }
+.comment-sat { font-size: 0.75rem; font-weight: 700; }
+.comment-date { font-size: 0.72rem; color: var(--muted); margin-left: auto; }
+.comment-text { font-size: 0.88rem; color: #333; line-height: 1.6; margin: 0; }
 
 /* CHARTS GRID */
 .charts-grid {

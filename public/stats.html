@@ -266,6 +266,17 @@
       </div>
 
     </div><!-- /.charts-grid -->
+
+    <!-- ── Comments ────────────────────────────────────────────── -->
+    <div id="commentsSection" style="display:none; margin-top:2rem;">
+      <h2 class="comments-heading">
+        <i class="fas fa-comment-dots" style="color:var(--leaf);margin-right:0.5rem;"></i>
+        <span data-i18n="comments_title">Commentaires</span>
+        <span class="comments-count" id="commentsCount"></span>
+      </h2>
+      <div id="commentsList" class="comments-list"></div>
+    </div>
+
   </div><!-- /#statsContent -->
 </div><!-- /.stats-main -->
 
@@ -298,7 +309,9 @@ const STATS_I18N = {
     cardTotal: 'Réponses totales', cardSince: 'depuis le lancement',
     cardSat: 'Satisfaction moy.', cardDesign: 'Design moy.', cardMsg: 'Messagerie moy.', cardBot: 'Chatbot moy.',
     cardWeek: 'Cette semaine', cardWeekSub: 'soumissions (7j)',
+    cardLang: 'Langues', cardLangSub: 'Réponses par langue',
     noNote: 'Aucune note',
+    comments_title: 'Commentaires', comments_none: 'Aucun commentaire pour l\'instant.',
     labels: {
       language:         { fr:'Français', ar:'العربية', wo:'Wolof' },
       colorScheme:      { excellent:'Excellent', good:'Bien', average:'Moyen', poor:'Mauvais' },
@@ -357,7 +370,9 @@ const STATS_I18N = {
     cardTotal: 'إجمالي الردود', cardSince: 'منذ الإطلاق',
     cardSat: 'متوسط الرضا', cardDesign: 'متوسط التصميم', cardMsg: 'متوسط المراسلة', cardBot: 'متوسط المساعد الذكي',
     cardWeek: 'هذا الأسبوع', cardWeekSub: 'إرسالات (7 أيام)',
+    cardLang: 'اللغات', cardLangSub: 'الردود حسب اللغة',
     noNote: 'لا تقييم',
+    comments_title: 'التعليقات', comments_none: 'لا توجد تعليقات بعد.',
     labels: {
       language:         { fr:'الفرنسية', ar:'العربية', wo:'ولوف' },
       colorScheme:      { excellent:'ممتاز', good:'جيد', average:'متوسط', poor:'ضعيف' },
@@ -416,7 +431,9 @@ const STATS_I18N = {
     cardTotal: 'Tontu yi bëpp', cardSince: 'Ci tànn bi',
     cardSat: 'Digg satisfaction', cardDesign: 'Digg design', cardMsg: 'Digg messagerie', cardBot: 'Digg chatbot',
     cardWeek: 'Ayu-bés bii', cardWeekSub: 'yónneen (7 fan)',
+    cardLang: 'Làkk yi', cardLangSub: 'Tontu yi ci làkk',
     noNote: 'Amul not',
+    comments_title: 'Xibaarayam yi', comments_none: 'Amul xibaarayam.',
     labels: {
       language:         { fr:'Français', ar:'Arabe', wo:'Wolof' },
       colorScheme:      { excellent:'Rafet lool', good:'Rafet', average:'Dëkk', poor:'Rafetul' },
@@ -576,6 +593,8 @@ function renderStats(data) {
   // Trend & Language
   renderTrendChart(data.recentTrend);
   renderLangPills(data.languageDistribution, data.total);
+  // Comments
+  renderComments(data.comments || []);
 }
 
 // ── Summary cards ────────────────────────────────────────────────
@@ -617,6 +636,13 @@ function renderSummary(data) {
       <div class="stat-card-label"><i class="fas fa-calendar-week" style="margin-right:0.35rem;"></i>${tl.cardWeek}</div>
       <div class="stat-card-value">${weekCount}</div>
       <div class="stat-card-sub">${tl.cardWeekSub}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label"><i class="fas fa-language" style="margin-right:0.35rem;color:var(--leaf);"></i>${tl.cardLang}</div>
+      <div class="lang-mini-grid">
+        ${['fr','ar','wo'].map(l=>`<div class="lang-mini"><span class="lang-mini-code">${l.toUpperCase()}</span><strong class="lang-mini-val">${(data.languageDistribution||{})[l]||0}</strong></div>`).join('')}
+      </div>
+      <div class="stat-card-sub">${tl.cardLangSub}</div>
     </div>`;
 }
 
@@ -799,6 +825,41 @@ function renderLangPills(dist, total) {
       <div class="lang-pill-dot"></div>
       <span><strong>${labelOf(LABELS.language,lang)}</strong> — ${t().responses(count)} (${total>0?Math.round(count/total*100):0}%)</span>
     </div>`).join('');
+}
+
+// ── Comments ─────────────────────────────────────────────────────
+function renderComments(comments) {
+  const section = document.getElementById('commentsSection');
+  const list    = document.getElementById('commentsList');
+  const countEl = document.getElementById('commentsCount');
+  const tl = t();
+  // update heading i18n
+  const heading = section.querySelector('[data-i18n="comments_title"]');
+  if (heading) heading.textContent = tl.comments_title;
+  if (!comments.length) {
+    section.style.display = 'block';
+    countEl.textContent = '';
+    list.innerHTML = `<p class="comments-empty">${tl.comments_none}</p>`;
+    return;
+  }
+  section.style.display = 'block';
+  countEl.textContent = `(${comments.length})`;
+  const LANG_FLAG = { fr:'🇫🇷', ar:'🇹🇳', wo:'🇸🇳' };
+  const SAT_COLOR = { 5:'#16a34a',4:'#65a30d',3:'#ca8a04',2:'#ea580c',1:'#dc2626' };
+  list.innerHTML = comments.map(c => {
+    const date = c.date ? new Date(c.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '';
+    const satBadge = c.satisfaction
+      ? `<span class="comment-sat" style="color:${SAT_COLOR[c.satisfaction]||'var(--muted)'};">${ratingText(c.satisfaction,'satisfaction')}</span>`
+      : '';
+    return `<div class="comment-card">
+      <div class="comment-meta">
+        <span class="comment-flag">${LANG_FLAG[c.lang]||''}</span>
+        ${satBadge}
+        <span class="comment-date">${date}</span>
+      </div>
+      <p class="comment-text">${c.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
+    </div>`;
+  }).join('');
 }
 
 // ── Reset ─────────────────────────────────────────────────────────
