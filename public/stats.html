@@ -148,14 +148,14 @@
       <!-- ── SECTION 1: Satisfaction ──────────────────────────── -->
 
       <div class="chart-card">
-        <h3><i class="fas fa-star" style="color:#f59e0b;margin-right:0.4rem;"></i><span data-i18n="satisfaction_title">Satisfaction globale</span></h3>
-        <p class="chart-card-sub" data-i18n="satisfaction_sub">Distribution des notes de satisfaction (1 à 5 ★)</p>
+        <h3><i class="fas fa-face-smile" style="color:#f59e0b;margin-right:0.4rem;"></i><span data-i18n="satisfaction_title">Satisfaction globale</span></h3>
+        <p class="chart-card-sub" data-i18n="satisfaction_sub">1 = Très insatisfait · 5 = Très satisfait</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartSatisfaction"></canvas></div>
       </div>
 
       <div class="chart-card">
         <h3><i class="fas fa-paintbrush" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="design_title">Qualité du design visuel</span></h3>
-        <p class="chart-card-sub" data-i18n="design_sub">Note sur le design / UX de l'application (1 à 5 ★)</p>
+        <p class="chart-card-sub" data-i18n="design_sub">1 = Très mauvais · 5 = Excellent</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartDesignRating"></canvas></div>
       </div>
 
@@ -183,13 +183,13 @@
 
       <div class="chart-card">
         <h3><i class="fas fa-comments" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="messaging_title">Messagerie intégrée</span></h3>
-        <p class="chart-card-sub" data-i18n="messaging_sub">Note sur la messagerie (1 à 5 ★)</p>
+        <p class="chart-card-sub" data-i18n="messaging_sub">1 = Très mauvaise · 5 = Excellente</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartMessagingRating"></canvas></div>
       </div>
 
       <div class="chart-card">
         <h3><i class="fas fa-robot" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="chatbot_title">Chatbot IA</span></h3>
-        <p class="chart-card-sub" data-i18n="chatbot_sub">Note sur le chatbot IA (1 à 5 ★)</p>
+        <p class="chart-card-sub" data-i18n="chatbot_sub">1 = Très mauvais · 5 = Excellent</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartChatbotRating"></canvas></div>
       </div>
 
@@ -317,14 +317,18 @@ const STATS_I18N = {
     easeLabels: { registration:'Inscription', postOffer:'Publier offre', searchCollector:'Trouver collecteur' },
     responses: n => `${n} réponse${n>1?'s':''}`,
     submissions: n => `${n} soumission${n>1?'s':''}`,
+    ratingLabels: {
+      satisfaction: ['Très insatisfait','Insatisfait','Neutre','Satisfait','Très satisfait'],
+      quality:      ['Très mauvais','Mauvais','Moyen','Bien','Excellent'],
+    },
     charts: {
-      satisfaction_title:'Satisfaction globale', satisfaction_sub:'Distribution des notes de satisfaction (1 à 5 ★)',
-      design_title:'Qualité du design visuel', design_sub:"Note sur le design / UX de l'application (1 à 5 ★)",
+      satisfaction_title:'Satisfaction globale', satisfaction_sub:'1 = Très insatisfait · 5 = Très satisfait',
+      design_title:'Qualité du design visuel', design_sub:'1 = Très mauvais · 5 = Excellent',
       complexity_title:'Complexité perçue', complexity_sub:"L'application vous paraît-elle simple ou complexe ?",
       onboarding_title:"Expérience d'onboarding", onboarding_sub:'Expérience lors de la première utilisation',
       ease_title:'Facilité des actions clés', ease_sub:"Inscription, publication d'offre, recherche de collecteur",
-      messaging_title:'Messagerie intégrée', messaging_sub:'Note sur la messagerie (1 à 5 ★)',
-      chatbot_title:'Chatbot IA', chatbot_sub:'Note sur le chatbot IA (1 à 5 ★)',
+      messaging_title:'Messagerie intégrée', messaging_sub:'1 = Très mauvaise · 5 = Excellente',
+      chatbot_title:'Chatbot IA', chatbot_sub:'1 = Très mauvais · 5 = Excellent',
       badge_title:'Système de badges', badge_sub:'Satisfaction envers le système de badges',
       savoirfaire_title:'Section Savoir-faire', savoirfaire_sub:'Utilité des articles, vidéos et tutoriels',
       profile_title:'Page Profil', profile_sub:'Utilité de la page profil (certification, badges, activité)',
@@ -351,8 +355,8 @@ const STATS_I18N = {
     modalText: 'سيؤدي هذا إلى حذف جميع الآراء نهائياً. لا يمكن التراجع عن هذا الإجراء.',
     modalCancel: 'إلغاء', modalConfirm: 'حذف الكل',
     cardTotal: 'إجمالي الردود', cardSince: 'منذ الإطلاق',
-    cardSat: 'متوسط الرضا', cardDesign: 'متوسط التصميم', cardMsg: 'متوسط المراسلة', cardBot: 'متوسط الروبوت',
-    cardWeek: 'هذا الأسبوع', cardWeekSub: 'إرسال (7 أيام)',
+    cardSat: 'متوسط الرضا', cardDesign: 'متوسط التصميم', cardMsg: 'متوسط المراسلة', cardBot: 'متوسط المساعد الذكي',
+    cardWeek: 'هذا الأسبوع', cardWeekSub: 'إرسالات (7 أيام)',
     noNote: 'لا تقييم',
     labels: {
       language:         { fr:'الفرنسية', ar:'العربية', wo:'ولوف' },
@@ -370,16 +374,20 @@ const STATS_I18N = {
       wouldRecommend:   { definitely:'بالتأكيد', probably:'على الأرجح', maybe:'ربما', no:'لا' },
     },
     easeLabels: { registration:'التسجيل', postOffer:'نشر عرض', searchCollector:'إيجاد جامع' },
-    responses: n => `${n} ردّ`,
-    submissions: n => `${n} إرسال`,
+    responses: n => `${n} ردود`,
+    submissions: n => `${n} إرسالات`,
+    ratingLabels: {
+      satisfaction: ['غير راضٍ تماماً','غير راضٍ','محايد','راضٍ','راضٍ جداً'],
+      quality:      ['سيئ جداً','سيئ','متوسط','جيد','ممتاز'],
+    },
     charts: {
-      satisfaction_title:'الرضا العام', satisfaction_sub:'توزيع تقييمات الرضا (1 إلى 5 ★)',
-      design_title:'جودة التصميم', design_sub:'تقييم تصميم / تجربة مستخدم التطبيق (1 إلى 5 ★)',
+      satisfaction_title:'الرضا العام', satisfaction_sub:'١ = غير راضٍ تماماً · ٥ = راضٍ جداً',
+      design_title:'جودة التصميم', design_sub:'١ = سيئ جداً · ٥ = ممتاز',
       complexity_title:'التعقيد المُدرَك', complexity_sub:'هل يبدو التطبيق بسيطاً أم معقداً؟',
       onboarding_title:'تجربة الانطلاق', onboarding_sub:'التجربة عند الاستخدام الأول',
       ease_title:'سهولة الإجراءات الرئيسية', ease_sub:'التسجيل، نشر عرض، إيجاد جامع',
-      messaging_title:'المراسلة المدمجة', messaging_sub:'تقييم نظام المراسلة (1 إلى 5 ★)',
-      chatbot_title:'روبوت الذكاء الاصطناعي', chatbot_sub:'تقييم الروبوت الذكي (1 إلى 5 ★)',
+      messaging_title:'المراسلة المدمجة', messaging_sub:'١ = سيئ جداً · ٥ = ممتاز',
+      chatbot_title:'روبوت الذكاء الاصطناعي', chatbot_sub:'١ = سيئ جداً · ٥ = ممتاز',
       badge_title:'نظام الشارات', badge_sub:'مستوى الرضا عن نظام الشارات',
       savoirfaire_title:'قسم المهارات', savoirfaire_sub:'مدى فائدة المقالات ومقاطع الفيديو',
       profile_title:'صفحة الملف الشخصي', profile_sub:'فائدة صفحة الملف (الشهادة، الشارات، النشاط)',
@@ -397,52 +405,56 @@ const STATS_I18N = {
     dir: 'ltr', lang: 'wo',
     pageTitle: 'RecapLink — Statistiques Feedback',
     heroTitle: 'Statistiques yi',
-    heroSub: 'Xibaar yi jëfandikoo yi ci RecapLink',
-    btnRefresh: 'Yeesal', btnReset: 'Seetël', btnBack: 'Dellu ci site bi',
+    heroSub: 'Xibaar yi bi jëfandikoo yi yónnee ci RecapLink',
+    btnRefresh: 'Yeesal', btnReset: 'Fàtteel', btnBack: 'Dellu ci site bi',
     loading: 'Jël statistiques yi…',
-    errorTitle: 'Mënuñu jëgël serveur bi', errorBody: 'Jàppali serveur bi dafa set.', retry: 'Dëkk tuuti',
-    emptyTitle: 'Amul dëkk bu bees', emptySub: 'Statistiques yi dinañu jëm ba la feedback yi ñëw.', emptyLink: 'Jëfandikoo site bi',
-    modalTitle: 'Seetël données yi bëpp?',
-    modalText: 'Liggeey bii dinaa dem ak feedback yi bëpp. Mënuñu dellu.',
+    errorTitle: 'Mënuñu yëgël serveur bi', errorBody: 'Mënuñu jàppali serveur bi.', retry: 'Tëssë',
+    emptyTitle: 'Amul xibaar', emptySub: 'Statistiques yi dinañu jëm ba la feedback yi ñëw.', emptyLink: 'Jëfandikoo site bi',
+    modalTitle: 'Fàtteel données yi bëpp?',
+    modalText: 'Liggeey bii dina fàtte feedback yi bëpp ak yëgëlëem. Mënuñu dellu.',
     modalCancel: 'Bàyyi', modalConfirm: 'Fàtte bëpp',
-    cardTotal: 'Tontu yi bëpp', cardSince: 'từ jël',
-    cardSat: 'Tang. satisfaction', cardDesign: 'Tang. design', cardMsg: 'Tang. messagerie', cardBot: 'Tang. chatbot',
-    cardWeek: 'Ayu-bés bi', cardWeekSub: 'yónneen (7 fan)',
+    cardTotal: 'Tontu yi bëpp', cardSince: 'Ci tànn bi',
+    cardSat: 'Digg satisfaction', cardDesign: 'Digg design', cardMsg: 'Digg messagerie', cardBot: 'Digg chatbot',
+    cardWeek: 'Ayu-bés bii', cardWeekSub: 'yónneen (7 fan)',
     noNote: 'Amul not',
     labels: {
       language:         { fr:'Français', ar:'Arabe', wo:'Wolof' },
-      colorScheme:      { excellent:'Rafet lool', good:'Rafet', average:'Dëkk', poor:'Baax woon' },
-      textReadability:  { very_clear:'Gëna yees lool', clear:'Yees', hard:'Doy gaaw' },
-      navIntuition:     { very_intuitive:'Yomb lool', intuitive:'Yomb', confusing:'Mbedd', very_confusing:'Mbedd lool' },
-      savoirFaire:      { very_useful:'Baax lool', useful:'Baax', neutral:'Dëkk', not_useful:'Baaxul', not_used:'Jëfandikuñu ko' },
+      colorScheme:      { excellent:'Rafet lool', good:'Rafet', average:'Dëkk', poor:'Rafetul' },
+      textReadability:  { very_clear:'Yees lool', clear:'Yees', hard:'Dëgënal' },
+      navIntuition:     { very_intuitive:'Yomb lool', intuitive:'Yomb', confusing:'Dëgënal', very_confusing:'Dëgënal lool' },
+      savoirFaire:      { very_useful:'Baax lool', useful:'Baax', neutral:'Dëkk', not_useful:'Baaxul', not_used:'Jëfandikuma ko' },
       profilePage:      { very_useful:'Baax lool', useful:'Baax', neutral:'Dëkk', not_useful:'Baaxul' },
       complexity:       { very_simple:'Yomb lool', simple:'Yomb', moderate:'Dëkk', complex:'Doy', very_complex:'Doy lool' },
-      onboarding:       { excellent:'Rafet lool', good:'Baax', average:'Dëkk', difficult:'Doy' },
-      ease:             { very_easy:'Yomb lool', easy:'Yomb', moderate:'Dëkk', hard:'Doy' },
-      badgeSatisfaction:{ very_satisfied:'Xam lool', satisfied:'Xam', little:'Tuuti', not_satisfied:'Xamul' },
+      onboarding:       { excellent:'Baax lool', good:'Baax', average:'Dëkk', difficult:'Dëgënal' },
+      ease:             { very_easy:'Yomb lool', easy:'Yomb', moderate:'Dëkk', hard:'Dëgënal' },
+      badgeSatisfaction:{ very_satisfied:'Soxor lool', satisfied:'Soxor', little:'Tuuti', not_satisfied:'Soxoruma' },
       favoriteFeature:  { collect:'Collecte', connect:'Réseau', badges:'Badges', ai_chatbot:'IA Chat', messaging:'Messagerie', eco_impact:'Éco-impact' },
-      usageFrequency:   { daily:'Fan bu nekk', weekly:'Ayu-bés', monthly:'Weer', rarely:'Mbir mbir', never:'Deedéet' },
-      wouldRecommend:   { definitely:'Waaw, dëgg', probably:'Ci kanam', maybe:'Soxor', no:'Déedéet' },
+      usageFrequency:   { daily:'Fan bu nekk', weekly:'Ci ayu-bés bi', monthly:'Ci weer wi', rarely:'Sax sax', never:'Déedéet dëgg' },
+      wouldRecommend:   { definitely:'Waaw, dëgg', probably:'Pexe waaw', maybe:'Xamuma', no:'Déedéet' },
     },
     easeLabels: { registration:'Dugël', postOffer:'Bind offre', searchCollector:'Yéeg collecteur' },
     responses: n => `${n} tontu`,
     submissions: n => `${n} yónneen`,
+    ratingLabels: {
+      satisfaction: ['Bëgguma','Bëgguma lëk','Dëkk','Bëgga','Bëgga rëy'],
+      quality:      ['Baaxul lool','Baaxul','Dëkk','Baax','Baax lool'],
+    },
     charts: {
-      satisfaction_title:'Satisfaction yi', satisfaction_sub:'Xam-xam satisfaction (1 ak 5 ★)',
-      design_title:'Jariñu design bi', design_sub:'Not design / UX (1 ak 5 ★)',
-      complexity_title:'Lu doy ci app bi', complexity_sub:'App bi dafa yomb walla doy?',
-      onboarding_title:'Tàng bu njëk', onboarding_sub:'Jëfandikoo bu njëk',
-      ease_title:'Yomb ci liggey yu mag', ease_sub:'Dugël, bind offre, yéeg collecteur',
-      messaging_title:'Messagerie bi', messaging_sub:'Not messagerie (1 ak 5 ★)',
-      chatbot_title:'Chatbot IA bi', chatbot_sub:'Not chatbot (1 ak 5 ★)',
-      badge_title:'Badge yi', badge_sub:'Lu neex ci badge yi',
-      savoirfaire_title:'Savoir-faire bi', savoirfaire_sub:'Baax ak articles, vidéo ak tutoriels yi',
+      satisfaction_title:'Satisfaction yi', satisfaction_sub:'1 = Bëgguma · 5 = Bëgga rëy',
+      design_title:'Jariñu design bi', design_sub:'1 = Baaxul lool · 5 = Baax lool',
+      complexity_title:'App bi dafa yomb walla doy?', complexity_sub:'Xam lu ngay xool ci app bi',
+      onboarding_title:'Bu njëk nga jëfandikoo', onboarding_sub:'Kilifëex ci jëfandikoo bu njëk',
+      ease_title:'Lu yomb ci liggey yu mag', ease_sub:'Dugël, bind offre, yéeg collecteur',
+      messaging_title:'Messagerie bi', messaging_sub:'1 = Baaxul lool · 5 = Baax lool',
+      chatbot_title:'Chatbot IA bi', chatbot_sub:'1 = Baaxul lool · 5 = Baax lool',
+      badge_title:'Badge yi', badge_sub:'Soxor ci badge yi',
+      savoirfaire_title:'Xët Savoir-faire bi', savoirfaire_sub:'Baax ci articles, vidéo ak tutoriels yi',
       profile_title:'Xët profil bi', profile_sub:'Baax profil bi (sertifikaa, badge, liggey)',
-      favorite_title:'Fonctionnalité yu neex', favorite_sub:'Fonctionnalité yu gëna neex (choix bu bari)',
-      color_title:'Xëriñ yu dëkk', color_sub:'Neex bi ci xëriñ yi',
-      readability_title:'Yees tekki', readability_sub:'Mag ak yees ci tekki yi',
-      nav_title:'Navigation yomb?', nav_sub:'Xam lu neex ci navigation bi',
-      frequency_title:'Ñaata lañu soxor jëfandikoo', frequency_sub:'Ñaata fan fan jëfandikooñu app bi?',
+      favorite_title:'Fonctionnalité bu la ëpp bëgg', favorite_sub:'Fonctionnalité yu gëna neex (choix bu bari)',
+      color_title:'Xëriñ yi', color_sub:'Bëgg bi ci xëriñ yi',
+      readability_title:'Yees ci tekki yi', readability_sub:'Mag ak yees ci tekki yi ci app bi',
+      nav_title:'Navigation bi dafa yomb?', nav_sub:'Naka nga xool navigation bi',
+      frequency_title:'Kañ lañu jëfandikoo app bi?', frequency_sub:'Ñaata fan fan jëfandikooñu app bi?',
       recommend_title:'Sàggal', recommend_sub:'Danga sàggal RecapLink?',
       trend_title:'Tendance 30 fan', trend_sub:'Ñaata yónneen fan bu nekk',
       languages_title:'Làkk yi jëfandikoo', languages_sub:'Répartition ci làkk yi',
@@ -500,13 +512,9 @@ let lastStatsData = null;
 function destroyChart(id) {
   if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
 }
-function starsHtml(avg) {
-  const full = Math.floor(avg), half = (avg - full) >= 0.5;
-  let s = '';
-  for (let i=1;i<=5;i++) {
-    if (i<=full) s+='★'; else if (i===full+1&&half) s+='½'; else s+='☆';
-  }
-  return s;
+function ratingText(avg, type) {
+  const labels = t().ratingLabels[type] || [];
+  return labels[Math.round(avg) - 1] || avg.toFixed(1);
 }
 function labelOf(map, key) { return map[key] || key; }
 function sortDesc(obj) { return Object.entries(obj).sort((a,b)=>b[1]-a[1]); }
@@ -541,8 +549,8 @@ function renderStats(data) {
   empty.style.display = 'none'; charts.style.display = 'grid';
 
   // Section 1
-  renderStarBar('chartSatisfaction',  data.satisfactionDistribution,  data.total);
-  renderStarBar('chartDesignRating',  data.designRatingDistribution,  data.total);
+  renderStarBar('chartSatisfaction',  data.satisfactionDistribution,  data.total, 'satisfaction');
+  renderStarBar('chartDesignRating',  data.designRatingDistribution,  data.total, 'quality');
   // Section 2
   renderDonut('chartColorScheme',     data.colorSchemeDistribution,     LABELS.colorScheme,    PALETTE);
   renderDonut('chartTextReadability', data.textReadabilityDistribution, LABELS.textReadability, PALETTE);
@@ -558,8 +566,8 @@ function renderStats(data) {
     searchCollectorEase: data.searchCollectorEaseDistribution || {},
   });
   // Section 4
-  renderStarBar('chartMessagingRating',  data.messagingRatingDistribution, data.total);
-  renderStarBar('chartChatbotRating',    data.chatbotRatingDistribution,   data.total);
+  renderStarBar('chartMessagingRating',  data.messagingRatingDistribution, data.total, 'quality');
+  renderStarBar('chartChatbotRating',    data.chatbotRatingDistribution,   data.total, 'quality');
   renderDonut('chartBadgeSatisfaction',  data.badgeSatisfactionDistribution, LABELS.badgeSatisfaction, PALETTE);
   renderHBar('chartFavoriteFeature', data.favoriteFeatureDistribution, LABELS.favoriteFeature, PALETTE);
   // Section 5
@@ -586,24 +594,24 @@ function renderSummary(data) {
       <div class="stat-card-sub">${tl.cardSince}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label"><i class="fas fa-star" style="margin-right:0.35rem;color:#f59e0b;"></i>${tl.cardSat}</div>
+      <div class="stat-card-label"><i class="fas fa-face-smile" style="margin-right:0.35rem;color:#f59e0b;"></i>${tl.cardSat}</div>
       <div class="stat-card-value">${avgS>0?avgS.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgS>0?starsHtml(avgS)+' / 5':tl.noNote}</div>
+      <div class="stat-card-sub">${avgS>0?ratingText(avgS,'satisfaction'):tl.noNote}</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label"><i class="fas fa-paintbrush" style="margin-right:0.35rem;color:var(--leaf);"></i>${tl.cardDesign}</div>
       <div class="stat-card-value">${avgD>0?avgD.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgD>0?starsHtml(avgD)+' / 5':tl.noNote}</div>
+      <div class="stat-card-sub">${avgD>0?ratingText(avgD,'quality'):tl.noNote}</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label"><i class="fas fa-comments" style="margin-right:0.35rem;color:var(--leaf);"></i>${tl.cardMsg}</div>
       <div class="stat-card-value">${avgM>0?avgM.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgM>0?starsHtml(avgM)+' / 5':tl.noNote}</div>
+      <div class="stat-card-sub">${avgM>0?ratingText(avgM,'quality'):tl.noNote}</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label"><i class="fas fa-robot" style="margin-right:0.35rem;color:var(--leaf);"></i>${tl.cardBot}</div>
       <div class="stat-card-value">${avgC>0?avgC.toFixed(1):'—'}</div>
-      <div class="stat-card-sub stat-stars">${avgC>0?starsHtml(avgC)+' / 5':tl.noNote}</div>
+      <div class="stat-card-sub">${avgC>0?ratingText(avgC,'quality'):tl.noNote}</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label"><i class="fas fa-calendar-week" style="margin-right:0.35rem;"></i>${tl.cardWeek}</div>
@@ -612,11 +620,11 @@ function renderSummary(data) {
     </div>`;
 }
 
-// ── Star distribution bar ────────────────────────────────────────
-function renderStarBar(canvasId, dist, total) {
+// ── Rating distribution bar ──────────────────────────────────────
+function renderStarBar(canvasId, dist, total, labelType) {
   destroyChart(canvasId);
   if (!dist) return;
-  const labels = ['1 ★','2 ★★','3 ★★★','4 ★★★★','5 ★★★★★'];
+  const labels = t().ratingLabels[labelType] || ['1','2','3','4','5'];
   const values = [1,2,3,4,5].map(i=>dist[i]||0);
   const ctx = document.getElementById(canvasId).getContext('2d');
   chartInstances[canvasId] = new Chart(ctx, {
