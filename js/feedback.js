@@ -1,6 +1,6 @@
 'use strict';
 
-const FB_API = 'http://localhost:3001/api';
+const FB_API = 'https://api.recaplink.tn/api';
 const FB_KEY = 'recaplink_fb_done';
 
 let fbLang = 'fr';
