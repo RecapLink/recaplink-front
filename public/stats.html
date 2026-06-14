@@ -86,7 +86,7 @@
       <button class="stats-refresh-btn" onclick="loadStats()">
         <i class="fas fa-rotate" id="refreshIcon"></i> <span id="btnRefresh">Actualiser</span>
       </button>
-      <button class="stats-reset-btn" onclick="confirmReset()">
+      <button id="resetBtn" class="stats-reset-btn" onclick="confirmReset()" style="display:none;">
         <i class="fas fa-trash"></i> <span id="btnReset">Réinitialiser</span>
       </button>
       <a href="index.html" class="stats-refresh-btn" style="text-decoration:none;">
@@ -291,6 +291,18 @@
 
 <script>
 const API_BASE = 'https://api.recaplink.tn/api';
+
+// Type recaplink.unlock() in the browser console to reveal the reset button
+window.recaplink = {
+  unlock: () => {
+    document.getElementById('resetBtn').style.display = '';
+    console.log('%c🔓 Reset button unlocked.', 'color:#16a34a;font-weight:bold;');
+  },
+  lock: () => {
+    document.getElementById('resetBtn').style.display = 'none';
+    console.log('%c🔒 Reset button hidden.', 'color:#dc2626;font-weight:bold;');
+  },
+};
 
 // ── i18n ──────────────────────────────────────────────────────────
 const STATS_I18N = {
@@ -890,6 +902,8 @@ async function doReset() {
     if (!res.ok) throw new Error();
     closeResetModal();
     lastStatsData = null;
+    document.getElementById('commentsSection').style.display = 'none';
+    document.getElementById('commentsList').innerHTML = '';
     loadStats();
   } catch {
     btn.disabled = false;
