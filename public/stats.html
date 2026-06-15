@@ -212,6 +212,12 @@
       </div>
 
       <div class="chart-card">
+        <h3><i class="fas fa-tag" style="color:var(--leaf);margin-right:0.4rem;"></i><span data-i18n="offerPrice_title">Préférence prix offre plastique</span></h3>
+        <p class="chart-card-sub" data-i18n="offerPrice_sub">Lors de la publication d'une offre, que préfèrent les utilisateurs ?</p>
+        <div class="chart-wrap" style="height:220px;"><canvas id="chartOfferPricePreference"></canvas></div>
+      </div>
+
+      <div class="chart-card">
         <h3><i class="fas fa-heart" style="color:#f59e0b;margin-right:0.4rem;"></i><span data-i18n="favorite_title">Fonctionnalités préférées</span></h3>
         <p class="chart-card-sub" data-i18n="favorite_sub">Fonctionnalités les plus appréciées (choix multiple)</p>
         <div class="chart-wrap" style="height:220px;"><canvas id="chartFavoriteFeature"></canvas></div>
@@ -336,6 +342,7 @@ const STATS_I18N = {
       ease:             { very_easy:'Très facile', easy:'Facile', moderate:'Moyen', hard:'Difficile' },
       badgeSatisfaction:{ very_satisfied:'Très satisfait', satisfied:'Satisfait', little:'Peu satisfait', not_satisfied:'Pas satisfait' },
       favoriteFeature:  { collect:'Collecte', connect:'Réseau', badges:'Badges', ai_chatbot:'IA Chat', messaging:'Messagerie', eco_impact:'Éco-impact' },
+      offerPricePreference: { show_price:'Prix visible', no_price:'Discussion privée', both_options:'Au choix' },
       usageFrequency:   { daily:'Chaque jour', weekly:'Chaque semaine', monthly:'Chaque mois', rarely:'Rarement', never:'Jamais' },
       wouldRecommend:   { definitely:'Certainement', probably:'Probablement', maybe:'Peut-être', no:'Non' },
     },
@@ -358,6 +365,7 @@ const STATS_I18N = {
       savoirfaire_title:'Section Savoir-faire', savoirfaire_sub:'Utilité des articles, vidéos et tutoriels',
       profile_title:'Page Profil', profile_sub:'Utilité de la page profil (certification, badges, activité)',
       favorite_title:'Fonctionnalités préférées', favorite_sub:'Fonctionnalités les plus appréciées (choix multiple)',
+      offerPrice_title:'Préférence prix offre plastique', offerPrice_sub:'Lors de la publication d\'une offre, que préfèrent les utilisateurs ?',
       color_title:'Palette de couleurs', color_sub:'Appréciation de la palette de couleurs',
       readability_title:'Lisibilité des textes', readability_sub:"Taille et lisibilité des textes dans l'app",
       nav_title:'Navigation intuitive ?', nav_sub:'Perception de la facilité de navigation',
@@ -397,6 +405,7 @@ const STATS_I18N = {
       ease:             { very_easy:'سهل جداً', easy:'سهل', moderate:'متوسط', hard:'صعب' },
       badgeSatisfaction:{ very_satisfied:'راضٍ جداً', satisfied:'راضٍ', little:'قليل الرضا', not_satisfied:'غير راضٍ' },
       favoriteFeature:  { collect:'الجمع', connect:'الشبكة', badges:'الشارات', ai_chatbot:'الذكاء الاصطناعي', messaging:'المراسلة', eco_impact:'الأثر البيئي' },
+      offerPricePreference: { show_price:'عرض السعر', no_price:'تفاوض خاص', both_options:'الخياران' },
       usageFrequency:   { daily:'يومياً', weekly:'أسبوعياً', monthly:'شهرياً', rarely:'نادراً', never:'أبداً' },
       wouldRecommend:   { definitely:'بالتأكيد', probably:'على الأرجح', maybe:'ربما', no:'لا' },
     },
@@ -419,6 +428,7 @@ const STATS_I18N = {
       savoirfaire_title:'قسم المهارات', savoirfaire_sub:'مدى فائدة المقالات ومقاطع الفيديو',
       profile_title:'صفحة الملف الشخصي', profile_sub:'فائدة صفحة الملف (الشهادة، الشارات، النشاط)',
       favorite_title:'الميزات المفضلة', favorite_sub:'الميزات الأكثر تقديراً (اختيار متعدد)',
+      offerPrice_title:'تفضيل السعر في عرض البلاستيك', offerPrice_sub:'ماذا يفضّل المستخدمون عند نشر عرض؟',
       color_title:'نظام الألوان', color_sub:'مدى تقدير لوحة الألوان',
       readability_title:'قابلية قراءة النص', readability_sub:'حجم وقابلية قراءة النصوص في التطبيق',
       nav_title:'التنقل سهل؟', nav_sub:'إدراك سهولة التنقل',
@@ -458,6 +468,7 @@ const STATS_I18N = {
       ease:             { very_easy:'Yomb lool', easy:'Yomb', moderate:'Dëkk', hard:'Dëgënal' },
       badgeSatisfaction:{ very_satisfied:'Soxor lool', satisfied:'Soxor', little:'Tuuti', not_satisfied:'Soxoruma' },
       favoriteFeature:  { collect:'Collecte', connect:'Réseau', badges:'Badges', ai_chatbot:'IA Chat', messaging:'Messagerie', eco_impact:'Éco-impact' },
+      offerPricePreference: { show_price:'Sàmm njëg', no_price:'Wax ci jamono', both_options:'Tann ci ñaar' },
       usageFrequency:   { daily:'Fan bu nekk', weekly:'Ci ayu-bés bi', monthly:'Ci weer wi', rarely:'Sax sax', never:'Déedéet dëgg' },
       wouldRecommend:   { definitely:'Waaw, dëgg', probably:'Pexe waaw', maybe:'Xamuma', no:'Déedéet' },
     },
@@ -480,6 +491,7 @@ const STATS_I18N = {
       savoirfaire_title:'Xët Savoir-faire bi', savoirfaire_sub:'Baax ci articles, vidéo ak tutoriels yi',
       profile_title:'Xët profil bi', profile_sub:'Baax profil bi (sertifikaa, badge, liggey)',
       favorite_title:'Fonctionnalité bu la ëpp bëgg', favorite_sub:'Fonctionnalité yu gëna neex (choix bu bari)',
+      offerPrice_title:'Bëgg ci njëg offre plastique', offerPrice_sub:'Lan la ëpp bëgg bu nga dugël offre?',
       color_title:'Xëriñ yi', color_sub:'Bëgg bi ci xëriñ yi',
       readability_title:'Yees ci tekki yi', readability_sub:'Mag ak yees ci tekki yi ci app bi',
       nav_title:'Navigation bi dafa yomb?', nav_sub:'Naka nga xool navigation bi',
@@ -609,6 +621,7 @@ function renderStats(data) {
   renderStarBar('chartMessagingRating',  data.messagingRatingDistribution, data.total, 'quality');
   renderStarBar('chartChatbotRating',    data.chatbotRatingDistribution,   data.total, 'quality');
   renderDonut('chartBadgeSatisfaction',  data.badgeSatisfactionDistribution, LABELS.badgeSatisfaction, PALETTE);
+  renderHBar('chartOfferPricePreference', data.offerPricePreferenceDistribution, LABELS.offerPricePreference, ['#16a34a','#3b82f6','#f59e0b']);
   renderHBar('chartFavoriteFeature', data.favoriteFeatureDistribution, LABELS.favoriteFeature, PALETTE);
   // Section 5
   renderHBar('chartUsageFrequency', data.usageFrequencyDistribution, LABELS.usageFrequency, ['#16a34a','#65a30d','#ca8a04','#ea580c','#dc2626']);

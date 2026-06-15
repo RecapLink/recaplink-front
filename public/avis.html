@@ -549,6 +549,11 @@
       </div>
       <hr class="av-divider">
       <div class="av-q">
+        <div class="av-q-label"><i class="fas fa-tag"></i> <span data-k="q_offerPricePreference">Lors de la publication d'une offre de plastique, que préférez-vous ?</span></div>
+        <div class="av-chips" id="chips_offerPricePreference"></div>
+      </div>
+      <hr class="av-divider">
+      <div class="av-q">
         <div class="av-q-label"><i class="fas fa-heart"></i> <span data-k="q_favoriteFeature">Votre fonctionnalité préférée</span></div>
         <div class="av-icon-chips" id="chips_favoriteFeature"></div>
       </div>
@@ -641,7 +646,7 @@ const T = {
     back:'Retour',
     heroTitle:'Évaluez l\'expérience RecapLink',
     heroSub:'Votre retour nous aide à construire une meilleure application',
-    qCount:'18 questions', time:'~3 min', anon:'Anonyme',
+    qCount:'19 questions', time:'~3 min', anon:'Anonyme',
     sec1Short:'Satisfaction', sec2Short:'Expérience', sec3Short:'Fonctions', sec4Short:'Design', sec5Short:'Avis final',
     sec1Num:'01 — SATISFACTION GÉNÉRALE', sec1Title:'Votre satisfaction globale',
     sec2Num:'02 — EXPÉRIENCE UTILISATEUR', sec2Title:'Facilité d\'utilisation',
@@ -665,6 +670,7 @@ const T = {
     q_profilePage:'La page Profil (certification, badges, activité) est-elle utile ?',
     q_favoriteFeature:'Votre fonctionnalité préférée',
     q_usageFrequency:'À quelle fréquence pensez-vous utiliser RecapLink ?',
+    q_offerPricePreference:'Lors de la publication d\'une offre de plastique, que préférez-vous ?',
     q_wouldRecommend:'Recommanderiez-vous RecapLink à votre entourage ?',
     q_comment:'Commentaires libres ou suggestions',
     satisfaction:   [{v:'5',l:'Très satisfait'},{v:'4',l:'Satisfait'},{v:'3',l:'Neutre'},{v:'2',l:'Insatisfait'},{v:'1',l:'Très insatisfait'}],
@@ -695,6 +701,7 @@ const T = {
       {v:'rarely',  i:'fa-clock-rotate-left', l:'Rarement'},
       {v:'never',   i:'fa-ban',            l:'Jamais'},
     ],
+    offerPricePreference:[{v:'show_price',l:'Afficher un prix'},{v:'no_price',l:'Discuter en privé'},{v:'both_options',l:'Avoir le choix'}],
     wouldRecommend:[{v:'definitely',l:'Certainement'},{v:'probably',l:'Probablement'},{v:'maybe',l:'Peut-être'},{v:'no',l:'Non'}],
     commentPlaceholder:'Partagez vos idées, suggestions ou impressions…',
     answeredTxt:'réponses',
@@ -708,7 +715,7 @@ const T = {
     back:'رجوع',
     heroTitle:'قيّم تجربتك مع RecapLink',
     heroSub:'ملاحظاتك تساعدنا على بناء تطبيق أفضل',
-    qCount:'١٨ سؤالاً', time:'~٣ دقائق', anon:'مجهول الهوية',
+    qCount:'١٩ سؤالاً', time:'~٣ دقائق', anon:'مجهول الهوية',
     sec1Short:'الرضا', sec2Short:'التجربة', sec3Short:'الميزات', sec4Short:'التصميم', sec5Short:'الرأي',
     sec1Num:'٠١ — الرضا العام', sec1Title:'مستوى رضاك الشامل',
     sec2Num:'٠٢ — تجربة المستخدم', sec2Title:'سهولة الاستخدام',
@@ -732,6 +739,7 @@ const T = {
     q_profilePage:'هل صفحة الملف الشخصي (شهادة، شارات، نشاط) مفيدة لك؟',
     q_favoriteFeature:'ميزتك المفضلة',
     q_usageFrequency:'كم مرة تنوي استخدام RecapLink؟',
+    q_offerPricePreference:'عند نشر عرض بلاستيك، ماذا تُفضّل؟',
     q_wouldRecommend:'هل ستنصح بـ RecapLink لأشخاص آخرين؟',
     q_comment:'تعليقات أو اقتراحات إضافية',
     satisfaction:   [{v:'5',l:'راضٍ جداً'},{v:'4',l:'راضٍ'},{v:'3',l:'محايد'},{v:'2',l:'غير راضٍ'},{v:'1',l:'غير راضٍ تماماً'}],
@@ -762,6 +770,7 @@ const T = {
       {v:'rarely',  i:'fa-clock-rotate-left', l:'نادراً'},
       {v:'never',   i:'fa-ban',               l:'أبداً'},
     ],
+    offerPricePreference:[{v:'show_price',l:'عرض السعر مباشرةً'},{v:'no_price',l:'التفاوض بشكل خاص'},{v:'both_options',l:'الاختيار بين الخيارين'}],
     wouldRecommend:[{v:'definitely',l:'بالتأكيد'},{v:'probably',l:'على الأرجح'},{v:'maybe',l:'ربما'},{v:'no',l:'لا'}],
     commentPlaceholder:'شاركنا أفكارك واقتراحاتك…',
     answeredTxt:'إجابات',
@@ -775,7 +784,7 @@ const T = {
     back:'Ginaaw',
     heroTitle:'Juge sa kilifëex ak RecapLink',
     heroSub:'Sa xalaat dina nu jëf ngir app bi mës a baax',
-    qCount:'18 laaj', time:'~3 min', anon:'Sunu tur amul',
+    qCount:'19 laaj', time:'~3 min', anon:'Sunu tur amul',
     sec1Short:'Bëgg', sec2Short:'Tawfeex', sec3Short:'Fonctions', sec4Short:'Design', sec5Short:'Xalaat',
     sec1Num:'01 — BËGG WI', sec1Title:'Sa bëgg ci app bi',
     sec2Num:'02 — TAWFEEX', sec2Title:'Lu yomb ci jëfandikoo bi',
@@ -799,6 +808,7 @@ const T = {
     q_profilePage:'Xët profil bi (certification, badge, activité) dafa jëf?',
     q_favoriteFeature:'Fonctionnalité bu la ëpp bëgg',
     q_usageFrequency:'Kañ danga jëfandikoo RecapLink?',
+    q_offerPricePreference:'Bu nga dugël offre plastique, lan la ëpp bëgg?',
     q_wouldRecommend:'Danga sàggal RecapLink ak yeneen?',
     q_comment:'Yeneen xalaat walla sàggal?',
     satisfaction:   [{v:'5',l:'Bëgga rëy'},{v:'4',l:'Bëgga'},{v:'3',l:'Dëkk'},{v:'2',l:'Bëgguma lëk'},{v:'1',l:'Bëgguma'}],
@@ -829,6 +839,7 @@ const T = {
       {v:'rarely',  i:'fa-clock-rotate-left', l:'Sax sax'},
       {v:'never',   i:'fa-ban',               l:'Déedéet dëgg'},
     ],
+    offerPricePreference:[{v:'show_price',l:'Sàmm njëg ci offre bi'},{v:'no_price',l:'Wax ci jamono bu dëkk'},{v:'both_options',l:'Tann ci ñaar yi'}],
     wouldRecommend:[{v:'definitely',l:'Waaw, dëgg'},{v:'probably',l:'Pexe waaw'},{v:'maybe',l:'Xamuma'},{v:'no',l:'Déedéet'}],
     commentPlaceholder:'Bind sa xalaat fi... (du dëgëre)',
     answeredTxt:'tontu',
@@ -847,7 +858,7 @@ const avData = { language: 'fr' };
 const SECTION_FIELDS = {
   1: ['satisfaction', 'designRating'],
   2: ['onboarding', 'registrationEase', 'postOfferEase', 'searchCollectorEase', 'complexity'],
-  3: ['messagingRating', 'chatbotRating', 'badgeSatisfaction', 'savoirFaire', 'profilePage', 'favoriteFeature'],
+  3: ['messagingRating', 'chatbotRating', 'badgeSatisfaction', 'savoirFaire', 'profilePage', 'offerPricePreference', 'favoriteFeature'],
   4: ['colorScheme', 'textReadability', 'navIntuition'],
   5: ['usageFrequency', 'wouldRecommend'],
 };
@@ -869,6 +880,7 @@ const CHIP_ICONS = {
   onboarding:      {'excellent':'fa-trophy','good':'fa-circle-check','average':'fa-circle-minus','difficult':'fa-face-tired'},
   ease:            {'very_easy':'fa-bolt','easy':'fa-circle-check','moderate':'fa-clock','hard':'fa-triangle-exclamation'},
   badgeSatisfaction:{'very_satisfied':'fa-face-grin-stars','satisfied':'fa-face-smile','little':'fa-face-meh','not_satisfied':'fa-face-frown'},
+  offerPricePreference: {'show_price':'fa-tag','no_price':'fa-lock','both_options':'fa-sliders'},
   wouldRecommend:  {'definitely':'fa-thumbs-up','probably':'fa-circle-check','maybe':'fa-circle-question','no':'fa-thumbs-down'},
 };
 
@@ -955,6 +967,7 @@ function applyLang(lang) {
   buildChips('badgeSatisfaction',   t.badgeSatisfaction,'av-chips',     'av-chip');
   buildChips('savoirFaire',         t.savoirFaire,     'av-chips',      'av-chip');
   buildChips('profilePage',         t.profilePage,     'av-chips',      'av-chip');
+  buildChips('offerPricePreference', t.offerPricePreference, 'av-chips', 'av-chip');
   buildMultiIconChips('favoriteFeature', t.favoriteFeature);
   // Section 4 — Design & Interface
   buildChips('colorScheme',         t.colorScheme,     'av-chips',      'av-chip');
