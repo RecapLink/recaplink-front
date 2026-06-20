@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { authApi } from '@/lib/api/auth.api'
 import { useAuthStore } from '@/store/auth.store'
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { LanguageSwitcher } from '@/components/ui/language-switcher'
 
@@ -29,112 +29,154 @@ export default function LoginPage() {
     onSuccess: (res) => {
       const { user, accessToken } = res.data
       setAuth(user, accessToken)
-      navigate(user.role === 'admin' ? '/admin/overview' : '/home')
+      navigate(user.role === 'super_admin' ? '/admin/overview' : '/home')
     },
   })
 
   return (
     <div className="min-h-dvh flex">
-      {/* ── LEFT panel — desktop only ── */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-[#4d9538] flex-col items-center justify-center p-12 relative overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute -top-24 -left-24 w-80 h-80 bg-white/5 rounded-full" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#038543]/60 rounded-full translate-x-1/3 translate-y-1/3" />
-        <div className="absolute top-1/3 -right-16 w-48 h-48 bg-white/5 rounded-full" />
 
-        <div className="relative z-10 max-w-md text-center">
-          {/* Logo */}
-          <div className="flex items-center justify-center gap-3 mb-10">
-            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-[#4d9538] font-black text-xl">RL</span>
-            </div>
-            <span className="text-white font-extrabold text-3xl tracking-tight">RecapLink</span>
-          </div>
+      {/* ── LEFT PANEL — photo + green overlay (desktop only) ── */}
+      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden flex-shrink-0">
+        {/* Background photo */}
+        <img
+          src="/images/login-bg.jpg"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Green hard-light blend */}
+        <div className="absolute inset-0 bg-[#4d9538] mix-blend-hard-light pointer-events-none" />
 
-          <h2 className="text-white font-bold text-2xl leading-snug mb-4">
-            La plateforme de l'économie circulaire plastique
-          </h2>
-          <p className="text-white/70 text-base leading-relaxed mb-10">
-            Connectez collecteurs, recycleurs et acheteurs de plastique en Tunisie et au Sénégal pour un avenir durable.
-          </p>
-
-          {/* Stats pills */}
-          <div className="flex gap-4 justify-center">
-            {[
-              { val: '12 480', label: 'kg recyclés' },
-              { val: '247', label: 'offres actives' },
-              { val: '84', label: 'collecteurs' },
-            ].map(s => (
-              <div key={s.label} className="bg-white/15 backdrop-blur-sm rounded-2xl px-5 py-3 text-center">
-                <p className="text-white font-extrabold text-xl">{s.val}</p>
-                <p className="text-white/70 text-xs mt-0.5">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Decorative ellipses — positions converted from Figma full-canvas % to left-panel % */}
+        {/* Large circle — top-left (partially off-screen) */}
+        <div
+          className="absolute rounded-full bg-white/25"
+          style={{ top: '-9.58%', left: '-1.49%', width: '40.6%', aspectRatio: '1' }}
+        />
+        {/* Small circle — bottom, near right edge of panel */}
+        <div
+          className="absolute rounded-full bg-white/25"
+          style={{ top: '91.85%', left: '89%', width: '14%', aspectRatio: '1' }}
+        />
+        {/* Tiny circle — bottom-left */}
+        <div
+          className="absolute rounded-full bg-white/25"
+          style={{ top: '86.39%', left: '1.49%', width: '7%', aspectRatio: '1' }}
+        />
+        {/* Small circle — top-left */}
+        <div
+          className="absolute rounded-full bg-white/25"
+          style={{ top: '1.43%', left: '4.92%', width: '14%', aspectRatio: '1' }}
+        />
       </div>
 
-      {/* ── RIGHT panel — form ── */}
+      {/* ── RIGHT PANEL — form ── */}
       <div className="flex-1 flex flex-col min-h-dvh bg-white">
-        {/* Top bar */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-2">
-          {/* Mobile logo only */}
-          <div className="flex items-center gap-2 lg:invisible">
-            <div className="w-8 h-8 bg-[#4d9538] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xs">RL</span>
-            </div>
-            <span className="font-bold text-[#231F20]">RecapLink</span>
+
+        {/* ── Branding header ── */}
+        <div className="flex flex-col items-center px-8 pt-[11%] gap-3">
+          {/* RecapLink logo: icon mark + wordmark side by side */}
+          <div className="flex items-center">
+            <img
+              src="/images/recaplink-icon.svg"
+              alt=""
+              style={{ height: '88px', width: '92px' }}
+            />
+            <img
+              src="/images/recaplink-logo-text.svg"
+              alt="RecapLink"
+              style={{ height: '56px', width: '265px', marginLeft: '-16px' }}
+            />
           </div>
+
+          {/* H4 — Bienvenue */}
+          <h2
+            className="font-bold text-2xl text-black text-center leading-none"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Bienvenue chez RecapLink
+          </h2>
+
+          {/* BBW sponsor line */}
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <p
+              className="text-[14px] text-black text-center leading-tight"
+              style={{ fontFamily: 'Inter, sans-serif' }}
+            >
+              Développée avec le soutien du Bildungswerk der Bayerischen Wirtschaft
+            </p>
+            <img
+              src="/images/bbw_international.svg"
+              alt="BBW International"
+              className="h-7 w-auto flex-shrink-0"
+            />
+          </div>
+
+          {/* Language switcher */}
           <LanguageSwitcher />
         </div>
 
-        {/* Form area */}
+        {/* ── Form section (vertically centered in remaining space) ── */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
-          <div className="w-full max-w-[440px]">
-            <div className="mb-8">
-              <h1 className="text-2xl font-extrabold text-[#231F20]">Se connecter à RecapLink</h1>
-              <p className="text-gray-500 text-sm mt-1.5">Bienvenue ! Entrez vos identifiants pour continuer.</p>
-            </div>
+          <div className="w-full max-w-[520px]">
 
-            <form onSubmit={handleSubmit(d => mutate(d))} className="space-y-4">
-              {/* Email */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-[#231F20]">E-mail ou téléphone</label>
-                <div className="relative">
-                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="email"
-                    placeholder="Entrez votre email"
-                    {...register('email')}
-                    className="w-full h-[50px] pl-10 pr-4 border-2 border-gray-200 rounded-xl text-[#231F20] text-sm outline-none focus:border-[#4d9538] transition-colors"
-                  />
-                </div>
-                {errors.email && <p className="text-xs text-[#c41539]">{errors.email.message}</p>}
+            {/* HeadLine — Se connecter */}
+            <h1
+              className="text-[40px] font-bold text-black text-center leading-none mb-8"
+              style={{ fontFamily: 'Inter, sans-serif' }}
+            >
+              Se connecter à RecapLink
+            </h1>
+
+            <form onSubmit={handleSubmit(d => mutate(d))} className="flex flex-col gap-4">
+
+              {/* Email input */}
+              <div>
+                <input
+                  type="email"
+                  placeholder="E-mail ou numéro de téléphone"
+                  {...register('email')}
+                  className="w-full h-[56px] px-5 border-2 border-[#4d9538] rounded-[10px] text-[16px] text-[#231F20] outline-none focus:border-[#038543] transition-colors placeholder:text-[rgba(35,31,32,0.5)] placeholder:font-bold"
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                />
+                {errors.email && (
+                  <p className="text-xs text-[#c41539] mt-1">{errors.email.message}</p>
+                )}
               </div>
 
-              {/* Password */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-[#231F20]">Mot de passe</label>
+              {/* Password input */}
+              <div>
                 <div className="relative">
-                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type={showPw ? 'text' : 'password'}
-                    placeholder="Entrez votre mot de passe"
+                    placeholder="Mot de passe"
                     {...register('password')}
-                    className="w-full h-[50px] pl-10 pr-11 border-2 border-gray-200 rounded-xl text-[#231F20] text-sm outline-none focus:border-[#4d9538] transition-colors"
+                    className="w-full h-[56px] px-5 pr-11 text-center border-2 border-[#4d9538] rounded-[10px] text-[16px] text-[#231F20] outline-none focus:border-[#038543] transition-colors placeholder:text-[rgba(35,31,32,0.5)] placeholder:font-bold placeholder:text-center"
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
                   />
-                  <button type="button" onClick={() => setShowPw(v => !v)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <button
+                    type="button"
+                    onClick={() => setShowPw(v => !v)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    aria-label={showPw ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  >
                     {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {errors.password && <p className="text-xs text-[#c41539]">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-xs text-[#c41539] mt-1">{errors.password.message}</p>
+                )}
               </div>
 
-              <div className="flex justify-end">
-                <Link to="/forgot-password" className="text-sm text-[#4d9538] font-medium hover:underline">
-                  Mot de passe oublié ?
-                </Link>
-              </div>
+              {/* Mot de passe oublié — Button-1 style, left-aligned, black */}
+              <Link
+                to="/forgot-password"
+                className="text-[16px] font-bold text-black hover:text-[#4d9538] transition-colors w-fit"
+                style={{ fontFamily: 'Poppins, sans-serif' }}
+              >
+                Mot de passe oublié ?
+              </Link>
 
               {error && (
                 <div className="bg-red-50 border border-red-100 rounded-xl p-3 text-sm text-[#c41539] text-center">
@@ -142,32 +184,35 @@ export default function LoginPage() {
                 </div>
               )}
 
+              {/* Submit — pill button, 24px Inter Bold */}
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full h-[52px] bg-[#4d9538] text-white font-bold rounded-xl hover:bg-[#038543] disabled:opacity-60 transition-colors text-base mt-2"
+                className="w-full h-[64px] bg-[#4d9538] text-white font-bold rounded-[30px] hover:bg-[#038543] disabled:opacity-60 transition-colors text-[24px]"
+                style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 {isPending ? 'Connexion...' : 'Se connecter'}
               </button>
             </form>
-
-            <div className="flex items-center gap-4 my-6">
-              <div className="flex-1 h-px bg-gray-100" />
-              <span className="text-sm text-gray-400">Ou</span>
-              <div className="flex-1 h-px bg-gray-100" />
-            </div>
-
-            <p className="text-center text-sm text-gray-600">
-              Pas de compte ?{' '}
-              <Link to="/signup" className="text-[#4d9538] font-semibold hover:underline">Inscrivez-vous</Link>
-            </p>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 text-center">
-          <p className="text-xs text-gray-400">RecapLink © 2026 · Développé par <span className="font-semibold">UFUK CONNECT</span></p>
+        {/* ── Footer ── */}
+        <div className="py-5 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+          <p className="text-[16px] text-black">RecapLink © 2026</p>
+          <p className="text-[16px] text-black">
+            Développé par{' '}
+            <a
+              href="https://ufuk.tn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-solid"
+            >
+              UFUK CONNECT
+            </a>
+          </p>
         </div>
+
       </div>
     </div>
   )

@@ -4,6 +4,6 @@ import { ReactNode } from 'react'
 
 export function RequireAdmin({ children }: { children: ReactNode }) {
   const user = useAuthStore(s => s.user)
-  if (!user || user.role !== 'admin') return <Navigate to="/home" replace />
+  if (!user || user.role !== 'super_admin') return <Navigate to="/home" replace />
   return <>{children}</>
 }

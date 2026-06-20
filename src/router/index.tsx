@@ -23,7 +23,6 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: L(() => import('@/features/auth/pages/OnboardingPage')) },
       { path: '/login', element: L(() => import('@/features/auth/pages/LoginPage')) },
-      { path: '/signup', element: L(() => import('@/features/auth/pages/SignupPage')) },
       { path: '/verify', element: L(() => import('@/features/auth/pages/VerifyPage')) },
       { path: '/role', element: L(() => import('@/features/auth/pages/RolePage')) },
       { path: '/welcome', element: L(() => import('@/features/auth/pages/WelcomePage')) },
