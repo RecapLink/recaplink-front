@@ -5,6 +5,8 @@ export const usersApi = {
   detail: (id: string) => api.get(`/users/${id}`),
   update: (id: string, data: FormData) =>
     api.patch(`/users/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  updateMe: (data: Partial<{ fullName: string; username: string; phone: string; bio: string; city: string; zone: string; plasticTypes: string[] }>) =>
+    api.patch('/users/me', data),
   delete: (id: string) => api.delete(`/users/${id}`),
   setStatus: (id: string, status: string) =>
     api.patch(`/users/${id}/status`, { status }),
