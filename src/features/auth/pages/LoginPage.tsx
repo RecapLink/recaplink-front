@@ -76,17 +76,40 @@ export default function LoginPage() {
 
         {/* ── Branding header ── */}
         <div className="flex flex-col items-center px-8 pt-[11%] gap-3">
-          {/* RecapLink logo: icon mark + wordmark side by side */}
-          <div className="flex items-center">
+          {/* RecapLink logo — icon, wordmark, and two red arc vectors composed from Figma positions */}
+          <div
+            className="relative w-full max-w-[490px]"
+            style={{ aspectRatio: '554 / 144' }}
+          >
+            {/* Red arc main (Vector5) — sweeping curve above wordmark, behind icon+text */}
+            <img
+              src="/images/recaplink-arc-main.svg"
+              alt=""
+              aria-hidden
+              className="absolute pointer-events-none"
+              style={{ left: '24.7%', top: '0%', width: '54.8%', height: '49%' }}
+            />
+            {/* Red arc right (Vector4) — right-side curve, behind icon+text */}
+            <img
+              src="/images/recaplink-arc-right.svg"
+              alt=""
+              aria-hidden
+              className="absolute pointer-events-none"
+              style={{ left: '68.9%', top: '10.1%', width: '31.1%', height: '40.2%' }}
+            />
+            {/* Icon mark */}
             <img
               src="/images/recaplink-icon.svg"
               alt=""
-              style={{ height: '88px', width: '92px' }}
+              className="absolute"
+              style={{ left: '0%', top: '10.4%', width: '24.2%', height: '89.6%' }}
             />
+            {/* Wordmark */}
             <img
               src="/images/recaplink-logo-text.svg"
               alt="RecapLink"
-              style={{ height: '56px', width: '265px', marginLeft: '-16px' }}
+              className="absolute"
+              style={{ left: '17.5%', top: '38.2%', width: '76.7%', height: '62.5%' }}
             />
           </div>
 
