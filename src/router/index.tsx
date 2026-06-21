@@ -27,7 +27,9 @@ export const router = createBrowserRouter([
       { path: '/role', element: L(() => import('@/features/auth/pages/RolePage')) },
       { path: '/welcome', element: L(() => import('@/features/auth/pages/WelcomePage')) },
       { path: '/forgot-password', element: L(() => import('@/features/auth/pages/ForgotPasswordPage')) },
-      { path: '/reset-password', element: L(() => import('@/features/auth/pages/ResetPasswordPage')) },
+      { path: '/forgot-password/sent', element: L(() => import('@/features/auth/pages/ForgotPasswordSentPage')) },
+      { path: '/reset-password/:token', element: L(() => import('@/features/auth/pages/ResetPasswordPage')) },
+      { path: '/reset-password/success', element: L(() => import('@/features/auth/pages/ResetPasswordSuccessPage')) },
     ],
   },
   // App

@@ -1,4 +1,4 @@
-export type Role = 'collecteur' | 'recycleur' | 'vendeur_plastique' | 'admin'
+export type Role = 'collecteur' | 'recycleur' | 'vendeur_plastique' | 'admin' | 'super_admin'
 export type UserStatus = 'active' | 'pending' | 'suspended'
 export type PlasticType = 'PET' | 'HDPE' | 'PP' | 'PVC' | 'Autres'
 
