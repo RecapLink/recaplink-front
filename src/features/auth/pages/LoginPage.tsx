@@ -175,7 +175,7 @@ export default function LoginPage() {
                     type={showPw ? 'text' : 'password'}
                     placeholder="Mot de passe"
                     {...register('password')}
-                    className="w-full h-[56px] px-5 pr-11 text-center border-2 border-[#4d9538] rounded-[10px] text-[16px] text-[#231F20] outline-none focus:border-[#038543] transition-colors placeholder:text-[rgba(35,31,32,0.5)] placeholder:font-bold placeholder:text-center"
+                    className="w-full h-[56px] px-5 pr-11 border-2 border-[#4d9538] rounded-[10px] text-[16px] text-[#231F20] outline-none focus:border-[#038543] transition-colors placeholder:text-[rgba(35,31,32,0.5)] placeholder:font-bold"
                     style={{ fontFamily: 'Poppins, sans-serif' }}
                   />
                   <button
