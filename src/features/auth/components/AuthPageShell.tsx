@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from '@/components/ui/language-switcher'
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 }
 
 export function AuthPageShell({ children }: Props) {
+  const { t } = useTranslation('common')
   return (
     <div className="min-h-dvh flex">
 
@@ -40,9 +42,9 @@ export function AuthPageShell({ children }: Props) {
 
         {/* Footer */}
         <div className="py-5 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
-          <p className="text-[16px] text-black">RecapLink © 2026</p>
+          <p className="text-[16px] text-black">{t('footer.copyright')}</p>
           <p className="text-[16px] text-black">
-            Développé par{' '}
+            {t('footer.dev_by')}{' '}
             <a href="https://ufuk.tn/" target="_blank" rel="noopener noreferrer" className="underline decoration-solid">UFUK CONNECT</a>
           </p>
         </div>

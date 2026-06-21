@@ -39,6 +39,16 @@ export const useUIStore = create<UIStore>()(
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
     }),
-    { name: 'rl-ui', partialize: (s) => ({ language: s.language, dir: s.dir, darkMode: s.darkMode }) },
+    {
+      name: 'rl-ui',
+      partialize: (s) => ({ language: s.language, dir: s.dir, darkMode: s.darkMode }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return
+        const dir = state.language === 'ar' ? 'rtl' : 'ltr'
+        document.documentElement.dir = dir
+        document.documentElement.lang = state.language
+        i18n.changeLanguage(state.language)
+      },
+    },
   ),
 )
