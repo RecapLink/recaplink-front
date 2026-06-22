@@ -4,7 +4,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { clsx } from 'clsx'
 
 const NAV = [
-  { to: '/home', icon: LayoutDashboard, label: 'Tableau de bord' },
+  { to: '/admin/overview', icon: LayoutDashboard, label: 'Tableau de bord' },
   { to: '/admin/collectors', icon: Users, label: 'Collecteurs' },
   { to: '/admin/recyclers', icon: Recycle, label: 'Recycleurs' },
   { to: '/admin/offers', icon: Package, label: 'Offres' },
@@ -23,7 +23,7 @@ export default function AdminLayout() {
         {/* Logo block — white background, same width as sidebar */}
         <div
           className="flex-shrink-0 flex items-center justify-center h-full bg-white px-4"
-          style={{ width: 240 }}
+          style={{ width: 280 }}
         >
           {/* Composite logo: icon + text side by side, mirroring the login page asset split */}
           <div className="relative flex items-center" style={{ height: 44, width: 180 }}>
@@ -96,7 +96,7 @@ export default function AdminLayout() {
         {/* Sidebar */}
         <aside
           className="flex-shrink-0 bg-white border-r border-gray-100 flex flex-col sticky overflow-y-auto"
-          style={{ width: 240, top: 96, height: 'calc(100vh - 96px)' }}
+          style={{ width: 280, top: 96, height: 'calc(100vh - 96px)' }}
         >
           {/* Navigation */}
           <nav className="flex-1 py-5 px-3 space-y-0.5">

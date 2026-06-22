@@ -90,18 +90,29 @@ export default function AdminBadgesPage() {
 
                 {/* Actions */}
                 <div className="flex gap-2 mt-3 w-full">
-                  <button
-                    onClick={() => remove(badge._id)}
-                    className="flex-1 py-2 rounded-xl text-xs font-semibold text-gray-500 border border-gray-200 hover:border-red-300 hover:text-[#c41539] transition-colors flex items-center justify-center gap-1"
-                  >
-                    ✏ Editer
-                  </button>
-                  <button
-                    onClick={() => adminApi.awardBadge('', badge._id).catch(() => {})}
-                    className="flex-1 py-2 rounded-xl text-xs font-semibold bg-[#4d9538] text-white hover:bg-[#038543] transition-colors"
-                  >
-                    Attribuer
-                  </button>
+                  {(badge.userCount || 0) <= 100 ? (
+                    <>
+                      <button
+                        onClick={() => remove(badge._id)}
+                        className="flex-1 py-2 rounded-xl text-xs font-semibold text-gray-500 border border-gray-200 hover:border-red-300 hover:text-[#c41539] transition-colors flex items-center justify-center gap-1"
+                      >
+                        ✏ Editer
+                      </button>
+                      <button
+                        onClick={() => adminApi.awardBadge('', badge._id).catch(() => {})}
+                        className="flex-1 py-2 rounded-xl text-xs font-semibold bg-[#4d9538] text-white hover:bg-[#038543] transition-colors"
+                      >
+                        Attribuer
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => adminApi.awardBadge('', badge._id).catch(() => {})}
+                      className="w-full py-2 rounded-xl text-xs font-semibold bg-[#4d9538] text-white hover:bg-[#038543] transition-colors"
+                    >
+                      Attribuer
+                    </button>
+                  )}
                 </div>
               </div>
             )
@@ -132,7 +143,7 @@ function BadgeGrid(_props: { onAward: (id: string) => void; onEdit: (id: string)
             <p className="text-[11px] text-gray-500 mt-1 leading-snug">{b.desc}</p>
             <button className="mt-3 text-sm font-bold text-[#4d9538] hover:underline">{b.users} Utilisateurs</button>
             <div className="flex gap-2 mt-3 w-full">
-              {b.users > 100 ? (
+              {b.users <= 100 ? (
                 <>
                   <button className="flex-1 py-2 rounded-xl text-xs font-semibold text-gray-500 border border-gray-200 hover:border-gray-300 transition-colors">
                     ✏ Editer

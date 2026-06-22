@@ -35,8 +35,9 @@ interface UserRow {
 }
 interface ListResponse { data: UserRow[]; total: number; totalPages: number }
 
-function StatCard({ icon: Icon, iconBg, value, label, change, changeColor, cardBg }: {
-  icon: React.ElementType; iconBg: string; value: string | number; label: string; change: string; changeColor: string; cardBg?: string
+function StatCard({ icon: Icon, iconBg, value, label, change, changeColor, changeBg, cardBg }: {
+  icon: React.ElementType; iconBg: string; value: string | number; label: string
+  change: string; changeColor: string; changeBg?: string; cardBg?: string
 }) {
   return (
     <div className="rounded-2xl p-4 flex gap-3 items-start" style={{ backgroundColor: cardBg || 'white' }}>
@@ -46,7 +47,16 @@ function StatCard({ icon: Icon, iconBg, value, label, change, changeColor, cardB
       <div>
         <p className={`font-extrabold text-2xl leading-none ${cardBg ? 'text-white' : 'text-[#231F20]'}`}>{value}</p>
         <p className={`text-xs mt-0.5 ${cardBg ? 'text-white/70' : 'text-gray-500'}`}>{label}</p>
-        <p className="text-[11px] font-semibold mt-1" style={{ color: cardBg ? 'rgba(255,255,255,0.85)' : changeColor }}>{change}</p>
+        <span
+          className="inline-block text-[11px] font-semibold mt-1.5 rounded-full"
+          style={{
+            color: changeBg ? changeColor : (cardBg ? 'rgba(255,255,255,0.9)' : changeColor),
+            backgroundColor: changeBg || 'transparent',
+            padding: changeBg ? '2px 8px' : '0',
+          }}
+        >
+          {change}
+        </span>
       </div>
     </div>
   )
@@ -94,7 +104,7 @@ export default function AdminRecyclersPage() {
         <StatCard icon={Recycle} iconBg="#ebf5ea" value={total || 312} label="Total recycleurs" change="▲ 5 ce mois" changeColor="#4d9538" />
         <StatCard icon={CheckCircle} iconBg="#ebf5ea" value={89} label="Certifié" change="▲ 5 nouveaux" changeColor="#4d9538" />
         <StatCard icon={Recycle} iconBg="#ebf5ea" value={198} label="Actifs ce mois" change="▲ 63%" changeColor="#4d9538" />
-        <StatCard icon={Star} iconBg="#f5c518" cardBg="#c41539" value="4.6" label="Note moyenne" change="→ Stable" changeColor="#4d9538" />
+        <StatCard icon={Star} iconBg="#f5c518" cardBg="#c41539" value="4.6" label="Note moyenne" change="→ Stable" changeColor="#231F20" changeBg="#f5c518" />
       </div>
 
       {/* Filters */}

@@ -35,18 +35,24 @@ interface UserRow {
 }
 interface ListResponse { data: UserRow[]; total: number; totalPages: number }
 
-function StatCard({ icon: Icon, iconBg, value, label, change, changeColor }: {
-  icon: React.ElementType; iconBg: string; value: string | number; label: string; change: string; changeColor: string
+function StatCard({ icon: Icon, iconBg, iconColor, value, label, change, changeBg, changeColor, cardBg }: {
+  icon: React.ElementType; iconBg: string; iconColor?: string; value: string | number; label: string
+  change: string; changeBg?: string; changeColor: string; cardBg?: string
 }) {
   return (
-    <div className="bg-white rounded-2xl p-4 flex gap-3 items-start">
+    <div className="rounded-2xl p-4 flex gap-3 items-start" style={{ backgroundColor: cardBg || 'white' }}>
       <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: iconBg }}>
-        <Icon size={22} className="text-[#4d9538]" />
+        <Icon size={22} style={{ color: iconColor || '#4d9538' }} />
       </div>
       <div>
         <p className="font-extrabold text-2xl text-[#231F20] leading-none">{value}</p>
         <p className="text-xs text-gray-500 mt-0.5">{label}</p>
-        <p className="text-[11px] font-semibold mt-1" style={{ color: changeColor }}>{change}</p>
+        <span
+          className="inline-block text-[11px] font-semibold mt-1.5 px-2 py-0.5 rounded-full"
+          style={{ backgroundColor: changeBg || 'transparent', color: changeColor, paddingLeft: changeBg ? undefined : 0, paddingRight: changeBg ? undefined : 0 }}
+        >
+          {change}
+        </span>
       </div>
     </div>
   )
@@ -93,8 +99,8 @@ export default function AdminCollectorsPage() {
       <div className="grid grid-cols-4 gap-4">
         <StatCard icon={Users} iconBg="#ebf5ea" value={total || 84} label="Total collecteurs" change="▲ 5 ce mois" changeColor="#4d9538" />
         <StatCard icon={CheckCircle} iconBg="#ebf5ea" value={71} label="Actifs" change="▲ 84%" changeColor="#4d9538" />
-        <StatCard icon={Clock} iconBg="#ebf5ea" value={8} label="En attente vérif." change="→ 3 nouvelles" changeColor="#f59e0b" />
-        <StatCard icon={Ban} iconBg="#fef2f2" value={5} label="Suspendus" change="▼ signalés" changeColor="#c41539" />
+        <StatCard icon={Clock} iconBg="#fff7ed" iconColor="#f59e0b" value={8} label="En attente vérif." change="→ 3 nouvelles" changeBg="#fef2f2" changeColor="#c41539" />
+        <StatCard icon={Ban} iconBg="#fef2f2" iconColor="#c41539" value={5} label="Suspendus" change="♥ signalés" changeBg="#fce4ec" changeColor="#c41539" />
       </div>
 
       {/* Filters + Search */}
