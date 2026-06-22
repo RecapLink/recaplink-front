@@ -32,7 +32,7 @@ export default function LoginPage() {
     onSuccess: (res) => {
       const { user, accessToken } = res.data
       setAuth(user, accessToken)
-      navigate(user.role === 'super_admin' ? '/admin/overview' : '/home')
+      navigate('/home')
     },
   })
 

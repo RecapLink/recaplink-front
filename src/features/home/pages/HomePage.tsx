@@ -1,276 +1,355 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { MapPin, Plus, Package, Recycle, Bot, BookOpen, TrendingUp, Clock, ArrowRight } from 'lucide-react'
+import { Package, Recycle, Award, Truck, MessageSquare, AlertTriangle, BookOpen } from 'lucide-react'
+import { PieChart, Pie, Cell } from 'recharts'
 import { useAuthStore } from '@/store/auth.store'
 import { offersApi } from '@/lib/api/offers.api'
-import { Avatar } from '@/components/ui/avatar'
-import type { Offer } from '@/types/offer.types'
+import { adminApi } from '@/lib/api/admin.api'
+import AdminOverviewPage from '@/features/admin/pages/AdminOverviewPage'
 
-const PLASTIC_TYPES = ['PET', 'HDPE', 'PP', 'PVC', 'Autres'] as const
+// ─── Constants ────────────────────────────────────────────────────────────────
 
-const ROLE_LABEL: Record<string, string> = {
-  collecteur: 'Collecteur',
-  recycleur: 'Recycleur',
-  vendeur: 'Vendeur de plastique',
-  admin: 'Administrateur',
+const PLASTIC_ORDER = ['PET', 'HDPE', 'PP', 'PVC', 'Autres'] as const
+
+const PLASTIC_COLORS: Record<string, string> = {
+  PET: '#2d6e1a', HDPE: '#4d9538', PP: '#7dbf52', PVC: '#aad98a', Autres: '#d0ecc0',
 }
 
-const QUICK_ACTIONS = [
-  { icon: Plus, label: 'Publier une offre', desc: 'Proposez votre plastique', to: '/offers/new', bg: '#4d9538', color: 'white' },
-  { icon: Package, label: 'Voir les offres', desc: 'Parcourez le marché', to: '/offers', bg: '#ebf5ea', color: '#4d9538' },
-  { icon: Bot, label: 'Assistant IA', desc: 'Posez vos questions', to: '/chatbot', bg: '#ebf5ea', color: '#4d9538' },
-  { icon: BookOpen, label: 'Savoir-faire', desc: 'Articles et tutoriels', to: '/knowledge', bg: '#ebf5ea', color: '#4d9538' },
-]
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function OfferCard({ offer }: { offer: Offer }) {
-  const navigate = useNavigate()
-  const PLASTIC_COLORS: Record<string, string> = {
-    PET: '#4d9538', HDPE: '#c41539', PP: '#231F20', PVC: '#c41539', Autres: '#9ca3af',
-  }
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime()
+  const min = Math.floor(diff / 60000)
+  if (min < 2) return 'À l\'instant'
+  if (min < 60) return `Il y a ${min}min`
+  const h = Math.floor(min / 60)
+  if (h < 24) return `Il y a ${h}h`
+  return `Il y a ${Math.floor(h / 24)}j`
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function StatKpiCard({
+  bg, decorativeColor, textColor, title, value, icon: Icon, iconBg, change, changeUp,
+}: {
+  bg: string; decorativeColor: string; textColor: string
+  title: string; value: string; icon: React.ElementType
+  iconBg: string; change: string; changeUp: boolean
+}) {
+  const subColor = textColor === 'white' ? 'rgba(255,255,255,0.8)' : 'rgba(35,31,32,0.65)'
   return (
-    <button
-      onClick={() => navigate(`/offers/${offer._id}`)}
-      className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow text-left w-full"
-    >
-      <div className="h-28 bg-[#f0f9f0] relative flex items-center justify-center">
-        {offer.images?.[0] ? (
-          <img src={offer.images[0]} alt={offer.title} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-12 h-12 bg-[#ebf5ea] rounded-full flex items-center justify-center">
-            <Package size={22} className="text-[#4d9538]" />
+    <div className="rounded-2xl overflow-hidden relative" style={{ backgroundColor: bg, minHeight: 140 }}>
+      <div className="absolute rounded-full pointer-events-none"
+        style={{ top: -40, right: -20, width: 110, height: 110, backgroundColor: decorativeColor }} />
+      <div className="absolute rounded-full pointer-events-none"
+        style={{ bottom: -36, right: 24, width: 170, height: 140, backgroundColor: decorativeColor }} />
+      <div className="relative p-5 flex flex-col h-full" style={{ minHeight: 140 }}>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="font-semibold text-xs leading-snug"
+              style={{ color: textColor === 'white' ? 'rgba(255,255,255,0.85)' : 'rgba(35,31,32,0.65)' }}>
+              {title}
+            </p>
+            <p className="font-bold text-2xl mt-1 leading-none" style={{ color: textColor }}>{value}</p>
           </div>
-        )}
-        <div className="absolute top-2 left-2">
-          <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
-            style={{ backgroundColor: PLASTIC_COLORS[offer.plasticType] || '#4d9538' }}
-          >
-            {offer.plasticType}
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: iconBg }}>
+            <Icon size={18} style={{ color: textColor === 'white' ? 'white' : '#4d9538' }} />
+          </div>
+        </div>
+        <div className="mt-auto pt-3">
+          <span className="text-xs font-medium" style={{ color: subColor }}>
+            {changeUp ? '▲' : '▼'} {change}
           </span>
         </div>
-        <div className="absolute top-2 right-2">
-          <Avatar src={offer.owner?.avatarUrl} name={offer.owner?.fullName || '?'} size="xs" className="border border-white shadow-sm" />
-        </div>
       </div>
-      <div className="p-3">
-        <p className="font-semibold text-sm text-[#231F20] truncate">{offer.title}</p>
-        <div className="flex items-center gap-1 mt-1">
-          <MapPin size={11} className="text-gray-400 flex-shrink-0" />
-          <span className="text-[11px] text-gray-500 truncate">{offer.location?.city}, {offer.location?.zone}</span>
-        </div>
-        <div className="flex items-center gap-1 mt-1">
-          <Clock size={11} className="text-gray-400 flex-shrink-0" />
-          <span className="text-[11px] text-gray-500">
-            {new Date(offer.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-          </span>
-        </div>
-        {offer.quantityKg && (
-          <p className="mt-2 text-sm font-bold text-[#4d9538]">{offer.quantityKg.toLocaleString()} kg</p>
-        )}
-      </div>
-    </button>
+    </div>
   )
 }
 
-export default function HomePage() {
-  const navigate = useNavigate()
-  const { user } = useAuthStore()
-  const [plasticFilter, setPlasticFilter] = useState<string>('Tous')
-  const [locationInput, setLocationInput] = useState('')
+function PlasticTypeCard({
+  name, pct, count, total, bg, barColor, nameColor, countColor, tall,
+}: {
+  name: string; pct: number; count: number; total: number; bg: string
+  barColor: string; nameColor: string; countColor: string; tall?: boolean
+}) {
+  return (
+    <div className="rounded-xl p-3 flex flex-col justify-between border border-gray-100"
+      style={{ backgroundColor: bg, minHeight: tall ? 160 : 110 }}>
+      <p className="text-[11px] font-bold leading-tight" style={{ color: nameColor }}>
+        {name} — {pct}%
+      </p>
+      <div className="mt-2 h-1 rounded-full bg-gray-100">
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: barColor }} />
+      </div>
+      <div className="mt-2 flex items-center gap-1.5">
+        <div className="w-0.5 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: barColor }} />
+        <span className="text-[10px]" style={{ color: countColor }}>
+          <span className="font-bold">{count}</span>
+          <span className="opacity-50 ml-0.5">sur {total} Offres</span>
+        </span>
+      </div>
+    </div>
+  )
+}
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['offers', plasticFilter, 'home'],
-    queryFn: () =>
-      offersApi
-        .list({ plasticType: plasticFilter !== 'Tous' ? plasticFilter as typeof PLASTIC_TYPES[number] : undefined, limit: 8 })
-        .then(r => r.data.data),
+function DonutChart({ distribution }: { distribution: { type: string; percentage: number }[] }) {
+  const sorted = PLASTIC_ORDER.map(key => {
+    const found = distribution.find(d => d.type === key)
+    return { name: key, value: found?.percentage ?? 0, color: PLASTIC_COLORS[key] ?? '#ccc' }
+  }).filter(d => d.value > 0)
+  const top = sorted[0]
+  return (
+    <div className="bg-white rounded-xl p-3 flex items-center gap-2 h-full border border-gray-100" style={{ minHeight: 160 }}>
+      <div className="relative flex-shrink-0">
+        <PieChart width={96} height={96}>
+          <Pie data={sorted} cx={48} cy={48} innerRadius={28} outerRadius={44} dataKey="value" strokeWidth={0}>
+            {sorted.map((e, i) => <Cell key={i} fill={e.color} />)}
+          </Pie>
+        </PieChart>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="font-bold text-[13px] text-[#231F20] leading-none">{top?.value ?? 0}%</span>
+          <span className="text-[9px] text-gray-500 font-medium mt-0.5">{top?.name ?? '—'}</span>
+        </div>
+      </div>
+      <div className="space-y-1 flex-1 min-w-0">
+        {sorted.map(item => (
+          <div key={item.name} className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md"
+            style={item.name === 'Autres' ? { backgroundColor: '#fff1f2' } : {}}>
+            <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+            <span className="text-[10px] text-gray-600 truncate">{item.name} — {item.value}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function activityIcon(type: string) {
+  switch (type) {
+    case 'offer_active':   return { Icon: Package,      bg: '#e8f5e9', color: '#4d9538' }
+    case 'offer_closed':   return { Icon: Package,      bg: '#f5f5f5', color: '#9ca3af' }
+    case 'offer_pending':  return { Icon: Package,      bg: '#fef9e7', color: '#d97706' }
+    case 'badge_award':    return { Icon: Award,        bg: '#f3e8ff', color: '#9333ea' }
+    case 'message':        return { Icon: MessageSquare, bg: '#e0f2fe', color: '#0284c7' }
+    case 'knowledge':      return { Icon: BookOpen,     bg: '#fef9e7', color: '#d97706' }
+    case 'report':         return { Icon: AlertTriangle, bg: '#fce4ec', color: '#c41539' }
+    default:               return { Icon: Truck,        bg: '#e8f5e9', color: '#4d9538' }
+  }
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function HomePage() {
+  const { user } = useAuthStore()
+
+  // Super admin sees the monitoring dashboard, not the user page
+  if (user?.role === 'super_admin') return <AdminOverviewPage />
+
+  const { data: myOffersData, isLoading: myOffersLoading } = useQuery({
+    queryKey: ['offers', 'mine'],
+    queryFn: () => offersApi.mine().then(r => r.data.data ?? r.data ?? []),
+    staleTime: 120_000,
   })
 
-  const offers: Offer[] = data?.data || []
+  const { data: plasticRaw } = useQuery({
+    queryKey: ['dashboard', 'plastic-distribution'],
+    queryFn: () => adminApi.plasticDistribution().then(r => r.data.data ?? r.data ?? []),
+    staleTime: 120_000,
+  })
+
+  const myOffers = Array.isArray(myOffersData) ? myOffersData : []
+  const myActiveOffers = myOffers.filter((o: any) => o.status === 'active').length
+  const myTotalKg = myOffers.reduce((s: number, o: any) => s + (o.quantityKg ?? 0), 0)
+
+  // Build activity feed from user's own offers
+  const activities = myOffers
+    .slice()
+    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 6)
+    .map((offer: any) => ({
+      type: offer.status === 'active' ? 'offer_active' : offer.status === 'closed' ? 'offer_closed' : 'offer_pending',
+      title: offer.status === 'active'
+        ? `Offre active — ${offer.title}`
+        : offer.status === 'closed'
+        ? `Offre clôturée — ${offer.title}`
+        : `Offre en attente — ${offer.title}`,
+      sub: `${offer.plasticType}${(offer.quantityKg ?? 0) > 0 ? ` · ${(offer.quantityKg ?? 0).toLocaleString('fr-FR')} kg` : ''}`,
+      createdAt: offer.createdAt,
+    }))
+
+  const FALLBACK_ACTIVITIES = [
+    { type: 'offer_active',  title: 'Aucune offre publiée pour le moment', sub: 'Publiez votre première offre',     createdAt: new Date().toISOString() },
+  ]
+
+  // Plastic distribution
+  const plasticDist = Array.isArray(plasticRaw) ? plasticRaw : []
+  const totalOffers = plasticDist.reduce((s: number, p: any) => s + (p.count ?? 0), 0) || 247
+
+  const plasticCards = PLASTIC_ORDER.slice(0, 4).map(key => {
+    const found = plasticDist.find((p: any) => p.type === key)
+    return {
+      name: key,
+      pct: found?.percentage ?? 0,
+      count: found?.count ?? 0,
+      total: totalOffers,
+      bg: '#ffffff',
+      barColor: '#c41539',
+      nameColor: '#4d9538',
+      countColor: '#231F20',
+    }
+  })
+  const autresItem = plasticDist.find((p: any) => p.type === 'Autres')
+  const autresCard = {
+    name: 'Autres', pct: autresItem?.percentage ?? 0, count: autresItem?.count ?? 0,
+    total: totalOffers, bg: '#fff1f2', barColor: '#c41539', nameColor: '#c41539', countColor: '#231F20',
+  }
+
+  const donutData = plasticDist.length > 0
+    ? plasticDist
+    : [
+        { type: 'PET', percentage: 40 }, { type: 'HDPE', percentage: 24 },
+        { type: 'PP', percentage: 18 }, { type: 'PVC', percentage: 14 },
+        { type: 'Autres', percentage: 4 },
+      ]
+
+  const roleLabel: Record<string, string> = {
+    collecteur: 'Collecteur', recycleur: 'Recycleur',
+    vendeur_plastique: 'Vendeur de plastique',
+  }
+
+  const feedItems = activities.length > 0 ? activities : FALLBACK_ACTIVITIES
 
   return (
-    <div className="space-y-6">
-      {/* Welcome banner */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-5">
-        <Avatar src={user?.avatarUrl} name={user?.fullName || '?'} size="lg" />
-        <div className="flex-1 min-w-0">
-          <p className="text-[#231F20] font-bold text-lg">
-            Bonjour, {user?.fullName?.split(' ')[0]} 👋
-          </p>
-          <p className="text-gray-500 text-sm mt-0.5">
-            {ROLE_LABEL[user?.role || ''] || 'Bienvenue'} · RecapLink
-          </p>
-        </div>
-        <div className="hidden md:flex items-center gap-4 text-center">
-          {[
-            { label: 'Offres actives', value: '247' },
-            { label: 'Collecteurs', value: '84' },
-            { label: 'kg recyclés', value: '12 480' },
-          ].map(s => (
-            <div key={s.label} className="bg-[#f0f9f0] rounded-xl px-4 py-2.5">
-              <p className="font-extrabold text-[#4d9538] text-lg leading-none">{s.value}</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">{s.label}</p>
-            </div>
-          ))}
+    <div className="space-y-5">
+
+      {/* ── Welcome banner ── */}
+      <div className="bg-[#4d9538] rounded-2xl overflow-hidden relative" style={{ minHeight: 96 }}>
+        <div className="absolute rounded-full pointer-events-none"
+          style={{ top: -40, right: -30, width: 160, height: 160, backgroundColor: 'rgba(255,255,255,0.10)' }} />
+        <div className="absolute rounded-full pointer-events-none"
+          style={{ bottom: -50, right: 120, width: 200, height: 200, backgroundColor: 'rgba(255,255,255,0.07)' }} />
+        <div className="relative p-6 flex items-center gap-5">
+          <div className="w-14 h-14 rounded-2xl bg-white/20 border-2 border-white/40 flex items-center justify-center flex-shrink-0 overflow-hidden">
+            {user?.avatarUrl ? (
+              <img src={user.avatarUrl} className="w-full h-full object-cover" alt="" />
+            ) : (
+              <span className="text-white font-bold text-lg">
+                {user?.fullName?.slice(0, 2).toUpperCase() || 'U'}
+              </span>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white font-bold text-xl leading-snug">
+              Bonjour, {user?.fullName?.split(' ')[0]} 👋
+            </p>
+            <p className="text-white/70 text-sm mt-0.5">
+              {roleLabel[user?.role || ''] || 'Bienvenue'} · RecapLink
+            </p>
+          </div>
+          <div className="hidden lg:flex items-center gap-3">
+            {[
+              { label: 'Offres actives', value: '247+' },
+              { label: 'Collecteurs', value: '80+' },
+              { label: 'kg recyclés', value: '12 000+' },
+            ].map(s => (
+              <div key={s.label} className="bg-white/15 rounded-xl px-4 py-2.5 text-center">
+                <p className="font-bold text-white text-lg leading-none">{s.value}</p>
+                <p className="text-white/70 text-[10px] mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Search + quick actions */}
-      <div className="grid grid-cols-3 gap-5">
-        {/* Search panel */}
-        <div className="col-span-2 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-4">
-          <h2 className="font-bold text-[#231F20]">Trouver un collecteur ou recycleur</h2>
+      {/* ── Main row: KPI cards + types de plastique (3fr) | Activité récente (2fr) ── */}
+      <div className="grid gap-5" style={{ gridTemplateColumns: '3fr 2fr' }}>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => navigate('/offers?role=collecteur')}
-              className="flex-1 h-10 bg-[#4d9538] text-white rounded-xl text-sm font-semibold hover:bg-[#038543] transition-colors flex items-center justify-center gap-2"
-            >
-              <Recycle size={15} /> Collecteur
-            </button>
-            <button
-              onClick={() => navigate('/offers?role=recycleur')}
-              className="flex-1 h-10 bg-[#ebf5ea] text-[#4d9538] rounded-xl text-sm font-semibold hover:bg-[#d4edcc] transition-colors flex items-center justify-center gap-2"
-            >
-              <Package size={15} /> Recycleur
-            </button>
-          </div>
+        {/* Left: KPI cards + plastic types */}
+        <div className="space-y-5">
 
-          <div className="relative">
-            <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d9538]" />
-            <input
-              value={locationInput}
-              onChange={e => setLocationInput(e.target.value)}
-              placeholder="Entrez votre ville ou adresse..."
-              className="w-full h-11 pl-10 pr-4 border-2 border-gray-200 rounded-xl text-sm text-[#231F20] outline-none focus:border-[#4d9538] transition-colors"
+          {/* Personal KPI cards */}
+          <div className="grid grid-cols-3 gap-4">
+            <StatKpiCard
+              bg="#4d9538" decorativeColor="rgba(255,255,255,0.13)" textColor="white"
+              icon={Package} iconBg="rgba(255,255,255,0.2)"
+              title="Mes offres actives" value={myActiveOffers.toString()}
+              change={`${myOffers.length} au total`} changeUp={true}
+            />
+            <StatKpiCard
+              bg="#231F20" decorativeColor="rgba(255,255,255,0.07)" textColor="white"
+              icon={Recycle} iconBg="rgba(255,255,255,0.12)"
+              title="Kg de plastique" value={myTotalKg > 0 ? myTotalKg.toLocaleString('fr-FR') : '—'}
+              change={myTotalKg > 0 ? 'dans mes offres' : 'Aucune donnée'} changeUp={true}
+            />
+            <StatKpiCard
+              bg="#f5c518" decorativeColor="rgba(0,0,0,0.07)" textColor="#231F20"
+              icon={Award} iconBg="rgba(0,0,0,0.1)"
+              title="Mes badges" value={(user as any)?.badges?.length?.toString() ?? '0'}
+              change="badges obtenus" changeUp={true}
             />
           </div>
 
-          <button
-            className="w-full h-11 bg-[#4d9538] text-white font-semibold rounded-xl hover:bg-[#038543] transition-colors text-sm flex items-center justify-center gap-2"
-            onClick={() => navigate('/offers')}
-          >
-            <MapPin size={15} /> Utiliser ma position actuelle
-          </button>
+          {/* Types de plastique Par Offres */}
+          <div className="space-y-3">
+            <h3 className="font-bold text-[#231F20] text-base">Types de plastique Par Offres</h3>
 
-          <button
-            className="w-full h-11 border-2 border-[#4d9538] text-[#4d9538] font-semibold rounded-xl hover:bg-[#ebf5ea] transition-colors text-sm"
-            onClick={() => navigate('/offers')}
-          >
-            Rechercher
-          </button>
-        </div>
+            {/* 4 type cards */}
+            <div className="grid grid-cols-4 gap-2">
+              {plasticCards.map(p => <PlasticTypeCard key={p.name} {...p} />)}
+            </div>
 
-        {/* Quick actions */}
-        <div className="space-y-3">
-          {QUICK_ACTIONS.map(a => (
-            <button
-              key={a.to}
-              onClick={() => navigate(a.to)}
-              className="w-full bg-white rounded-2xl border border-gray-100 p-3.5 flex items-center gap-3 hover:shadow-md transition-shadow text-left"
-            >
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: a.bg }}
-              >
-                <a.icon size={18} style={{ color: a.color }} />
+            {/* Autres + Donut */}
+            <div className="grid grid-cols-4 gap-2 items-stretch">
+              <PlasticTypeCard {...autresCard} tall />
+              <div className="col-span-3">
+                <DonutChart distribution={donutData} />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-[#231F20]">{a.label}</p>
-                <p className="text-[11px] text-gray-400">{a.desc}</p>
-              </div>
-              <ArrowRight size={14} className="text-gray-300 flex-shrink-0" />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Offers section */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="font-bold text-[#231F20]">Offres récentes</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Plastiques disponibles sur la plateforme</p>
+            </div>
           </div>
-          <button
-            onClick={() => navigate('/offers')}
-            className="flex items-center gap-1.5 text-sm text-[#4d9538] font-semibold hover:underline"
-          >
-            Tout voir <ArrowRight size={14} />
-          </button>
         </div>
 
-        {/* Plastic type filter chips */}
-        <div className="flex gap-2 mb-4 flex-wrap">
-          {['Tous', ...PLASTIC_TYPES].map(p => (
-            <button
-              key={p}
-              onClick={() => setPlasticFilter(p)}
-              className={`px-3 h-8 rounded-full text-xs font-semibold transition-colors border ${
-                plasticFilter === p
-                  ? 'bg-[#4d9538] text-white border-[#4d9538]'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-[#4d9538] hover:text-[#4d9538]'
-              }`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
+        {/* Right: Activité récente */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-[#231F20] text-base">Activité récente</h3>
+          </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
-                <div className="h-28 bg-gray-100" />
-                <div className="p-3 space-y-2">
-                  <div className="h-3.5 bg-gray-100 rounded w-3/4" />
-                  <div className="h-3 bg-gray-50 rounded w-1/2" />
+          {myOffersLoading ? (
+            <div className="space-y-3">
+              {[0, 1, 2, 3, 4].map(i => (
+                <div key={i} className="flex gap-4 py-4 border-b border-gray-100 last:border-0">
+                  <div className="w-11 h-11 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 bg-gray-100 animate-pulse rounded w-3/4" />
+                    <div className="h-2.5 bg-gray-100 animate-pulse rounded w-1/2" />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : offers.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-            <div className="w-16 h-16 bg-[#ebf5ea] rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Package size={28} className="text-[#4d9538]" />
+              ))}
             </div>
-            <p className="font-bold text-[#231F20]">Aucune offre disponible</p>
-            <p className="text-sm text-gray-400 mt-1">Soyez le premier à publier une offre</p>
-            <button
-              onClick={() => navigate('/offers/new')}
-              className="mt-4 bg-[#4d9538] text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-[#038543] transition-colors text-sm"
-            >
-              Publier une offre
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-4 gap-4">
-            {offers.map(offer => (
-              <OfferCard key={offer._id} offer={offer} />
-            ))}
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {feedItems.map((item, i) => {
+                const { Icon, bg, color } = activityIcon(item.type)
+                return (
+                  <div key={i} className="flex items-center gap-3 py-4">
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: bg }}>
+                      <Icon size={18} style={{ color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#231F20] leading-snug truncate">{item.title}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 leading-snug truncate">{item.sub}</p>
+                    </div>
+                    <p className="text-[11px] text-gray-400 flex-shrink-0 font-mono italic whitespace-nowrap">
+                      {timeAgo(item.createdAt)}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          { icon: TrendingUp, label: 'kg recyclés ce mois', value: '12 480', change: '+18%', color: '#4d9538' },
-          { icon: Package, label: 'Offres actives', value: '247', change: '+12%', color: '#c41539' },
-          { icon: Recycle, label: 'Collecteurs actifs', value: '84', change: '5 nouveaux', color: '#231F20' },
-        ].map(s => (
-          <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: s.color + '15' }}>
-              <s.icon size={22} style={{ color: s.color }} />
-            </div>
-            <div>
-              <p className="font-extrabold text-2xl text-[#231F20] leading-none">{s.value}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
-              <p className="text-[11px] font-semibold mt-1" style={{ color: s.color }}>{s.change}</p>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   )

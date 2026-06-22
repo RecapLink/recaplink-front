@@ -11,10 +11,12 @@ export const adminApi = {
     api.get('/admin/offers', { params }),
   verifyOffer: (id: string) => api.patch(`/offers/${id}/verify`),
 
-  // Stats
-  overview: () => api.get('/admin/stats/overview'),
-  registrationsByMonth: () => api.get('/admin/stats/registrations-by-month'),
-  collectionsByZone: () => api.get('/admin/stats/collections-by-zone'),
+  // Stats / Dashboard
+  overview: () => api.get('/dashboard/stats'),
+  plasticDistribution: () => api.get('/dashboard/plastic-distribution'),
+  dashboardActivity: () => api.get('/dashboard/activity'),
+  registrationsByMonth: () => api.get('/dashboard/monthly'),
+  collectionsByZone: () => api.get('/dashboard/zones'),
 
   // Knowledge
   listKnowledge: (params?: { status?: string; page?: number; limit?: number }) =>

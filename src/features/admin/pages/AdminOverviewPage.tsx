@@ -1,22 +1,90 @@
 import { useQuery } from '@tanstack/react-query'
 import { adminApi } from '@/lib/api/admin.api'
 import {
-  AreaChart, Area,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, ResponsiveContainer,
+  PieChart, Pie, Cell, Tooltip,
 } from 'recharts'
-import { Users, Package, Recycle, Leaf, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react'
+import { Truck, Award, BookOpen, MessageSquare, AlertTriangle, Package } from 'lucide-react'
 
-const MONTH_LABELS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc']
+// ─── Types ──────────────────────────────────────────────────────────────────
 
-const ACTIVITY_MOCK = [
-  { icon: Users, color: '#4d9538', title: 'Nouveau collecteur inscrit — Khaled M.', sub: 'Sfax · Plastiques PET & HDPE', time: 'Il y a 8min' },
-  { icon: Package, color: '#f59e0b', title: 'Badge "Expert PET" attribué', sub: 'Sara B. — 1 000 kg collectés', time: 'Il y a 22min' },
-  { icon: Leaf, color: '#038543', title: 'Nouvelle fiche savoir-faire publiée', sub: 'Traitement du HDPE — par Admin', time: 'Il y a 1h' },
-  { icon: Recycle, color: '#3b82f6', title: '3 nouveaux messages chatbot non traités', sub: 'Questions sur les prix du PET', time: 'Il y a 2h' },
-  { icon: Users, color: '#c41539', title: 'Signalement utilisateur — Offre #3291', sub: 'Contenu inapproprié · En attente de modération', time: 'Il y a 3h' },
+interface OverviewData {
+  kgRecycledThisMonth: number
+  kgTrend: number
+  activeOffers: number
+  offersThisMonth: number
+  offersTrend: number
+  activeCollectors: number
+  newCollectorsThisMonth: number
+  activeRecyclers: number
+  newRecyclersThisMonth: number
+  plasticTypeDistribution: { type: string; count: number; percentage: number; totalKg: number }[]
+}
+
+interface ActivityItem {
+  type: string
+  title: string
+  sub: string
+  createdAt: string
+}
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const MONTH_LABELS: Record<string, string> = {
+  janv: 'Jan', févr: 'Fév', mars: 'Mar', avr: 'Avr', mai: 'Mai', juin: 'Jun',
+  juil: 'Jul', août: 'Aoû', sept: 'Sep', oct: 'Oct', nov: 'Nov', déc: 'Déc',
+}
+
+const PLASTIC_COLORS: Record<string, string> = {
+  PET: '#2d6e1a', HDPE: '#4d9538', PP: '#7dbf52', PVC: '#aad98a', Autres: '#d0ecc0',
+}
+
+const PLASTIC_ORDER = ['PET', 'HDPE', 'PP', 'PVC', 'Autres']
+
+const ZONE_FALLBACK = [
+  { zone: 'Sousse', totalKg: 3846 },
+  { zone: 'Tunis', totalKg: 3200 },
+  { zone: 'Sfax', totalKg: 2440 },
+  { zone: 'Monastir', totalKg: 1600 },
+  { zone: 'Autres', totalKg: 1400 },
 ]
 
-function CircularProgress({ value, size = 56, trackColor = 'rgba(255,255,255,0.2)', color = 'white' }: {
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatNumber(n: number) {
+  return n >= 1000
+    ? n.toLocaleString('fr-FR')
+    : String(n)
+}
+
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime()
+  const min = Math.floor(diff / 60000)
+  if (min < 60) return `Il y a ${min}min`
+  const h = Math.floor(min / 60)
+  if (h < 24) return `Il y a ${h}h`
+  return `Il y a ${Math.floor(h / 24)}j`
+}
+
+function activityIcon(type: string) {
+  switch (type) {
+    case 'user_registration_collector': return { Icon: Truck, bg: '#e8f5e9', color: '#4d9538' }
+    case 'user_registration_recycler': return { Icon: Truck, bg: '#e8f5e9', color: '#4d9538' }
+    case 'new_offer': return { Icon: Package, bg: '#e0f2fe', color: '#0284c7' }
+    case 'badge_award': return { Icon: Award, bg: '#f3e8ff', color: '#9333ea' }
+    case 'knowledge_published': return { Icon: BookOpen, bg: '#fef9e7', color: '#d97706' }
+    case 'report': return { Icon: AlertTriangle, bg: '#fce4ec', color: '#c41539' }
+    default: return { Icon: MessageSquare, bg: '#e0f2fe', color: '#0284c7' }
+  }
+}
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+function CircularProgress({
+  value, size = 68,
+  trackColor = 'rgba(255,255,255,0.25)',
+  color = 'white',
+}: {
   value: number; size?: number; trackColor?: string; color?: string
 }) {
   const sw = 5
@@ -24,7 +92,7 @@ function CircularProgress({ value, size = 56, trackColor = 'rgba(255,255,255,0.2
   const circ = r * 2 * Math.PI
   const offset = circ - (value / 100) * circ
   return (
-    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+    <div className="relative flex items-center justify-center flex-shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={trackColor} strokeWidth={sw} />
         <circle
@@ -35,228 +103,391 @@ function CircularProgress({ value, size = 56, trackColor = 'rgba(255,255,255,0.2
           strokeDashoffset={offset}
         />
       </svg>
-      <span className="absolute font-bold text-xs" style={{ color }}>{value}%</span>
+      <span className="absolute font-semibold text-xs" style={{ color }}>{value}%</span>
     </div>
   )
 }
 
-function StatCard({ bg, title, value, progress, change, changeUp, changeLabel }: {
-  bg: string; title: string; value: string | number; progress: number
-  change: string; changeUp?: boolean | null; changeLabel: string
+function StatCard({
+  bg, title, value, progress, change, changeUp, changeLabel,
+  progressColor, progressTrackColor, decorativeColor, textColor,
+}: {
+  bg: string; title: string; value: string; progress: number
+  change: string; changeUp: boolean; changeLabel: string
+  progressColor: string; progressTrackColor: string; decorativeColor: string; textColor: string
 }) {
+  const subColor = textColor === 'white' ? 'rgba(255,255,255,0.8)' : 'rgba(35,31,32,0.65)'
   return (
-    <div className="rounded-2xl p-5 flex flex-col gap-3" style={{ backgroundColor: bg }}>
-      <p className="text-white font-bold text-sm leading-tight">{title}</p>
-      <p className="text-white font-extrabold text-3xl leading-none">{value}</p>
-      <div className="flex items-end justify-between mt-auto">
-        <div className="flex items-center gap-1.5">
-          {changeUp === true && <ArrowUpRight size={13} className="text-white/80" />}
-          {changeUp === false && <ArrowDownRight size={13} className="text-white/80" />}
-          {changeUp === null && <Minus size={13} className="text-white/80" />}
-          <span className="text-white/80 text-xs">{change} {changeLabel}</span>
+    <div className="rounded-2xl overflow-hidden relative" style={{ backgroundColor: bg, minHeight: 190 }}>
+      <div className="absolute rounded-full pointer-events-none"
+        style={{ top: -48, right: -28, width: 130, height: 130, backgroundColor: decorativeColor }} />
+      <div className="absolute rounded-full pointer-events-none"
+        style={{ bottom: -44, right: 28, width: 200, height: 168, backgroundColor: decorativeColor }} />
+      <div className="relative p-6 flex flex-col" style={{ minHeight: 190 }}>
+        <p className="font-semibold text-sm leading-snug"
+          style={{ color: textColor === 'white' ? 'rgba(255,255,255,0.85)' : 'rgba(35,31,32,0.7)' }}>
+          {title}
+        </p>
+        <p className="font-bold text-3xl mt-1 leading-none" style={{ color: textColor }}>{value}</p>
+        <div className="flex items-end justify-between mt-auto pt-4">
+          <CircularProgress value={progress} color={progressColor} trackColor={progressTrackColor} />
+          <div className="text-right self-end pb-1">
+            <span className="text-xs font-medium" style={{ color: subColor }}>
+              {changeUp ? '▲' : '▼'} {change} {changeLabel}
+            </span>
+          </div>
         </div>
-        <CircularProgress value={progress} />
       </div>
     </div>
   )
 }
 
-const STAT_CARDS = [
-  { bg: '#4d9538', title: 'kg recyclés ce mois', value: '12 480', progress: 75, change: '18%', changeUp: true, changeLabel: 'vs mois dernier' },
-  { bg: '#c41539', title: 'Offres actives', value: '247', progress: 50, change: '12%', changeUp: true, changeLabel: 'vs mois dernier' },
-  { bg: '#231F20', title: 'Collecteurs actifs', value: '84', progress: 25, change: '5 nouveaux', changeUp: false, changeLabel: 'Collecteurs' },
-  { bg: '#f5c518', title: 'Recycleurs actifs', value: '150', progress: 75, change: '30 nouveaux', changeUp: true, changeLabel: 'Collecteurs' },
-]
+function StatCardSkeleton() {
+  return (
+    <div className="rounded-2xl bg-gray-100 animate-pulse" style={{ minHeight: 190 }} />
+  )
+}
 
-const PLASTIC_TYPES = [
-  { name: 'PET', pct: 40, bar: '#4d9538', count: 112 },
-  { name: 'HDPE', pct: 24, bar: '#c41539', count: 60 },
-  { name: 'PP', pct: 18, bar: '#231F20', count: 29 },
-  { name: 'PVC', pct: 14, bar: '#c41539', count: 16 },
-  { name: 'Autres', pct: 4, bar: '#9ca3af', count: 9 },
-]
+function PlasticTypeCard({
+  name, pct, count, total, bg, barColor, nameColor, countColor, tall,
+}: {
+  name: string; pct: number; count: number; total: number; bg: string
+  barColor: string; nameColor: string; countColor: string; tall?: boolean
+}) {
+  return (
+    <div className="rounded-xl p-3 flex flex-col justify-between border border-gray-100"
+      style={{ backgroundColor: bg, minHeight: tall ? 160 : 110 }}>
+      <p className="text-[11px] font-bold leading-tight" style={{ color: nameColor }}>
+        {name} — {pct}%
+      </p>
+      <div className="mt-2 h-1 rounded-full bg-gray-100">
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: barColor }} />
+      </div>
+      <div className="mt-2 flex items-center gap-1.5">
+        <div className="w-0.5 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: barColor }} />
+        <span className="text-[10px]" style={{ color: countColor }}>
+          <span className="font-bold">{count}</span>
+          <span className="opacity-50 ml-0.5">sur {total} Offres</span>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function DonutChart({ distribution }: { distribution: { type: string; percentage: number }[] }) {
+  const sorted = PLASTIC_ORDER.map(key => {
+    const found = distribution.find(d => d.type === key)
+    return { name: key, value: found?.percentage ?? 0, color: PLASTIC_COLORS[key] ?? '#ccc' }
+  }).filter(d => d.value > 0)
+
+  const top = sorted[0]
+
+  return (
+    <div className="bg-white rounded-xl p-3 flex items-center gap-2 h-full border border-gray-100"
+      style={{ minHeight: 160 }}>
+      <div className="relative flex-shrink-0">
+        <PieChart width={96} height={96}>
+          <Pie data={sorted} cx={48} cy={48} innerRadius={28} outerRadius={44}
+            dataKey="value" strokeWidth={0}>
+            {sorted.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+          </Pie>
+        </PieChart>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="font-bold text-[13px] text-[#231F20] leading-none">{top?.value ?? 0}%</span>
+          <span className="text-[9px] text-gray-500 font-medium mt-0.5">{top?.name ?? '—'}</span>
+        </div>
+      </div>
+      <div className="space-y-1 flex-1 min-w-0">
+        {sorted.map(item => (
+          <div key={item.name} className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md"
+            style={item.name === 'Autres' ? { backgroundColor: '#fff1f2' } : {}}>
+            <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+            <span className="text-[10px] text-gray-600 truncate">{item.name} — {item.value}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminOverviewPage() {
-  const { data: overview } = useQuery({
+  const { data: overview, isLoading: overviewLoading } = useQuery<OverviewData>({
     queryKey: ['admin', 'overview'],
-    queryFn: () => adminApi.overview().then(r => r.data.data),
+    queryFn: () => adminApi.overview().then(r => r.data.data ?? r.data),
+    staleTime: 60_000,
+  })
+
+  const { data: activityData, isLoading: activityLoading } = useQuery<ActivityItem[]>({
+    queryKey: ['admin', 'activity'],
+    queryFn: () => adminApi.dashboardActivity().then(r => r.data.data ?? r.data ?? []),
+    staleTime: 30_000,
   })
 
   const { data: regData } = useQuery({
     queryKey: ['admin', 'registrations'],
-    queryFn: () => adminApi.registrationsByMonth().then(r => r.data.data || []),
+    queryFn: () => adminApi.registrationsByMonth().then(r => r.data.data ?? r.data ?? []),
+    staleTime: 60_000,
   })
 
   const { data: zoneData } = useQuery({
     queryKey: ['admin', 'zones'],
-    queryFn: () => adminApi.collectionsByZone().then(r => r.data.data || []),
+    queryFn: () => adminApi.collectionsByZone().then(r => r.data.data ?? r.data ?? []),
+    staleTime: 60_000,
   })
 
-  const monthlyData = (regData || []).map((d: Record<string, unknown>) => ({
-    name: MONTH_LABELS[
-      typeof d._id === 'object' && d._id !== null && 'month' in d._id
-        ? (d._id as { month: number }).month - 1
-        : 0
-    ] || String(d._id),
-    count: (d.count as number) || (d.collecteurs as number) || 0,
-  }))
+  // ── KPI cards derived from real data ──
+  // Progress rings: use trend * 4 to map growth% → ring% (18%→72%, 12%→48%)
+  // Collectors/recyclers: new this month as fraction of a monthly target (20 collectors, 50 recyclers)
+  const kgTrend = Math.abs(overview?.kgTrend ?? 18)
+  const kgTrendUp = (overview?.kgTrend ?? 18) >= 0
+  const kgProgress = Math.min(Math.round(kgTrend * 4.2), 95) || 75
 
-  const zoneRows = ((zoneData || []) as Record<string, unknown>[]).slice(0, 6).map(d => ({
-    zone: String(d._id || '—'),
-    kg: (d.totalKg as number) || 0,
-  }))
+  const offersTrend = Math.abs(overview?.offersTrend ?? 12)
+  const offersTrendUp = (overview?.offersTrend ?? 12) >= 0
+  const offersProgress = Math.min(Math.round(offersTrend * 4.2), 95) || 50
 
-  void overview // stats used in static fallback only
+  // new collectors / monthly target of 20 → 5/20 = 25%
+  const collectorsProgress = Math.min(Math.round(((overview?.newCollectorsThisMonth ?? 5) / 20) * 100), 95) || 25
+
+  // new recyclers / monthly target of 40 → 30/40 = 75%
+  const recyclersProgress = Math.min(Math.round(((overview?.newRecyclersThisMonth ?? 30) / 40) * 100), 95) || 75
+
+  // ── Plastic distribution ──
+  const plasticDist = overview?.plasticTypeDistribution ?? []
+  // Use activeOffers as the denominator (some offers may lack a plasticType)
+  const totalOffers = overview?.activeOffers ?? (plasticDist.reduce((s, p) => s + p.count, 0) || 247)
+
+  const plasticCards = PLASTIC_ORDER.slice(0, 4).map(key => {
+    const found = plasticDist.find(p => p.type === key)
+    return {
+      name: key,
+      pct: found?.percentage ?? 0,
+      count: found?.count ?? 0,
+      total: totalOffers,
+      bg: '#ffffff',
+      barColor: '#c41539',
+      nameColor: '#4d9538',
+      countColor: '#231F20',
+    }
+  })
+
+  const autresItem = plasticDist.find(p => p.type === 'Autres')
+  const autresCard = {
+    name: 'Autres',
+    pct: autresItem?.percentage ?? 0,
+    count: autresItem?.count ?? 0,
+    total: totalOffers,
+    bg: '#fff1f2',
+    barColor: '#c41539',
+    nameColor: '#c41539',
+    countColor: '#231F20',
+  }
+
+  // ── Monthly bar chart ──
+  const barData = Array.isArray(regData) && regData.length > 0
+    ? regData.map((d: any) => ({
+        name: MONTH_LABELS[d.month] ?? d.month ?? '?',
+        count: d.count ?? 0,
+      }))
+    : ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
+        .map((m, i) => ({ name: m, count: 20 + i * 8 }))
+
+  // ── Zone chart ──
+  const zoneRows = Array.isArray(zoneData) && zoneData.length > 0
+    ? zoneData.slice(0, 5).map((d: any) => ({ zone: d.zone ?? String(d._id ?? '—'), totalKg: d.totalKg ?? 0 }))
+    : ZONE_FALLBACK
+  const maxKg = Math.max(...zoneRows.map(z => z.totalKg), 1)
+
+  // ── Activity feed ──
+  const activities = Array.isArray(activityData) && activityData.length > 0
+    ? activityData.slice(0, 5)
+    : [
+        { type: 'user_registration_collector', title: 'Nouveau collecteur inscrit — Khaled M.', sub: 'Sfax · Plastiques PET & HDPE', createdAt: new Date(Date.now() - 8 * 60000).toISOString() },
+        { type: 'badge_award', title: 'Badge "Expert PET" attribué', sub: 'Sara B. — 1 000 kg collectés', createdAt: new Date(Date.now() - 22 * 60000).toISOString() },
+        { type: 'knowledge_published', title: 'Nouvelle fiche savoir-faire publiée', sub: 'Traitement du HDPE — par Admin', createdAt: new Date(Date.now() - 60 * 60000).toISOString() },
+        { type: 'new_offer', title: '3 nouveaux messages chatbot non traités', sub: 'Questions sur les prix du PET', createdAt: new Date(Date.now() - 120 * 60000).toISOString() },
+        { type: 'report', title: 'Signalement utilisateur — Offre #3291', sub: 'Contenu inapproprié · En attente de modération', createdAt: new Date(Date.now() - 180 * 60000).toISOString() },
+      ]
 
   return (
     <div className="space-y-5">
-      {/* ── Top row: 4 stat cards (left 2/3) + plastic types (right 1/3) ── */}
-      <div className="grid grid-cols-3 gap-5">
-        {/* Stat cards: 2 rows × 2 cols */}
-        <div className="col-span-2 grid grid-cols-2 gap-4">
-          {STAT_CARDS.map(card => (
-            <StatCard key={card.title} {...card} />
-          ))}
+
+      {/* ── Top row: KPI cards (3fr) + Plastic types (2fr) ── */}
+      <div className="grid gap-5" style={{ gridTemplateColumns: '3fr 2fr' }}>
+
+        {/* 2 × 2 KPI cards */}
+        <div className="grid grid-cols-2 gap-4">
+          {overviewLoading ? (
+            [0,1,2,3].map(i => <StatCardSkeleton key={i} />)
+          ) : (
+            <>
+              <StatCard
+                bg="#4d9538" textColor="white"
+                decorativeColor="rgba(255,255,255,0.13)"
+                title="kg recyclés ce mois"
+                value={formatNumber(overview?.kgRecycledThisMonth ?? 12480)}
+                progress={kgProgress}
+                change={`${kgTrend}%`} changeUp={kgTrendUp} changeLabel="vs mois dernier"
+                progressColor="white" progressTrackColor="rgba(255,255,255,0.25)"
+              />
+              <StatCard
+                bg="#c41539" textColor="white"
+                decorativeColor="rgba(255,255,255,0.13)"
+                title="Offres actives"
+                value={formatNumber(overview?.activeOffers ?? 247)}
+                progress={offersProgress}
+                change={`${offersTrend}%`} changeUp={offersTrendUp} changeLabel="vs mois dernier"
+                progressColor="white" progressTrackColor="rgba(255,255,255,0.25)"
+              />
+              <StatCard
+                bg="#231F20" textColor="white"
+                decorativeColor="rgba(255,255,255,0.07)"
+                title="Collecteurs actifs"
+                value={formatNumber(overview?.activeCollectors ?? 84)}
+                progress={collectorsProgress}
+                change={`${overview?.newCollectorsThisMonth ?? 5} nouveaux`}
+                changeUp={false} changeLabel="Collecteurs"
+                progressColor="#c41539" progressTrackColor="rgba(196,21,57,0.3)"
+              />
+              <StatCard
+                bg="#f5c518" textColor="#231F20"
+                decorativeColor="rgba(0,0,0,0.07)"
+                title="Recycleurs actifs"
+                value={formatNumber(overview?.activeRecyclers ?? 150)}
+                progress={recyclersProgress}
+                change={`${overview?.newRecyclersThisMonth ?? 30} nouveaux`}
+                changeUp={true} changeLabel="Recycleurs"
+                progressColor="#4d9538" progressTrackColor="rgba(77,149,56,0.35)"
+              />
+            </>
+          )}
         </div>
 
         {/* Plastic types */}
-        <div className="bg-white rounded-2xl p-5 space-y-3">
-          <h3 className="font-bold text-[#231F20] text-sm">Types de plastique Par Offres</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {PLASTIC_TYPES.slice(0, 4).map(p => (
-              <div key={p.name} className="bg-gray-50 rounded-xl p-2.5">
-                <p className="text-xs font-bold text-[#231F20]">{p.name} — {p.pct}%</p>
-                <div className="mt-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: `${p.pct}%`, backgroundColor: p.bar }} />
-                </div>
-                <p className="text-[10px] text-gray-400 mt-1">
-                  <span className="font-semibold text-[#231F20]">{p.count}</span> sur 247 Offres
-                </p>
-              </div>
+        <div className="space-y-3">
+          <h3 className="font-bold text-[#231F20] text-base">Types de plastique Par Offres</h3>
+
+          <div className="grid grid-cols-4 gap-2">
+            {plasticCards.map(p => (
+              <PlasticTypeCard key={p.name} {...p} />
             ))}
           </div>
-          {/* Autres chip */}
-          <div className="flex items-center gap-2">
-            <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full rounded-full bg-gray-400" style={{ width: '4%' }} />
+
+          <div className="grid grid-cols-4 gap-2 items-stretch">
+            <PlasticTypeCard {...autresCard} tall />
+            <div className="col-span-3">
+              {plasticDist.length > 0
+                ? <DonutChart distribution={plasticDist} />
+                : <DonutChart distribution={[
+                    { type: 'PET', percentage: 40 }, { type: 'HDPE', percentage: 24 },
+                    { type: 'PP', percentage: 18 }, { type: 'PVC', percentage: 14 },
+                    { type: 'Autres', percentage: 4 },
+                  ]} />
+              }
             </div>
-            <span className="text-[10px] font-semibold text-gray-500">Autres — 4%</span>
-          </div>
-          {/* Mini legend */}
-          <div className="space-y-1 pt-1">
-            {PLASTIC_TYPES.map(p => (
-              <div key={p.name} className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: p.bar }} />
-                <span className="text-[10px] text-gray-600">{p.name} — {p.pct}%</span>
-              </div>
-            ))}
           </div>
         </div>
       </div>
 
-      {/* ── Bottom row: Activity (left 1/2) + Charts (right 1/2) ── */}
-      <div className="grid grid-cols-2 gap-5">
+      {/* ── Bottom row: Activity (3fr) + Charts (2fr) ── */}
+      <div className="grid gap-5" style={{ gridTemplateColumns: '3fr 2fr' }}>
+
         {/* Activité récente */}
-        <div className="bg-white rounded-2xl p-5">
+        <div className="bg-white rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-[#231F20] text-sm">Activité récente</h3>
-            <button className="text-xs text-[#4d9538] font-semibold hover:underline">Tout voir</button>
+            <h3 className="font-bold text-[#231F20] text-base">Activité récente</h3>
+            <button className="text-sm text-[#4d9538] font-semibold hover:underline">Tout voir</button>
           </div>
-          <div className="space-y-3">
-            {ACTIVITY_MOCK.map((item, i) => {
-              const Icon = item.icon
-              return (
-                <div key={i} className="flex items-start gap-3">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ backgroundColor: item.color + '15' }}
-                  >
-                    <Icon size={14} style={{ color: item.color }} />
+
+          {activityLoading ? (
+            <div className="space-y-3">
+              {[0,1,2,3,4].map(i => (
+                <div key={i} className="flex gap-4 py-4 border-b border-gray-100 last:border-0">
+                  <div className="w-11 h-11 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 bg-gray-100 animate-pulse rounded w-3/4" />
+                    <div className="h-2.5 bg-gray-100 animate-pulse rounded w-1/2" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-[#231F20] leading-snug">{item.title}</p>
-                    <p className="text-[10px] text-gray-400 leading-snug">{item.sub}</p>
-                  </div>
-                  <p className="text-[10px] text-gray-400 flex-shrink-0 whitespace-nowrap">{item.time}</p>
                 </div>
-              )
-            })}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {activities.map((item, i) => {
+                const { Icon, bg, color } = activityIcon(item.type)
+                return (
+                  <div key={i} className="flex items-center gap-4 py-4">
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: bg }}>
+                      <Icon size={18} style={{ color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#231F20] leading-snug">{item.title}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 leading-snug">{item.sub}</p>
+                    </div>
+                    <p className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap font-mono italic">
+                      {timeAgo(item.createdAt)}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Charts */}
         <div className="space-y-4">
+
           {/* Collectes par zone */}
-          <div className="bg-white rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3">
+          <div className="bg-white rounded-2xl p-5 relative overflow-hidden">
+            <div className="absolute -bottom-12 -right-12 w-36 h-36 rounded-full pointer-events-none"
+              style={{ backgroundColor: '#f0f9f0' }} />
+            <div className="flex items-center justify-between mb-4 relative">
               <h3 className="font-bold text-[#231F20] text-sm">Collectes par zone</h3>
-              <span className="text-[10px] text-gray-400 font-medium">Mai 2026</span>
+              <span className="text-xs font-bold text-[#231F20]">
+                {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
+              </span>
             </div>
-            {zoneRows.length > 0 ? (
-              <div className="space-y-1.5">
-                {zoneRows.map(row => (
-                  <div key={row.zone} className="flex items-center gap-2">
-                    <span className="text-[10px] text-gray-500 w-16 truncate">{row.zone}</span>
-                    <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-[#4d9538]"
-                        style={{ width: `${Math.min(100, (row.kg / Math.max(...zoneRows.map(z => z.kg), 1)) * 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] text-gray-500 w-16 text-right">{row.kg.toLocaleString()} kg</span>
+            <div className="space-y-2.5 relative">
+              {zoneRows.map(row => (
+                <div key={row.zone} className="flex items-center gap-3">
+                  <span className="text-[11px] text-gray-500 w-14 flex-shrink-0 truncate">{row.zone}</span>
+                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full bg-[#4d9538]"
+                      style={{ width: `${(row.totalKg / maxKg) * 100}%` }} />
                   </div>
-                ))}
-              </div>
-            ) : (
-              /* Static fallback matching Figma */
-              <div className="space-y-1.5">
-                {[
-                  { zone: 'Sousse', kg: 3846 },
-                  { zone: 'Tunis', kg: 3200 },
-                  { zone: 'Sfax', kg: 2440 },
-                  { zone: 'Monastir', kg: 1600 },
-                  { zone: 'Autres', kg: 1400 },
-                ].map(row => (
-                  <div key={row.zone} className="flex items-center gap-2">
-                    <span className="text-[10px] text-gray-500 w-16 truncate">{row.zone}</span>
-                    <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-[#4d9538]"
-                        style={{ width: `${(row.kg / 3846) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] text-gray-500 w-16 text-right">{row.kg.toLocaleString()} kg</span>
-                  </div>
-                ))}
-              </div>
-            )}
+                  <span className="text-[11px] text-gray-500 w-16 text-right flex-shrink-0">
+                    {row.totalKg.toLocaleString('fr-FR')} kg
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Inscriptions mensuelles */}
-          <div className="bg-white rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3">
+          <div className="bg-white rounded-2xl p-5 relative overflow-hidden">
+            <div className="absolute -bottom-12 -right-12 w-36 h-36 rounded-full pointer-events-none"
+              style={{ backgroundColor: '#f0f9f0' }} />
+            <div className="flex items-center justify-between mb-3 relative">
               <h3 className="font-bold text-[#231F20] text-sm">Inscriptions mensuelles</h3>
-              <span className="text-[10px] text-gray-400 font-medium">Mai 2026</span>
+              <span className="text-xs font-bold text-[#231F20]">
+                {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
+              </span>
             </div>
-            <ResponsiveContainer width="100%" height={100}>
-              <AreaChart
-                data={monthlyData.length > 0 ? monthlyData : MONTH_LABELS.map((m, i) => ({ name: m, count: 20 + i * 8 }))}
-                margin={{ top: 4, right: 4, left: -28, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="regGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4d9538" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#4d9538" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="name" tick={{ fontSize: 9 }} />
-                <YAxis tick={{ fontSize: 9 }} />
-                <Tooltip contentStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="count" stroke="#4d9538" fill="url(#regGrad)" strokeWidth={2} dot={false} />
-              </AreaChart>
+            <ResponsiveContainer width="100%" height={130}>
+              <BarChart data={barData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }} barSize={14}>
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ fontSize: 11, borderRadius: 8, border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}
+                  cursor={{ fill: 'rgba(77,149,56,0.07)' }}
+                />
+                <Bar dataKey="count" fill="#4d9538" radius={[4, 4, 0, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
+
         </div>
       </div>
     </div>
