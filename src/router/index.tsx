@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
   {
     element: <RequireGuest><AuthLayout /></RequireGuest>,
     children: [
-      { path: '/', element: L(() => import('@/features/auth/pages/OnboardingPage')) },
+      { path: '/', element: <Navigate to="/login" replace /> },
       { path: '/login', element: L(() => import('@/features/auth/pages/LoginPage')) },
       { path: '/verify', element: L(() => import('@/features/auth/pages/VerifyPage')) },
       { path: '/role', element: L(() => import('@/features/auth/pages/RolePage')) },
