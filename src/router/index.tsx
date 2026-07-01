@@ -6,6 +6,7 @@ import AdminLayout from '@/layouts/AdminLayout'
 import { RequireAuth } from './guards/RequireAuth'
 import { RequireAdmin } from './guards/RequireAdmin'
 import { RequireGuest } from './guards/RequireGuest'
+import { RequireUser } from './guards/RequireUser'
 
 function L(importFn: () => Promise<{ default: React.ComponentType }>) {
   const Component = lazy(importFn)
@@ -34,7 +35,7 @@ export const router = createBrowserRouter([
   },
   // App
   {
-    element: <RequireAuth><AppLayout /></RequireAuth>,
+    element: <RequireAuth><RequireUser><AppLayout /></RequireUser></RequireAuth>,
     children: [
       { path: '/home', element: L(() => import('@/features/home/pages/HomePage')) },
       { path: '/offers', element: L(() => import('@/features/offers/pages/OffersPage')) },

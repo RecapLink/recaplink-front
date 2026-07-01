@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
   Home, Package, MessageCircle, BookOpen, Bot, Bell, Settings, User,
-  Search, CheckCircle2, LayoutDashboard, Users, Recycle, Award,
+  Search, CheckCircle2,
 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth.store'
 import { useSocketStore } from '@/store/socket.store'
@@ -24,37 +24,21 @@ const USER_NAV_BOTTOM = [
   { to: '/settings',      icon: Settings, label: 'Paramètres' },
 ]
 
-const ADMIN_NAV = [
-  { to: '/home',             icon: LayoutDashboard, label: 'Tableau de bord' },
-  { to: '/admin/collectors', icon: Users,           label: 'Collecteurs' },
-  { to: '/admin/recyclers',  icon: Recycle,         label: 'Recycleurs' },
-  { to: '/admin/offers',     icon: Package,         label: 'Offres' },
-  { to: '/admin/knowledge',  icon: BookOpen,        label: 'Savoir-faire' },
-  { to: '/admin/badges',     icon: Award,           label: 'Gestion des Badges' },
-  { to: '/admin/settings',   icon: Settings,        label: 'Paramètres' },
-]
-
 // ─── Page title map ───────────────────────────────────────────────────────────
 
 const PAGE_TITLES: Record<string, string> = {
-  '/home':              'Tableau de bord',
-  '/offers':            'Offres',
-  '/offers/new':        'Nouvelle offre',
-  '/offers/mine':       'Mes offres',
-  '/messaging':         'Messagerie',
-  '/knowledge':         'Savoir-faire',
-  '/chatbot':           'Assistant IA',
-  '/notifications':     'Notifications',
-  '/profile':           'Mon profil',
-  '/profile/edit':      'Modifier le profil',
-  '/profile/badges':    'Mes badges',
-  '/settings':          'Paramètres',
-  '/admin/collectors':  'Collecteurs',
-  '/admin/recyclers':   'Recycleurs',
-  '/admin/offers':      'Offres',
-  '/admin/knowledge':   'Savoir-faire',
-  '/admin/badges':      'Gestion des Badges',
-  '/admin/settings':    'Paramètres',
+  '/home':           'Tableau de bord',
+  '/offers':         'Offres',
+  '/offers/new':     'Nouvelle offre',
+  '/offers/mine':    'Mes offres',
+  '/messaging':      'Messagerie',
+  '/knowledge':      'Savoir-faire',
+  '/chatbot':        'Assistant IA',
+  '/notifications':  'Notifications',
+  '/profile':        'Mon profil',
+  '/profile/edit':   'Modifier le profil',
+  '/profile/badges': 'Mes badges',
+  '/settings':       'Paramètres',
 }
 
 function getPageTitle(pathname: string): string {
@@ -62,7 +46,6 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith('/offers/')) return "Détail de l'offre"
   if (pathname.startsWith('/messaging/')) return 'Conversation'
   if (pathname.startsWith('/knowledge/')) return 'Article'
-  if (pathname.startsWith('/admin/')) return 'Administration'
   return 'RecapLink'
 }
 
@@ -114,9 +97,6 @@ export default function AppLayout() {
   const { dir } = useUIStore()
   const location = useLocation()
 
-  const isSuperAdmin = user?.role === 'super_admin'
-  const profileTo = isSuperAdmin ? '/admin/profile' : '/profile'
-
   return (
     <div dir={dir} className="min-h-screen bg-[#f0f9f0] flex flex-col">
       {/* ── Header ── */}
@@ -154,31 +134,18 @@ export default function AppLayout() {
 
         {/* Bell + user */}
         <div className="flex items-center gap-4 pr-8 flex-shrink-0">
-          {!isSuperAdmin && (
-            <NavLink to="/notifications" className="relative">
-              <button className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors">
-                <Bell size={22} className="text-white" strokeWidth={1.5} />
-              </button>
-              {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#c41539] text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
-              )}
-            </NavLink>
-          )}
-
-          {isSuperAdmin && (
-            <div className="relative">
-              <button className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors">
-                <Bell size={22} className="text-white" strokeWidth={1.5} />
-              </button>
+          <NavLink to="/notifications" className="relative">
+            <button className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors">
+              <Bell size={22} className="text-white" strokeWidth={1.5} />
+            </button>
+            {unreadCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#c41539] text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
-                3
+                {unreadCount > 9 ? '9+' : unreadCount}
               </span>
-            </div>
-          )}
+            )}
+          </NavLink>
 
-          <NavLink to={profileTo} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+          <NavLink to="/profile" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white/40 overflow-hidden bg-[#c41539] flex-shrink-0">
               {user?.avatarUrl ? (
                 <img src={user.avatarUrl} className="w-full h-full object-cover" alt="" />
@@ -203,29 +170,19 @@ export default function AppLayout() {
           className="flex-shrink-0 bg-white border-r border-gray-100 flex flex-col sticky overflow-y-auto"
           style={{ width: 240, top: 96, height: 'calc(100vh - 96px)' }}
         >
-          {isSuperAdmin ? (
-            /* ── Admin nav (single flat list) ── */
-            <nav className="flex-1 py-5 px-3 space-y-0.5">
-              {ADMIN_NAV.map(item => (
-                <NavItem key={item.to} {...item} />
-              ))}
-            </nav>
-          ) : (
-            /* ── User nav (top + divider + bottom) ── */
-            <nav className="flex-1 py-5 px-3 space-y-0.5">
-              {USER_NAV_TOP.map(item => (
-                <NavItem
-                  key={item.to}
-                  {...item}
-                  badge={item.label === 'Messagerie' ? unreadCount : undefined}
-                />
-              ))}
-              <div className="my-2 border-t border-gray-100" />
-              {USER_NAV_BOTTOM.map(item => (
-                <NavItem key={item.to} {...item} />
-              ))}
-            </nav>
-          )}
+          <nav className="flex-1 py-5 px-3 space-y-0.5">
+            {USER_NAV_TOP.map(item => (
+              <NavItem
+                key={item.to}
+                {...item}
+                badge={item.label === 'Messagerie' ? unreadCount : undefined}
+              />
+            ))}
+            <div className="my-2 border-t border-gray-100" />
+            {USER_NAV_BOTTOM.map(item => (
+              <NavItem key={item.to} {...item} />
+            ))}
+          </nav>
 
           {/* Support widget */}
           <div className="mx-3 mb-3">
@@ -258,7 +215,7 @@ export default function AppLayout() {
           {/* User card */}
           <div className="border-t border-gray-100">
             <NavLink
-              to={profileTo}
+              to="/profile"
               className="flex items-center gap-2.5 px-3 py-3 hover:bg-gray-50 transition-colors"
             >
               <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden bg-[#c41539]">

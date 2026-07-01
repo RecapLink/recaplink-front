@@ -4,7 +4,7 @@ import {
   BarChart, Bar, XAxis, ResponsiveContainer,
   PieChart, Pie, Cell, Tooltip,
 } from 'recharts'
-import { Truck, Award, BookOpen, MessageSquare, AlertTriangle, Package } from 'lucide-react'
+import { Truck, Award, BookOpen, MessageSquare, AlertTriangle, Package, InboxIcon } from 'lucide-react'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -40,14 +40,6 @@ const PLASTIC_COLORS: Record<string, string> = {
 }
 
 const PLASTIC_ORDER = ['PET', 'HDPE', 'PP', 'PVC', 'Autres']
-
-const ZONE_FALLBACK = [
-  { zone: 'Sousse', totalKg: 3846 },
-  { zone: 'Tunis', totalKg: 3200 },
-  { zone: 'Sfax', totalKg: 2440 },
-  { zone: 'Monastir', totalKg: 1600 },
-  { zone: 'Autres', totalKg: 1400 },
-]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -210,6 +202,15 @@ function DonutChart({ distribution }: { distribution: { type: string; percentage
   )
 }
 
+function EmptyState({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-8 gap-2 text-gray-400">
+      <InboxIcon size={28} strokeWidth={1.4} />
+      <p className="text-xs">{label}</p>
+    </div>
+  )
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminOverviewPage() {
@@ -237,27 +238,26 @@ export default function AdminOverviewPage() {
     staleTime: 60_000,
   })
 
-  // ── KPI cards derived from real data ──
-  // Progress rings: use trend * 4 to map growth% → ring% (18%→72%, 12%→48%)
-  // Collectors/recyclers: new this month as fraction of a monthly target (20 collectors, 50 recyclers)
-  const kgTrend = Math.abs(overview?.kgTrend ?? 18)
-  const kgTrendUp = (overview?.kgTrend ?? 18) >= 0
-  const kgProgress = Math.min(Math.round(kgTrend * 4.2), 95) || 75
+  // ── KPI cards ──
+  const kgTrend = Math.abs(overview?.kgTrend ?? 0)
+  const kgTrendUp = (overview?.kgTrend ?? 0) >= 0
+  const kgProgress = overview ? Math.min(Math.round(kgTrend * 4.2), 95) || 5 : 0
 
-  const offersTrend = Math.abs(overview?.offersTrend ?? 12)
-  const offersTrendUp = (overview?.offersTrend ?? 12) >= 0
-  const offersProgress = Math.min(Math.round(offersTrend * 4.2), 95) || 50
+  const offersTrend = Math.abs(overview?.offersTrend ?? 0)
+  const offersTrendUp = (overview?.offersTrend ?? 0) >= 0
+  const offersProgress = overview ? Math.min(Math.round(offersTrend * 4.2), 95) || 5 : 0
 
-  // new collectors / monthly target of 20 → 5/20 = 25%
-  const collectorsProgress = Math.min(Math.round(((overview?.newCollectorsThisMonth ?? 5) / 20) * 100), 95) || 25
+  const collectorsProgress = overview
+    ? Math.min(Math.round(((overview.newCollectorsThisMonth) / 20) * 100), 95) || 5
+    : 0
 
-  // new recyclers / monthly target of 40 → 30/40 = 75%
-  const recyclersProgress = Math.min(Math.round(((overview?.newRecyclersThisMonth ?? 30) / 40) * 100), 95) || 75
+  const recyclersProgress = overview
+    ? Math.min(Math.round(((overview.newRecyclersThisMonth) / 40) * 100), 95) || 5
+    : 0
 
   // ── Plastic distribution ──
   const plasticDist = overview?.plasticTypeDistribution ?? []
-  // Use activeOffers as the denominator (some offers may lack a plasticType)
-  const totalOffers = overview?.activeOffers ?? (plasticDist.reduce((s, p) => s + p.count, 0) || 247)
+  const totalOffers = overview?.activeOffers ?? plasticDist.reduce((s, p) => s + p.count, 0)
 
   const plasticCards = PLASTIC_ORDER.slice(0, 4).map(key => {
     const found = plasticDist.find(p => p.type === key)
@@ -265,7 +265,7 @@ export default function AdminOverviewPage() {
       name: key,
       pct: found?.percentage ?? 0,
       count: found?.count ?? 0,
-      total: totalOffers,
+      total: totalOffers ?? 0,
       bg: '#ffffff',
       barColor: '#c41539',
       nameColor: '#4d9538',
@@ -278,7 +278,7 @@ export default function AdminOverviewPage() {
     name: 'Autres',
     pct: autresItem?.percentage ?? 0,
     count: autresItem?.count ?? 0,
-    total: totalOffers,
+    total: totalOffers ?? 0,
     bg: '#fff1f2',
     barColor: '#c41539',
     nameColor: '#c41539',
@@ -291,25 +291,18 @@ export default function AdminOverviewPage() {
         name: MONTH_LABELS[d.month] ?? d.month ?? '?',
         count: d.count ?? 0,
       }))
-    : ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
-        .map((m, i) => ({ name: m, count: 20 + i * 8 }))
+    : []
 
   // ── Zone chart ──
-  const zoneRows = Array.isArray(zoneData) && zoneData.length > 0
+  const zoneRows: { zone: string; totalKg: number }[] = Array.isArray(zoneData) && zoneData.length > 0
     ? zoneData.slice(0, 5).map((d: any) => ({ zone: d.zone ?? String(d._id ?? '—'), totalKg: d.totalKg ?? 0 }))
-    : ZONE_FALLBACK
+    : []
   const maxKg = Math.max(...zoneRows.map(z => z.totalKg), 1)
 
   // ── Activity feed ──
-  const activities = Array.isArray(activityData) && activityData.length > 0
+  const activities: ActivityItem[] = Array.isArray(activityData) && activityData.length > 0
     ? activityData.slice(0, 5)
-    : [
-        { type: 'user_registration_collector', title: 'Nouveau collecteur inscrit — Khaled M.', sub: 'Sfax · Plastiques PET & HDPE', createdAt: new Date(Date.now() - 8 * 60000).toISOString() },
-        { type: 'badge_award', title: 'Badge "Expert PET" attribué', sub: 'Sara B. — 1 000 kg collectés', createdAt: new Date(Date.now() - 22 * 60000).toISOString() },
-        { type: 'knowledge_published', title: 'Nouvelle fiche savoir-faire publiée', sub: 'Traitement du HDPE — par Admin', createdAt: new Date(Date.now() - 60 * 60000).toISOString() },
-        { type: 'new_offer', title: '3 nouveaux messages chatbot non traités', sub: 'Questions sur les prix du PET', createdAt: new Date(Date.now() - 120 * 60000).toISOString() },
-        { type: 'report', title: 'Signalement utilisateur — Offre #3291', sub: 'Contenu inapproprié · En attente de modération', createdAt: new Date(Date.now() - 180 * 60000).toISOString() },
-      ]
+    : []
 
   return (
     <div className="space-y-5">
@@ -327,7 +320,7 @@ export default function AdminOverviewPage() {
                 bg="#4d9538" textColor="white"
                 decorativeColor="rgba(255,255,255,0.13)"
                 title="kg recyclés ce mois"
-                value={formatNumber(overview?.kgRecycledThisMonth ?? 12480)}
+                value={formatNumber(overview?.kgRecycledThisMonth ?? 0)}
                 progress={kgProgress}
                 change={`${kgTrend}%`} changeUp={kgTrendUp} changeLabel="vs mois dernier"
                 progressColor="white" progressTrackColor="rgba(255,255,255,0.25)"
@@ -336,7 +329,7 @@ export default function AdminOverviewPage() {
                 bg="#c41539" textColor="white"
                 decorativeColor="rgba(255,255,255,0.13)"
                 title="Offres actives"
-                value={formatNumber(overview?.activeOffers ?? 247)}
+                value={formatNumber(overview?.activeOffers ?? 0)}
                 progress={offersProgress}
                 change={`${offersTrend}%`} changeUp={offersTrendUp} changeLabel="vs mois dernier"
                 progressColor="white" progressTrackColor="rgba(255,255,255,0.25)"
@@ -345,9 +338,9 @@ export default function AdminOverviewPage() {
                 bg="#231F20" textColor="white"
                 decorativeColor="rgba(255,255,255,0.07)"
                 title="Collecteurs actifs"
-                value={formatNumber(overview?.activeCollectors ?? 84)}
+                value={formatNumber(overview?.activeCollectors ?? 0)}
                 progress={collectorsProgress}
-                change={`${overview?.newCollectorsThisMonth ?? 5} nouveaux`}
+                change={`${overview?.newCollectorsThisMonth ?? 0} nouveaux`}
                 changeUp={false} changeLabel="Collecteurs"
                 progressColor="#c41539" progressTrackColor="rgba(196,21,57,0.3)"
               />
@@ -355,9 +348,9 @@ export default function AdminOverviewPage() {
                 bg="#f5c518" textColor="#231F20"
                 decorativeColor="rgba(0,0,0,0.07)"
                 title="Recycleurs actifs"
-                value={formatNumber(overview?.activeRecyclers ?? 150)}
+                value={formatNumber(overview?.activeRecyclers ?? 0)}
                 progress={recyclersProgress}
-                change={`${overview?.newRecyclersThisMonth ?? 30} nouveaux`}
+                change={`${overview?.newRecyclersThisMonth ?? 0} nouveaux`}
                 changeUp={true} changeLabel="Recycleurs"
                 progressColor="#4d9538" progressTrackColor="rgba(77,149,56,0.35)"
               />
@@ -380,11 +373,11 @@ export default function AdminOverviewPage() {
             <div className="col-span-3">
               {plasticDist.length > 0
                 ? <DonutChart distribution={plasticDist} />
-                : <DonutChart distribution={[
-                    { type: 'PET', percentage: 40 }, { type: 'HDPE', percentage: 24 },
-                    { type: 'PP', percentage: 18 }, { type: 'PVC', percentage: 14 },
-                    { type: 'Autres', percentage: 4 },
-                  ]} />
+                : (
+                  <div className="bg-white rounded-xl border border-gray-100 h-full flex items-center justify-center" style={{ minHeight: 160 }}>
+                    <EmptyState label="Aucune donnée de distribution" />
+                  </div>
+                )
               }
             </div>
           </div>
@@ -413,6 +406,8 @@ export default function AdminOverviewPage() {
                 </div>
               ))}
             </div>
+          ) : activities.length === 0 ? (
+            <EmptyState label="Aucune activité récente" />
           ) : (
             <div className="divide-y divide-gray-100">
               {activities.map((item, i) => {
@@ -450,20 +445,24 @@ export default function AdminOverviewPage() {
                 {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
               </span>
             </div>
-            <div className="space-y-2.5 relative">
-              {zoneRows.map(row => (
-                <div key={row.zone} className="flex items-center gap-3">
-                  <span className="text-[11px] text-gray-500 w-14 flex-shrink-0 truncate">{row.zone}</span>
-                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full bg-[#4d9538]"
-                      style={{ width: `${(row.totalKg / maxKg) * 100}%` }} />
+            {zoneRows.length === 0 ? (
+              <EmptyState label="Aucune donnée par zone" />
+            ) : (
+              <div className="space-y-2.5 relative">
+                {zoneRows.map(row => (
+                  <div key={row.zone} className="flex items-center gap-3">
+                    <span className="text-[11px] text-gray-500 w-14 flex-shrink-0 truncate">{row.zone}</span>
+                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-[#4d9538]"
+                        style={{ width: `${(row.totalKg / maxKg) * 100}%` }} />
+                    </div>
+                    <span className="text-[11px] text-gray-500 w-16 text-right flex-shrink-0">
+                      {row.totalKg.toLocaleString('fr-FR')} kg
+                    </span>
                   </div>
-                  <span className="text-[11px] text-gray-500 w-16 text-right flex-shrink-0">
-                    {row.totalKg.toLocaleString('fr-FR')} kg
-                  </span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Inscriptions mensuelles */}
@@ -476,16 +475,20 @@ export default function AdminOverviewPage() {
                 {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
               </span>
             </div>
-            <ResponsiveContainer width="100%" height={130}>
-              <BarChart data={barData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }} barSize={14}>
-                <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={{ fontSize: 11, borderRadius: 8, border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}
-                  cursor={{ fill: 'rgba(77,149,56,0.07)' }}
-                />
-                <Bar dataKey="count" fill="#4d9538" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {barData.length === 0 ? (
+              <EmptyState label="Aucune donnée d'inscription" />
+            ) : (
+              <ResponsiveContainer width="100%" height={130}>
+                <BarChart data={barData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }} barSize={14}>
+                  <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{ fontSize: 11, borderRadius: 8, border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}
+                    cursor={{ fill: 'rgba(77,149,56,0.07)' }}
+                  />
+                  <Bar dataKey="count" fill="#4d9538" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
         </div>

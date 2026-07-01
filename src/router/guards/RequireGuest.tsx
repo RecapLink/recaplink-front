@@ -5,7 +5,8 @@ import { ReactNode } from 'react'
 export function RequireGuest({ children }: { children: ReactNode }) {
   const { isAuthenticated, user } = useAuthStore()
   if (isAuthenticated) {
-    return <Navigate to={user?.role === 'admin' ? '/admin/overview' : '/home'} replace />
+    const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'
+    return <Navigate to={isAdmin ? '/admin/overview' : '/home'} replace />
   }
   return <>{children}</>
 }
