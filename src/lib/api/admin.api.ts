@@ -34,6 +34,23 @@ export const adminApi = {
   getSettings: () => api.get('/auth/me'),
   updateNotifPrefs: (prefs: unknown) => api.patch('/users/me', { notifPrefs: prefs }),
 
+  // Offers — create & upload
+  createOffer: (data: Record<string, unknown>) => api.post('/offers', data),
+  uploadOfferImage: (file: File, onProgress?: (pct: number) => void) => {
+    const fd = new FormData()
+    fd.append('images', file)
+    return api.post('/offers/upload-images', fd, {
+      onUploadProgress: e => e.total && onProgress?.(Math.round((e.loaded * 100) / e.total)),
+    })
+  },
+  uploadOfferVoice: (blob: Blob, filename = 'recording.webm', onProgress?: (pct: number) => void) => {
+    const fd = new FormData()
+    fd.append('voice', blob, filename)
+    return api.post('/offers/upload-voice', fd, {
+      onUploadProgress: e => e.total && onProgress?.(Math.round((e.loaded * 100) / e.total)),
+    })
+  },
+
   // Support widget settings
   getSupportSettings: () => api.get('/settings/support'),
   updateSupportSettings: (data: {

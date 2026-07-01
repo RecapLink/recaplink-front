@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '@/lib/api/admin.api'
 import { Package, Recycle, Users, Plus, Search, Eye, Pencil, Ban, ChevronLeft, ChevronRight } from 'lucide-react'
+import { AddOfferModal } from '../offers/AddOfferModal'
 
 const FILTERS = [
   { key: 'all', label: 'Tous' },
@@ -51,6 +52,7 @@ export default function AdminOffersPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin', 'offers', statusFilter, search, page],
@@ -77,7 +79,10 @@ export default function AdminOffersPage() {
           <h1 className="text-xl font-bold text-[#231F20]">Offres</h1>
           <p className="text-sm text-gray-500 mt-0.5">Gérez et suivez toutes vos offres</p>
         </div>
-        <button className="flex items-center gap-2 bg-[#4d9538] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#038543] transition-colors">
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center gap-2 bg-[#4d9538] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#038543] transition-colors"
+        >
           <Plus size={15} />
           Ajouter une offre
         </button>
@@ -255,6 +260,11 @@ export default function AdminOffersPage() {
           </div>
         )}
       </div>
+
+      <AddOfferModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+      />
     </div>
   )
 }
