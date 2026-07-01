@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
 import { io } from 'socket.io-client'
 import router from '@/router'
 import { useAuthStore } from '@/store/auth.store'
@@ -52,6 +53,11 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <SocketManager />
       <RouterProvider router={router} />
+      <Toaster
+        position="top-right"
+        richColors
+        toastOptions={{ duration: 3500 }}
+      />
     </QueryClientProvider>
   )
 }

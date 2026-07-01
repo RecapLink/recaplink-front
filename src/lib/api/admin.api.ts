@@ -33,4 +33,17 @@ export const adminApi = {
   // Settings (profile/notifications of admin)
   getSettings: () => api.get('/auth/me'),
   updateNotifPrefs: (prefs: unknown) => api.patch('/users/me', { notifPrefs: prefs }),
+
+  // Support widget settings
+  getSupportSettings: () => api.get('/settings/support'),
+  updateSupportSettings: (data: {
+    supportEnabled?: boolean
+    supportTitle?: string
+    supportStartHour?: string
+    supportEndHour?: string
+    supportPhone?: string
+    supportEmail?: string
+    supportIllustration?: string
+    supportBubbleColor?: string
+  }) => api.patch('/settings/support', data),
 }

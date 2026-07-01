@@ -1,18 +1,34 @@
 import type { CSSProperties } from 'react'
+import { useSupportSettings } from '@/hooks/useSupportSettings'
 
-const bubbleStyle: CSSProperties = {
-  position: 'absolute',
-  right: 10,
-  top: 24,
-  width: 140,
-  backgroundColor: '#4d9538',
-  borderRadius: 9999,
-  padding: '11px 15px 13px',
-  boxShadow: '0 8px 28px rgba(77, 149, 56, 0.42)',
-  animation: 'sidebar-float 3.5s ease-in-out infinite',
+function interpolate(template: string, vars: Record<string, string>) {
+  return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? `{${key}}`)
 }
 
 export function SidebarSupport() {
+  const { settings } = useSupportSettings()
+
+  if (!settings.enabled) return null
+
+  const bubbleStyle: CSSProperties = {
+    position: 'absolute',
+    right: 10,
+    top: 24,
+    width: 140,
+    backgroundColor: settings.bubbleColor || '#4d9538',
+    borderRadius: 9999,
+    padding: '11px 15px 13px',
+    boxShadow: '0 8px 28px rgba(77, 149, 56, 0.42)',
+    animation: 'sidebar-float 3.5s ease-in-out infinite',
+  }
+
+  const titleText = interpolate(settings.title, {
+    startHour: settings.startHour,
+    endHour: settings.endHour,
+  })
+
+  const illustrationSrc = settings.illustration || '/images/sidebar-support.png'
+
   return (
     <div
       className="relative w-full flex-shrink-0 select-none"
@@ -20,7 +36,7 @@ export function SidebarSupport() {
     >
       {/* Woman illustration — anchored to bottom-left */}
       <img
-        src="/images/sidebar-support.png"
+        src={illustrationSrc}
         alt=""
         draggable={false}
         className="absolute bottom-0 pointer-events-none"
@@ -38,9 +54,7 @@ export function SidebarSupport() {
             fontWeight: 400,
           }}
         >
-          Assistance disponible de
-          <br />
-          9h à 17h au
+          {titleText}
         </p>
         <p
           style={{
@@ -52,7 +66,7 @@ export function SidebarSupport() {
             letterSpacing: '0.3px',
           }}
         >
-          52.056.778
+          {settings.phone}
         </p>
       </div>
     </div>

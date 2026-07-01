@@ -28,7 +28,11 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: 'rl-auth',
-      partialize: (s) => ({ user: s.user, isAuthenticated: s.isAuthenticated }),
+      partialize: (s) => ({
+        user: s.user,
+        accessToken: s.accessToken,
+        isAuthenticated: s.isAuthenticated,
+      }),
     },
   ),
 )
