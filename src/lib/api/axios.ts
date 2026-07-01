@@ -5,7 +5,6 @@ import { useUIStore } from '@/store/ui.store'
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
 })
 
 api.interceptors.request.use((config) => {
@@ -13,6 +12,10 @@ api.interceptors.request.use((config) => {
   const lang = useUIStore.getState().language
   if (token) config.headers.Authorization = `Bearer ${token}`
   config.headers['Accept-Language'] = lang
+  if (config.data instanceof FormData) {
+    // Suppress Content-Type so the browser sets multipart/form-data with the correct boundary
+    config.headers.set('Content-Type', false)
+  }
   return config
 })
 
