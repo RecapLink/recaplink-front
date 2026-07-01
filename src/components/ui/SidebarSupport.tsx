@@ -10,14 +10,16 @@ export function SidebarSupport() {
 
   if (!settings.enabled) return null
 
+  // Figma node 573:2760 — group 225×219px at x=55 in the 301px sidebar
+  // Bubble sits in the upper-right of the group (right=21 from sidebar edge)
   const bubbleStyle: CSSProperties = {
     position: 'absolute',
-    right: 10,
-    top: 24,
-    width: 140,
+    right: 15,
+    top: 10,
+    width: 118,
     backgroundColor: settings.bubbleColor || '#4d9538',
     borderRadius: 9999,
-    padding: '11px 15px 13px',
+    padding: '10px 13px 12px',
     boxShadow: '0 8px 28px rgba(77, 149, 56, 0.42)',
     animation: 'sidebar-float 3.5s ease-in-out infinite',
   }
@@ -30,25 +32,26 @@ export function SidebarSupport() {
   const illustrationSrc = settings.illustration || '/images/sidebar-support.png'
 
   return (
+    // Figma group height = 219px
     <div
-      className="relative w-full flex-shrink-0 select-none"
-      style={{ height: 276 }}
+      className="relative w-full flex-shrink-0 select-none overflow-visible"
+      style={{ height: 219 }}
     >
-      {/* Woman illustration — anchored to bottom-left */}
+      {/* Illustration — left=50 matches Figma group x=55, width=130 */}
       <img
         src={illustrationSrc}
         alt=""
         draggable={false}
         className="absolute bottom-0 pointer-events-none"
-        style={{ left: 14, width: 162 }}
+        style={{ left: 50, width: 130 }}
       />
 
-      {/* Floating assistance bubble — top-right, animated */}
+      {/* Floating speech bubble */}
       <div style={bubbleStyle}>
         <p
           style={{
             color: 'rgba(255,255,255,0.85)',
-            fontSize: 8.5,
+            fontSize: 8,
             lineHeight: 1.55,
             margin: 0,
             fontWeight: 400,
@@ -59,7 +62,7 @@ export function SidebarSupport() {
         <p
           style={{
             color: '#ffffff',
-            fontSize: 19,
+            fontSize: 17,
             fontWeight: 700,
             margin: '4px 0 0',
             lineHeight: 1.2,

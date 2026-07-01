@@ -424,52 +424,41 @@ export default function AdminSettingsPage() {
                 </div>
 
                 {/* Live preview — full widget replica */}
+                {/* Preview — scaled proportionally from the 301×219px sidebar widget */}
                 <div className="flex-shrink-0 w-[200px]">
                   <p className="text-xs font-medium text-gray-500 mb-3">Aperçu</p>
                   <div
                     className="rounded-2xl overflow-hidden border border-gray-100"
-                    style={{ backgroundColor: '#ffffff', height: 200 }}
+                    style={{ backgroundColor: '#ffffff', height: 145 }}
                   >
                     {supportForm.enabled ? (
                       <div className="relative w-full h-full select-none">
-                        {/* Green oval blob */}
-                        <div
-                          className="absolute rounded-full"
-                          style={{
-                            width: 120,
-                            height: 66,
-                            background: supportForm.bubbleColor || '#4d9538',
-                            opacity: 0.35,
-                            bottom: 0,
-                            left: 10,
-                          }}
-                        />
-                        {/* Illustration */}
+                        {/* Illustration — left=33 ≈ 50×(200/301), width=86 ≈ 130×(200/301) */}
                         <img
                           src={supportForm.illustration || '/images/sidebar-support.png'}
                           alt=""
                           draggable={false}
                           className="absolute bottom-0 pointer-events-none"
-                          style={{ left: 6, width: 108 }}
+                          style={{ left: 33, width: 86 }}
                         />
-                        {/* Bubble */}
+                        {/* Bubble — proportional to sidebar bubble */}
                         <div
                           style={{
                             position: 'absolute',
-                            right: 8,
-                            top: 16,
-                            width: 93,
+                            right: 10,
+                            top: 7,
+                            width: 78,
                             backgroundColor: supportForm.bubbleColor || '#4d9538',
                             borderRadius: 9999,
-                            padding: '7px 10px 8px',
-                            boxShadow: '0 5px 18px rgba(77,149,56,0.35)',
+                            padding: '7px 9px 8px',
+                            boxShadow: '0 5px 18px rgba(77,149,56,0.38)',
                             animation: 'sidebar-float 3.5s ease-in-out infinite',
                           }}
                         >
-                          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 5.5, lineHeight: 1.55, margin: 0 }}>
+                          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 5.3, lineHeight: 1.55, margin: 0 }}>
                             {previewTitle || 'Texte de la bulle'}
                           </p>
-                          <p style={{ color: '#fff', fontSize: 12.5, fontWeight: 700, margin: '3px 0 0', lineHeight: 1.2 }}>
+                          <p style={{ color: '#fff', fontSize: 11, fontWeight: 700, margin: '3px 0 0', lineHeight: 1.2 }}>
                             {supportForm.phone || '—'}
                           </p>
                         </div>

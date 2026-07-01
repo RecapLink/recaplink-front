@@ -98,76 +98,85 @@ export default function AdminLayout() {
 
         {/* ── Sidebar ── */}
         <aside
-          className="flex-shrink-0 bg-white flex flex-col sticky overflow-y-auto rounded-br-[40px]"
+          className="flex-shrink-0 bg-white flex flex-col sticky"
           style={{ width: SIDEBAR_W, top: 96, height: 'calc(100vh - 96px)' }}
         >
-          {/* Navigation */}
-          <nav className="flex-1 pt-6 pb-2">
-            {NAV.map(({ to, icon: Icon, label }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  clsx(
-                    'flex items-center gap-4 py-[17px] pl-10 pr-6 transition-colors',
-                    isActive
-                      ? 'text-[#4d9538]'
-                      : 'text-[#9CA3AF] hover:text-[#6B7280]',
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <Icon
-                      size={22}
-                      strokeWidth={isActive ? 2.2 : 1.8}
-                      className={clsx(
-                        'flex-shrink-0 transition-colors',
-                        isActive ? 'text-[#4d9538]' : 'text-[#BEBEBE]',
+          {/* Scrollable nav — only this section scrolls */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <nav className="pt-6 pb-2">
+              {NAV.map(({ to, icon: Icon, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    clsx(
+                      'flex items-center gap-4 py-[17px] pl-10 pr-6 transition-colors',
+                      isActive
+                        ? 'text-[#4d9538]'
+                        : 'text-[#9CA3AF] hover:text-[#6B7280]',
+                    )
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <Icon
+                        size={22}
+                        strokeWidth={isActive ? 2.2 : 1.8}
+                        className={clsx(
+                          'flex-shrink-0 transition-colors',
+                          isActive ? 'text-[#4d9538]' : 'text-[#BEBEBE]',
+                        )}
+                      />
+                      <span
+                        className={clsx(
+                          'flex-1 text-sm leading-tight',
+                          isActive ? 'font-semibold text-[#4d9538]' : 'font-normal text-[#9CA3AF]',
+                        )}
+                      >
+                        {label}
+                      </span>
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-[#4d9538] flex-shrink-0" />
                       )}
-                    />
-                    <span
-                      className={clsx(
-                        'flex-1 text-sm leading-tight',
-                        isActive ? 'font-semibold text-[#4d9538]' : 'font-normal text-[#9CA3AF]',
-                      )}
-                    >
-                      {label}
-                    </span>
-                    {isActive && (
-                      <span className="w-2 h-2 rounded-full bg-[#4d9538] flex-shrink-0" />
-                    )}
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </nav>
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
 
-          {/* Support illustration + floating bubble */}
-          <SidebarSupport />
+          {/* Fixed bottom — support widget + profile card, never scroll, never clipped */}
+          <div className="flex-shrink-0 flex flex-col">
+            <SidebarSupport />
 
-          {/* Bottom user card */}
-          <div
-            className="flex-shrink-0 flex items-center gap-3 px-4 py-[14px] rounded-tl-[24px]"
-            style={{ backgroundColor: '#1B3A27' }}
-          >
-            <div className="w-[50px] h-[50px] rounded-full flex-shrink-0 overflow-hidden border-2 border-white/20 bg-[#c41539] flex items-center justify-center">
-              {user?.avatarUrl
-                ? <img src={user.avatarUrl} className="w-full h-full object-cover" alt="" />
-                : <span className="text-white font-bold text-sm">{initials}</span>}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <p className="text-white font-bold text-[13px] leading-tight truncate">
-                {user?.fullName || 'Administrateur'}
-              </p>
-            </div>
-
+            {/* Profile card — h=64px, bg=#2E7D32, flush to sidebar bottom */}
             <NavLink
               to="/admin/profile"
-              className="w-7 h-7 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center flex-shrink-0 transition-colors"
+              className="flex items-center justify-between h-16 px-6 transition-colors duration-200"
+              style={{ backgroundColor: '#2E7D32' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#256B28')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#2E7D32')}
             >
-              <ChevronRight size={14} className="text-white" strokeWidth={2.5} />
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="flex-shrink-0 rounded-full overflow-hidden bg-[#c41539] flex items-center justify-center border-2 border-white"
+                  style={{ width: 36, height: 36 }}
+                >
+                  {user?.avatarUrl
+                    ? <img src={user.avatarUrl} className="w-full h-full object-cover" alt="" />
+                    : <span className="text-white font-bold text-xs">{initials}</span>}
+                </div>
+                <span className="text-white truncate" style={{ fontSize: 14, fontWeight: 600 }}>
+                  {user?.fullName || 'Administrateur'}
+                </span>
+              </div>
+
+              <div
+                className="flex-shrink-0 flex items-center justify-center rounded-full bg-white"
+                style={{ width: 32, height: 32 }}
+              >
+                <ChevronRight size={16} style={{ color: '#2E7D32' }} strokeWidth={2.5} />
+              </div>
             </NavLink>
           </div>
         </aside>
